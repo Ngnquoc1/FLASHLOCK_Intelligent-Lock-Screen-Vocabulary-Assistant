@@ -1,0 +1,15 @@
+{"id": 1, "task": "Colors Configuration", "status": "Done", "note": "Đã configure LUNA palette tokens vào res/values/colors.xml"}
+{"id": 2, "task": "Themes Configuration", "status": "Done", "note": "Đã ánh xạ các colors system vào res/values/themes.xml và res/values-night/themes.xml cho LUNA Theme."}
+{"id": 3, "task": "Login Screen UI", "status": "Done", "note": "Đã tạo activity_login.xml theo chuẩn thiết kế và tích hợp ViewBinding trong LoginActivity.java"}
+{"id": 4, "task": "Architectural Compliance", "status": "Done", "note": "Áp dụng rule MVVM: tách logic sang LoginViewModel, và đưa tất cả chuỗi hardcode vào strings.xml."}
+{"id": 5, "task": "MVVM Folder Structure", "status": "Done", "note": "Đã thiết lập cấu trúc thư mục package mới: ui, data, di, utils. Phân bổ các classes về đúng package tương ứng (ui.login, ui.main) và update file AndroidManifest.xml."}
+{"id": 6, "task": "Register Screen UI", "status": "Done", "note": "Đã tạo activity_register.xml, RegisterActivity.java chuyển logic sang RegisterViewModel.java, tuân thủ MVVM rule và khai báo 100% strings cứng vào strings.xml."}
+{"id": 7, "task": "Navigation Logic", "status": "Done", "note": "Đã implement Intent chuyển trang từ Login->Register và Register->Login sử dụng FLAG_ACTIVITY_CLEAR_TOP tránh tràn RAM bởi Multiple Instances."}
+{"id": 8, "task": "Reset Access Screen UI", "status": "Done", "note": "Đã tạo màn hình Reset Access, setup ViewModel, Activity, XML và update luồng đi từ Forgot Password sang Reset rồi quay trở lại."}
+{"id": 9, "task": "Reset Confirmation UI", "status": "Done", "note": "Đã tạoo màn hình `ResetConfirmActivity` với layout thông báo, điều hướng mượt từ bước nhập email qua."}
+{"id": 10, "task": "Set New Password UI", "status": "Done", "note": "Đã tạo `SetNewPasswordActivity` kèm `SetNewPasswordViewModel` để tính toán strength bar, setup file XML với GridLayout cho các yêu cầu, bảo lưu cấu trúc MVVM."}
+{"id": 11, "task": "Bugfix Login Screen", "status": "Done", "note": "Đã khắc phục lỗi form nhập liệu màn Login bị che khuất bởi Bottom Navigation. Đã bọc toàn bộ nội dung form vào `ScrollView` để người dùng có thể lướt xem đầy đủ trên các màn hình nhỏ."}
+{"id": 13, "task": "Bottom Nav Rounded Styling", "status": "Done", "note": "Đã bo tròn thanh nav dưới bằng drawable riêng và căn giữa icon trong nền bo tròn cho cả Login/Register để đồng nhất giao diện."}
+{"id": 14, "task": "Register Bottom Nav Rounded Styling", "status": "Done", "note": "Đã áp dụng cùng style nav bo tròn cho màn Register, icon được căn giữa trong nền bo tròn và giữ trạng thái tab Register đang active."}
+{"id": 15, "task": "Reset Icons Bugfix", "status": "Done", "note": "Đã sửa lỗi icon bị chèn sai/placeholder ở các màn reset: thay icon back, icon security/support, icon checklist và progress drawable để hiển thị đúng."}
+{"id": 16, "task": "Reset Access Email Icon Size", "status": "Done", "note": "Đã sửa lỗi icon email bị phóng to bằng cách thay sang vector 24dp (`ic_email_outline`) trong TextInputLayout."}
