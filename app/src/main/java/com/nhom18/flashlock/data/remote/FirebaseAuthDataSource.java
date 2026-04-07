@@ -10,7 +10,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-import com.nhom18.flashlock.data.model.AuthUserProfile;
 import com.nhom18.flashlock.data.repository.AuthResultCallback;
 
 import java.util.HashMap;
