@@ -1,0 +1,6 @@
+- Tech Stack: Java, MVVM Architecture, ViewBinding.
+- Backend: Firebase Auth (Email & Google), Firestore (Data Sync), Firebase Storage.
+- AI & ML: Gemini API cho sinh ví dụ ngữ cảnh.
+- Đặc thù Android: Sử dụng Service và WindowManager cho tính năng màn hình khóa.
+- Quy tắc: "Không viết logic trong Activity, luôn tách vào ViewModel", "Mọi String phải nằm trong strings.xml".
+- Chú ý: luôn lưu lai nhật ký trong file JOURNAL.Jsonl

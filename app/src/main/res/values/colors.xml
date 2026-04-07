@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- LUNA Palette from Design System -->
+    <color name="surface_container_lowest">#000e26</color>
+    <color name="surface">#00132f</color>
+    <color name="surface_container_low">#001b3f</color>
+    <color name="surface_container">#041f43</color>
+    <color name="surface_container_high">#122a4e</color>
+    <color name="surface_container_highest">#1e3559</color>
+    <color name="surface_variant">#1e3559</color>
+    <color name="on_surface">#d7e3ff</color>
+
+    <color name="primary">#94cdf9</color>
+    <color name="primary_container">#26658c</color>
+    <color name="on_primary_container">#00132f</color> <!-- inferred for contrast -->
+
+    <color name="secondary">#007587</color> <!-- base for secondary -->
+    <color name="secondary_container">#007587</color>
+    <color name="secondary_fixed_dim">#7dd3e7</color>
+
+    <color name="accent">#023859</color>
+    <color name="outline_variant">#41484e</color>
+</resources>

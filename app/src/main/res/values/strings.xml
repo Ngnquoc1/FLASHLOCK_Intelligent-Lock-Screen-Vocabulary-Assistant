@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">FlashLock</string>
+
+    <!-- Login Screen Strings -->
+    <string name="login_title_welcome">Welcome back.</string>
+    <string name="login_subtitle_welcome">Continue your journey in the digital sanctuary.</string>
+    <string name="login_label_email">EMAIL ADDRESS</string>
+    <string name="login_hint_email">name\@domain.com</string>
+    <string name="login_label_password">PASSWORD</string>
+    <string name="login_btn_forgot_password">Forgot Password?</string>
+    <string name="login_hint_password">••••••••</string>
+    <string name="login_btn_login">Login</string>
+    <string name="login_text_or">OR SECURELY WITH</string>
+    <string name="login_btn_google">Sign in with Google</string>
+    <string name="login_text_no_account">Don\'t have an account? </string>
+    <string name="login_btn_register">Register</string>
+
+    <!-- Register Screen Strings -->
+    <string name="register_title_help">Help</string>
+    <string name="register_title_create_account">Create Account</string>
+    <string name="register_subtitle_join">Join the elite sanctuary of secure language learning.</string>
+    <string name="register_label_full_name">FULL NAME</string>
+    <string name="register_hint_full_name">Enter your name</string>
+    <string name="register_label_email">EMAIL ADDRESS</string>
+    <string name="register_hint_email">you\@example.com</string>
+    <string name="register_label_phone">PHONE NUMBER</string>
+    <string name="register_hint_phone">+1 (555) 000-0000</string>
+    <string name="register_label_password">SECURE PASSWORD</string>
+    <string name="register_hint_password">••••••••••••</string>
+    <string name="register_btn_register">Register</string>
+    <string name="register_text_already_account">Already have an account? </string>
+    <string name="register_btn_login">Login</string>
+
+    <!-- Reset Access Strings -->
+    <string name="reset_title_app_bar">Reset Access</string>
+    <string name="reset_title">Reset Access</string>
+    <string name="reset_subtitle">Enter your registered email to receive a recovery link.</string>
+    <string name="reset_label_email">EMAIL ADDRESS</string>
+    <string name="reset_hint_email">name\@example.com</string>
+    <string name="reset_btn_send">Send Reset Link</string>
+    <string name="reset_btn_back">BACK TO LOGIN</string>
+    <string name="reset_footer_text">SECURE RECOVERY PROTOCOL V4.2</string>
+
+    <!-- Reset Confirmation Strings -->
+    <string name="reset_confirm_title_app_bar">Reset Access</string>
+    <string name="reset_confirm_title">Check your email</string>
+    <string name="reset_confirm_subtitle">We\'ve sent a password recovery link to your inbox. Please check your spam folder if you don\'t see it.</string>
+    <string name="reset_confirm_btn_back">Back to Login</string>
+    <string name="reset_confirm_btn_resend">RESEND EMAIL</string>
+    <string name="reset_confirm_security_title">SECURITY</string>
+    <string name="reset_confirm_security_desc">Links expire in 24h</string>
+    <string name="reset_confirm_support_title">SUPPORT</string>
+    <string name="reset_confirm_support_desc">Contact 24/7 help</string>
+    <string name="bottom_nav_support">SUPPORT</string>
+    <string name="common_back">Back</string>
+
+    <!-- Set New Password Strings -->
+    <string name="set_pwd_title_app_bar">Reset Password</string>
+    <string name="set_pwd_app_name">FLASHLOCK</string>
+    <string name="set_pwd_title">Set New Password</string>
+    <string name="set_pwd_subtitle">Create a strong password to secure your account and progress.</string>
+    <string name="set_pwd_label_new">NEW PASSWORD</string>
+    <string name="set_pwd_hint_pwd">••••••••</string>
+    <string name="set_pwd_strength">Strength: </string>
+    <string name="set_pwd_strength_medium">Medium</string>
+    <string name="set_pwd_strength_percent">65%</string>
+    <string name="set_pwd_hint_desc">Use 8+ characters with a mix of letters, numbers &amp; symbols.</string>
+    <string name="set_pwd_label_confirm">CONFIRM NEW PASSWORD</string>
+    <string name="set_pwd_btn_update">Update Password</string>
+    <string name="set_pwd_trouble">Having trouble? </string>
+    <string name="set_pwd_contact_support">Contact Support</string>
+
+    <!-- Password Requirements Strings -->
+    <string name="req_8_chars">At least 8\ncharacters</string>
+    <string name="req_one_number">One number</string>
+    <string name="req_one_upper">One uppercase\nletter</string>
+    <string name="req_one_special">One special\ncharacter</string>
+
+    <!-- Navigation Strings -->
+    <string name="bottom_nav_login">LOGIN</string>
+    <string name="bottom_nav_register">REGISTER</string>
+</resources>
