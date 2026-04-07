@@ -79,4 +79,31 @@
     <!-- Navigation Strings -->
     <string name="bottom_nav_login">LOGIN</string>
     <string name="bottom_nav_register">REGISTER</string>
+
+    <!-- Auth Status Strings -->
+    <string name="auth_login_success">Login successful.</string>
+    <string name="auth_register_success">Registration successful.</string>
+    <string name="auth_reset_link_sent">Recovery email sent.</string>
+    <string name="auth_action_failed">Request failed: %1$s</string>
+    <string name="auth_error_login_email_required">Vui long nhap email.</string>
+    <string name="auth_error_login_password_required">Vui long nhap mat khau.</string>
+    <string name="auth_error_register_name_required">Vui long nhap ho ten.</string>
+    <string name="auth_error_register_email_required">Vui long nhap email hợp lệ.</string>
+    <string name="auth_error_register_phone_required">Vui long nhap so dien thoai.</string>
+    <string name="auth_error_register_password_required">Vui long nhap mat khau.</string>
+
+    <string name="auth_error_invalid_email">Email khong đung định dang.</string>
+    <string name="auth_error_user_not_found">Tai khoan khong ton tai.</string>
+    <string name="auth_error_wrong_password">Mat khau khong dung hoac account da thay doi.</string>
+    <string name="auth_error_email_already_in_use">Email nay da duoc su dung boi tai khoan khac.</string>
+    <string name="auth_error_weak_password">Mat khau phai co it nhat 6 ky tu.</string>
+    <string name="auth_error_user_disabled">Tai khoan da bi vo hieu hoa.</string>
+    <string name="auth_error_network">Khong the ket noi toi may chu. Kiem tra lai mang.</string>
+    <string name="auth_error_too_many_requests">Vui long doi mot lat truoc khi thu lai.</string>
+    <string name="auth_error_google_token_invalid">Dang nhap Google that bai. Vui long thu lai.</string>
+    <string name="auth_error_google_cancelled">Ban da huy dang nhap Google.</string>
+    <string name="auth_error_google_config_missing">Chua cau hinh Google Sign-In. Vui long cap nhat web client id.</string>
+    <string name="google_web_client_id">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID</string>
+
+    <string name="main_title">Ban da dang nhap thanh cong.</string>
 </resources>

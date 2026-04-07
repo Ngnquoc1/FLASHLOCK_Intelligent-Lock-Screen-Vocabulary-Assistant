@@ -25,16 +25,14 @@ public class ResetConfirmActivity extends AppCompatActivity {
 
     private void setupListeners() {
         binding.ivBack.setOnClickListener(v -> navigateToLogin());
-
+        
         binding.btnBackToLogin.setOnClickListener(v -> navigateToLogin());
-
+        
         binding.llNavLogin.setOnClickListener(v -> navigateToLogin());
 
         binding.tvResendEmail.setOnClickListener(v -> {
-            // Simulator: Trigger the deep link flow instead for demo
-            Intent intent = new Intent(this, SetNewPasswordActivity.class);
-            startActivity(intent);
-            finish();
+            // Trigger resend email action using ViewModel or equivalent pattern if needed
+            // For now just mock interaction
         });
     }
 

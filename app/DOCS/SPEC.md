@@ -1,56 +1,59 @@
-**TỔNG HỢP CHỨC NĂNG ỨNG DỤNG FLASHLOCK**
+# SPEC - FlashLock
 
-1. **Phân hệ Người dùng & Hệ thống (User & System Module)**s
+## 1) Mục tiêu sản phẩm
 
-*Đây là phân hệ nền tảng, đảm bảo dữ liệu người dùng được bảo mật và đồng bộ.*
+FlashLock là ứng dụng học từ vựng tập trung vào trải nghiệm học chủ động (in-app) và học thụ động (trên màn hình khóa), đảm bảo dữ liệu người dùng được bảo mật và đồng bộ đa thiết bị.
 
-- **Đăng ký tài khoản (Register):** Tạo tài khoản mới bằng Email, SĐT, Mật khẩu.
-- **Đăng nhập (Login):**
-    - Đăng nhập tài khoản đã có.
-    - Tích hợp đăng nhập nhanh qua Google.
-- **Quên mật khẩu:** Gửi OTP qua SMS/Email yêu cầu thay đổi mật khẩu.
-- **Đăng xuất:** Đăng xuất không phải chỉ chuyển sang form khác, phải ć thông báo / token ghi nhận đã đăng xuất.
-- **Đồng bộ đám mây (Cloud Sync):** Tự động sao lưu tiến độ học tập (Level từ vựng) và bộ từ vựng cá nhân lên Server (Firebase) để không mất dữ liệu khi đổi máy.
-- **Quản lý hồ sơ (User Profile):** Hiển thị và chỉnh sửa thông tin cá nhân (Tên, Ảnh đại diện).
-1. **Quản lý Nội dung (Content Management Module)**
-- **Thư viện chủ đề (Topic Library):**
-    - Hiển thị danh sách các gói từ vựng có sẵn (VD: TOEIC, IELTS, Giao tiếp cơ bản...).
-    - Cho phép người dùng chọn/tải các gói này về học.
-- **Quản lý Từ vựng cá nhân (My Vocabulary - CRUD):**
-    - **Thêm từ (Create):** Người dùng tự nhập từ mới, nghĩa tiếng Việt, và câu ví dụ.
-    - **Xem danh sách (Read):** Xem lại tất cả các từ đã thêm, hỗ trợ tìm kiếm/lọc.
-    - **Sửa từ (Update):** Chỉnh sửa nội dung nếu nhập sai.
-    - **Xóa từ (Delete):** Xóa bỏ các từ không còn muốn học.
-- **Tra từ nhanh (Mini Dictionary):** Tra cứu nghĩa của một từ bất kỳ có trong cơ sở dữ liệu ứng dụng.
+## 2) Phạm vi chức năng
 
-1. **Học tập Chủ động (Active Learning Module)**
-- **Học Flashcard (In-app Study):**
-    - Giao diện lật thẻ (Mặt trước: Tiếng Anh - Mặt sau: Nghĩa & Ví dụ).
-    - Tương tác Vuốt (Swipe) hoặc bấm nút để đánh giá mức độ thuộc bài.
-- **Phát âm chuẩn (Text-to-Speech):** Tích hợp nút loa để nghe giọng đọc bản xứ (Anh/Mỹ) cho từng từ vựng.
+### 2.1 Người dùng & hệ thống (User & System)
 
-1. **Học tập Thụ động (Passive Learning Module)**
+- Đăng ký tài khoản bằng Email, số điện thoại và mật khẩu.
+- Đăng nhập bằng Email/Password.
+- Đăng nhập nhanh bằng Google.
+- Quên mật khẩu qua Email/SMS OTP.
+- Đăng xuất có ghi nhận trạng thái phiên đăng nhập.
+- Đồng bộ đám mây dữ liệu học tập lên Firebase.
+- Quản lý hồ sơ cá nhân: tên hiển thị, ảnh đại diện.
 
-*Tính năng cốt lõi (Key Feature).*
+### 2.2 Quản lý nội dung (Content Management)
 
-- **Màn hình khóa thông minh (Lock Screen Overlay):**
-    - Tự động hiển thị thẻ từ vựng đè lên màn hình ngay khi người dùng bật sáng điện thoại (SCREEN\_ON).
-    - Cho phép tương tác nhanh mà không cần mở khóa:
-        - Nút **"Đã nhớ"**: Đánh dấu đã thuộc.
-        - Nút **"Chưa nhớ"**: Đánh dấu cần ôn lại.
-        - Nút **"Bỏ qua"**: Tắt lớp phủ để dùng điện thoại.
-- **Thuật toán Lặp lại ngắt quãng (SRS Logic):**
-    - Hệ thống tự động tính toán "điểm rơi của trí nhớ" để hiển thị từ vựng vào đúng lúc người dùng sắp quên (thay vì hiển thị ngẫu nhiên).
-    - Từ khó (bấm "Chưa nhớ") sẽ xuất hiện tần suất dày đặc hơn từ dễ.
-- **Ví dụ ngữ cảnh thông minh (AI Contextual Examples):**
-    - Mô tả: Sử dụng Generative AI (Gemini/OpenAI) để sinh ra các câu ví dụ mới lạ, độc nhất cho mỗi lần từ vựng xuất hiện, tránh nhàm chán so với câu ví dụ tĩnh.
+- Thư viện chủ đề: duyệt các gói từ vựng có sẵn (TOEIC, IELTS, giao tiếp...).
+- My Vocabulary (CRUD): thêm, xem, sửa, xóa từ vựng cá nhân.
+- Tra từ nhanh (Mini Dictionary).
 
-**5. Tiện ích & Cài đặt (Settings & Utilities)**
+### 2.3 Học tập chủ động (Active Learning)
 
-*Tăng trải nghiệm người dùng (UX).*
+- Học flashcard với cơ chế lật thẻ.
+- Đánh giá mức độ ghi nhớ bằng thao tác vuốt hoặc nút hành động.
+- Text-to-Speech phát âm Anh/Mỹ.
 
-- **Nhắc nhở học tập (Daily Reminder):** Gửi thông báo (Push Notification) nhắc người dùng vào app học vào khung giờ cố định.
-- **Cấu hình hiển thị:**
-    - Bật/Tắt tính năng Màn hình khóa.
-    - Tùy chọn chủ đề từ vựng muốn hiển thị ra màn hình khóa.
+### 2.4 Học tập thụ động (Passive Learning)
 
+- Lớp phủ màn hình khóa hiển thị thẻ từ khi bật sáng màn hình.
+- 3 hành động nhanh: Đã nhớ, Chưa nhớ, Bỏ qua.
+- Áp dụng SRS để điều chỉnh tần suất lặp lại.
+- Sinh ví dụ ngữ cảnh động bằng AI (Gemini/OpenAI).
+
+### 2.5 Tiện ích & cài đặt (Settings & Utilities)
+
+- Nhắc nhở học tập theo khung giờ.
+- Bật/tắt tính năng màn hình khóa.
+- Chọn chủ đề từ vựng hiển thị trên màn hình khóa.
+
+## 3) Yêu cầu dữ liệu và đồng bộ
+
+- Dữ liệu người dùng phải gắn theo `uid`.
+- Tiến độ học và bộ từ cá nhân phải đồng bộ Firebase để không mất dữ liệu khi đổi máy.
+- Trạng thái đồng bộ cần có thời điểm cập nhật gần nhất.
+
+## 4) Yêu cầu bảo mật
+
+- Dữ liệu cá nhân chỉ chủ tài khoản được đọc/ghi.
+- API nhạy cảm phải có kiểm soát quyền truy cập.
+- Luồng đăng xuất phải đảm bảo hủy phiên và token local.
+
+## 5) Ngoài phạm vi tài liệu này
+
+- Thiết kế chi tiết điều hướng và trạng thái UI nằm ở `app/DOCS/ScreenFlow.md`.
+- Kế hoạch thực thi chi tiết nhóm Authentication nằm ở `app/DOCS/AuthExecution.byStep.md`.

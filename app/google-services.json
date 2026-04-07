@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "830784065426",
+    "project_id": "flashlock-2490b",
+    "storage_bucket": "flashlock-2490b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830784065426:android:0734c88642b2765aeb7b4b",
+        "android_client_info": {
+          "package_name": "com.nhom18.flashlock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2lzpI0VWVNzqJTWqLWC55wByYnDlfe5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

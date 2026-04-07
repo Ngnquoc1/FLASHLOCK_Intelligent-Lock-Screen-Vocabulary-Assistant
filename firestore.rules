@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      match /auth_logs/{logId} {
+        allow read, create: if isOwner(uid);
+        allow update, delete: if false;
+      }
+
+      match /my_words/{wordId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      match /study_events/{eventId} {
+        allow read, create: if isOwner(uid);
+        allow update, delete: if false;
+      }
+
+      match /sync_logs/{logId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid);
+        allow update, delete: if false;
+      }
+    }
+
+    match /topics/{topicId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+
+      match /words/{wordId} {
+        allow read: if isSignedIn();
+        allow write: if isAdmin();
+      }
+    }
+  }
+}
