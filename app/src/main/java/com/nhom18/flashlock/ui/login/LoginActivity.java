@@ -137,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         if ("AUTH_USER_NOT_FOUND".equals(errorCodeOrMessage)) return getString(R.string.auth_error_user_not_found);
         if ("AUTH_WRONG_PASSWORD".equals(errorCodeOrMessage)) return getString(R.string.auth_error_wrong_password);
         if ("AUTH_USER_DISABLED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_user_disabled);
+        if ("AUTH_EMAIL_NOT_VERIFIED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_email_not_verified);
         if ("AUTH_NETWORK_ERROR".equals(errorCodeOrMessage)) return getString(R.string.auth_error_network);
         if ("AUTH_TOO_MANY_REQUESTS".equals(errorCodeOrMessage)) return getString(R.string.auth_error_too_many_requests);
         if ("AUTH_GOOGLE_TOKEN_INVALID".equals(errorCodeOrMessage)) return getString(R.string.auth_error_google_token_invalid);

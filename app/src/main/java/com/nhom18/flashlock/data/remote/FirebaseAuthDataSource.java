@@ -30,8 +30,16 @@ public class FirebaseAuthDataSource {
         String normalizedEmail = normalizeEmail(email);
         firebaseAuth.signInWithEmailAndPassword(normalizedEmail, password)
                 .addOnSuccessListener(authResult -> {
-                    syncUserProfile(authResult.getUser(), "password");
-                    logAuthEvent(authResult.getUser(), "login_email", "success", "");
+                    FirebaseUser user = authResult.getUser();
+                    if (user == null || !user.isEmailVerified()) {
+                        logAuthEvent(user, "login_email", "failed", "AUTH_EMAIL_NOT_VERIFIED");
+                        firebaseAuth.signOut();
+                        callback.onError("AUTH_EMAIL_NOT_VERIFIED");
+                        return;
+                    }
+
+                    syncUserProfile(user, "password");
+                    logAuthEvent(user, "login_email", "success", "");
                     callback.onSuccess();
                 })
                 .addOnFailureListener(e -> {
@@ -40,13 +48,30 @@ public class FirebaseAuthDataSource {
                 });
     }
 
-    public void registerWithEmail(String email, String password, AuthResultCallback callback) {
+    public void registerWithEmail(String name, String email, String password, AuthResultCallback callback) {
         String normalizedEmail = normalizeEmail(email);
+        String normalizedName = normalizeValue(name);
+
         firebaseAuth.createUserWithEmailAndPassword(normalizedEmail, password)
                 .addOnSuccessListener(authResult -> {
-                    syncUserProfile(authResult.getUser(), "password");
-                    logAuthEvent(authResult.getUser(), "register_email", "success", "");
-                    callback.onSuccess();
+                    FirebaseUser user = authResult.getUser();
+                    syncUserProfile(user, "password", normalizedName);
+                    logAuthEvent(user, "register_email", "success", "");
+
+                    if (user == null) {
+                        callback.onError("AUTH_VERIFY_EMAIL_SEND_FAILED");
+                        return;
+                    }
+
+                    user.sendEmailVerification()
+                            .addOnSuccessListener(unused -> {
+                                firebaseAuth.signOut();
+                                callback.onSuccess();
+                            })
+                            .addOnFailureListener(e -> {
+                                logAuthEvent(user, "verify_email", "failed", "AUTH_VERIFY_EMAIL_SEND_FAILED");
+                                callback.onError("AUTH_VERIFY_EMAIL_SEND_FAILED");
+                            });
                 })
                 .addOnFailureListener(e -> {
                     logAuthEvent(null, "register_email", "failed", resolveErrorMessage(e));
@@ -95,7 +120,15 @@ public class FirebaseAuthDataSource {
         return email == null ? "" : email.trim();
     }
 
+    private String normalizeValue(String value) {
+        return value == null ? "" : value.trim();
+    }
+
     private void syncUserProfile(FirebaseUser user, String provider) {
+        syncUserProfile(user, provider, "");
+    }
+
+    private void syncUserProfile(FirebaseUser user, String provider, String name) {
         AuthUserProfile profile = AuthUserProfile.fromFirebaseUser(user, provider);
         if (profile == null) {
             return;
@@ -103,6 +136,11 @@ public class FirebaseAuthDataSource {
 
         String uid = profile.getUid();
         Map<String, Object> payload = profile.toFirestoreMap();
+
+        // Registration form name should overwrite empty FirebaseUser displayName.
+        if (!normalizeValue(name).isEmpty()) {
+            payload.put("displayName", normalizeValue(name));
+        }
 
         firestore.collection("users").document(uid).get()
                 .addOnSuccessListener(snapshot -> {

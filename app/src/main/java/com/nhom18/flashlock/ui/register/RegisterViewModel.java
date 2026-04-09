@@ -27,10 +27,9 @@ public class RegisterViewModel extends ViewModel {
         return authUiState;
     }
 
-    public void register(String name, String email, String phone, String password) {
+    public void register(String name, String email, String password) {
         String nameValue = name == null ? "" : name.trim();
         String emailValue = email == null ? "" : email.trim();
-        String phoneValue = phone == null ? "" : phone.trim();
         String passwordValue = password == null ? "" : password.trim();
 
         if (nameValue.isEmpty()) {
@@ -41,17 +40,13 @@ public class RegisterViewModel extends ViewModel {
             authUiState.setValue(AuthUiState.error("REGISTER_EMAIL_REQUIRED"));
             return;
         }
-        if (phoneValue.isEmpty()) {
-            authUiState.setValue(AuthUiState.error("REGISTER_PHONE_REQUIRED"));
-            return;
-        }
         if (passwordValue.isEmpty()) {
             authUiState.setValue(AuthUiState.error("REGISTER_PASSWORD_REQUIRED"));
             return;
         }
 
         authUiState.setValue(AuthUiState.loading());
-        authRepository.registerWithEmail(emailValue, passwordValue, new AuthResultCallback() {
+        authRepository.registerWithEmail(nameValue, emailValue, passwordValue, new AuthResultCallback() {
             @Override
             public void onSuccess() {
                 authUiState.postValue(AuthUiState.success());

@@ -54,10 +54,9 @@ public class RegisterActivity extends AppCompatActivity {
         binding.btnRegister.setOnClickListener(v -> {
             String name = binding.etFullName.getText() != null ? binding.etFullName.getText().toString() : "";
             String email = binding.etEmail.getText() != null ? binding.etEmail.getText().toString() : "";
-            String phone = binding.etPhone.getText() != null ? binding.etPhone.getText().toString() : "";
             String password = binding.etPassword.getText() != null ? binding.etPassword.getText().toString() : "";
 
-            viewModel.register(name, email, phone, password);
+            viewModel.register(name, email, password);
         });
 
         binding.tvLogin.setOnClickListener(v -> navigateToLogin());
@@ -79,12 +78,12 @@ public class RegisterActivity extends AppCompatActivity {
     private String resolveAuthErrorMessage(String errorCodeOrMessage) {
         if ("REGISTER_NAME_REQUIRED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_register_name_required);
         if ("REGISTER_EMAIL_REQUIRED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_register_email_required);
-        if ("REGISTER_PHONE_REQUIRED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_register_phone_required);
         if ("REGISTER_PASSWORD_REQUIRED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_register_password_required);
 
         if ("AUTH_INVALID_EMAIL".equals(errorCodeOrMessage)) return getString(R.string.auth_error_invalid_email);
         if ("AUTH_EMAIL_ALREADY_IN_USE".equals(errorCodeOrMessage)) return getString(R.string.auth_error_email_already_in_use);
         if ("AUTH_WEAK_PASSWORD".equals(errorCodeOrMessage)) return getString(R.string.auth_error_weak_password);
+        if ("AUTH_VERIFY_EMAIL_SEND_FAILED".equals(errorCodeOrMessage)) return getString(R.string.auth_error_verify_email_send_failed);
         if ("AUTH_NETWORK_ERROR".equals(errorCodeOrMessage)) return getString(R.string.auth_error_network);
         if ("AUTH_TOO_MANY_REQUESTS".equals(errorCodeOrMessage)) return getString(R.string.auth_error_too_many_requests);
 

@@ -16,8 +16,8 @@ public class FirebaseAuthRepository implements AuthRepository {
     }
 
     @Override
-    public void registerWithEmail(String email, String password, AuthResultCallback callback) {
-        authDataSource.registerWithEmail(email, password, callback);
+    public void registerWithEmail(String name, String email, String password, AuthResultCallback callback) {
+        authDataSource.registerWithEmail(name, email, password, callback);
     }
 
     @Override
