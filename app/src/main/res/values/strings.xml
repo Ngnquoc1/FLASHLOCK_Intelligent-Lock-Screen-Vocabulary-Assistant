@@ -79,6 +79,10 @@
     <!-- Navigation Strings -->
     <string name="bottom_nav_login">LOGIN</string>
     <string name="bottom_nav_register">REGISTER</string>
+    <string name="nav_home">HOME</string>
+    <string name="nav_library">LIBRARY</string>
+    <string name="nav_vocabulary">VOCABULARY</string>
+    <string name="nav_profile">PROFILE</string>
 
     <!-- Auth Status Strings -->
     <string name="auth_login_success">Login successful.</string>
