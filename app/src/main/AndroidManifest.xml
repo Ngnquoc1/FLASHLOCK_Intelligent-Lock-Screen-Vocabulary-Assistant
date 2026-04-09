@@ -12,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FlashLock">
+        <activity
+            android:name=".ui.main.MainActivity" />
 
         <!-- SplashActivity là màn hình khởi đầu -->
         <activity
@@ -23,10 +25,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.main.MainActivity"
-            android:exported="false" />
-
+        <activity android:name=".ui.register.RegisterActivity" />
+        <activity android:name=".ui.reset.ResetAccessActivity" />
+        <activity android:name=".ui.reset.ResetConfirmActivity" />
+        <activity android:name=".ui.reset.SetNewPasswordActivity" />
     </application>
 
 </manifest>
