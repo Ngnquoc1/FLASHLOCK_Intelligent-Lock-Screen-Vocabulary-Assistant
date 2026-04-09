@@ -11,14 +11,12 @@ public class AuthUserProfile {
     private final String uid;
     private final String email;
     private final String displayName;
-    private final String phone;
     private final String provider;
 
-    public AuthUserProfile(String uid, String email, String displayName, String phone, String provider) {
+    public AuthUserProfile(String uid, String email, String displayName, String provider) {
         this.uid = uid;
         this.email = email;
         this.displayName = displayName;
-        this.phone = phone;
         this.provider = provider;
     }
 
@@ -30,7 +28,6 @@ public class AuthUserProfile {
                 user.getUid(),
                 user.getEmail() == null ? "" : user.getEmail(),
                 user.getDisplayName() == null ? "" : user.getDisplayName(),
-                user.getPhoneNumber() == null ? "" : user.getPhoneNumber(),
                 provider
         );
     }
@@ -43,12 +40,10 @@ public class AuthUserProfile {
         Map<String, Object> payload = new HashMap<>();
         payload.put("email", email);
         payload.put("displayName", displayName);
-        payload.put("phone", phone);
         payload.put("provider", provider);
-        payload.put("isActive", true);
+        payload.put("status", "active");
         payload.put("updatedAt", FieldValue.serverTimestamp());
         payload.put("lastLoginAt", FieldValue.serverTimestamp());
         return payload;
     }
 }
-

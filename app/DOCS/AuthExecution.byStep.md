@@ -26,7 +26,7 @@ Triển khai tuần tự nhóm Authentication theo thứ tự phụ thuộc kỹ
 ## Step 3 - Register
 
 - [x] Đã có gọi Firebase Auth create user.
-- [x] Chuẩn hóa validate name/email/phone/password.
+- [x] Chuẩn hóa validate name/email/password.
 - [x] Đồng bộ lỗi auth sang thông báo UI.
 - [x] Điều hướng sau register theo flow đã chốt.
 

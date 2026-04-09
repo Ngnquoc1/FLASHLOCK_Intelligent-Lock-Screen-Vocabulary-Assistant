@@ -23,8 +23,6 @@
     <string name="register_hint_full_name">Enter your name</string>
     <string name="register_label_email">EMAIL ADDRESS</string>
     <string name="register_hint_email">you\@example.com</string>
-    <string name="register_label_phone">PHONE NUMBER</string>
-    <string name="register_hint_phone">+1 (555) 000-0000</string>
     <string name="register_label_password">SECURE PASSWORD</string>
     <string name="register_hint_password">••••••••••••</string>
     <string name="register_btn_register">Register</string>
@@ -93,7 +91,6 @@
     <string name="auth_error_login_password_required">Vui long nhap mat khau.</string>
     <string name="auth_error_register_name_required">Vui long nhap ho ten.</string>
     <string name="auth_error_register_email_required">Vui long nhap email hop le.</string>
-    <string name="auth_error_register_phone_required">Vui long nhap so dien thoai.</string>
     <string name="auth_error_register_password_required">Vui long nhap mat khau.</string>
 
     <string name="auth_error_invalid_email">Email khong dung dinh dang.</string>
