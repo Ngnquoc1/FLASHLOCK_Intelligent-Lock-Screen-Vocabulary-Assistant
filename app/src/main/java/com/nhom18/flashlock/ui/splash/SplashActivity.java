@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.nhom18.flashlock.R;
+import com.nhom18.flashlock.ui.login.LoginActivity;
 import com.nhom18.flashlock.ui.main.MainActivity;
 
 public class SplashActivity extends AppCompatActivity {
@@ -52,8 +53,7 @@ public class SplashActivity extends AppCompatActivity {
         if (currentUser != null) {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
         } else {
-            // Tạm thời vẫn vào MainActivity cho đến khi có LoginActivity
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
         }
         finish();
     }
