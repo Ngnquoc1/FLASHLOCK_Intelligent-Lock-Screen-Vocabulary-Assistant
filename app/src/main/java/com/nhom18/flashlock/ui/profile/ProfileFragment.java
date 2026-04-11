@@ -1,12 +1,16 @@
 package com.nhom18.flashlock.ui.profile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.nhom18.flashlock.R;
+import com.nhom18.flashlock.data.model.UserProfile; // Nhớ import model UserProfile
 import com.nhom18.flashlock.data.remote.FirebaseProfileDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
 import com.nhom18.flashlock.databinding.FragmentProfileBinding;
@@ -49,12 +54,55 @@ public class ProfileFragment extends Fragment {
         viewModel.loadProfile();
     }
 
+    private void hideKeyboard() {
+        if (getActivity() != null) {
+            View view = getActivity().getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }
+        if (binding != null) {
+            binding.etDisplayName.clearFocus();
+        }
+    }
+
     private void setupObservers() {
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
-            if (state.getStatus() == ProfileUiState.Status.CONTENT && state.getUserProfile() != null) {
-                binding.tvDisplayName.setText(state.getUserProfile().getDisplayName());
-            } else if (state.getStatus() == ProfileUiState.Status.ERROR) {
-                Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
+
+            // Xử lý bật/tắt nút Lưu dựa trên trạng thái (Khóa nút khi đang lưu)
+            boolean isSaving = (state.getStatus() == ProfileUiState.Status.SAVING);
+            binding.btnSave.setEnabled(!isSaving);
+            binding.btnSave.setText(isSaving ? R.string.profile_msg_saving : R.string.profile_btn_save);
+
+            switch (state.getStatus()) {
+                case CONTENT:
+                case SUCCESS:
+                    if (state.getUserProfile() != null) {
+                        // Chỉ set lại text nếu User không đang gõ (tránh việc con trỏ bị giật về đầu)
+                        if (!binding.etDisplayName.hasFocus()) {
+                            binding.etDisplayName.setText(state.getUserProfile().getDisplayName());
+                        }
+
+                        // Hiển thị Email
+                        binding.tvEmail.setText(state.getUserProfile().getEmail());
+
+                        // TODO: Nếu model Settings của bạn đã hoàn thiện, hãy gỡ comment bên dưới để set dữ liệu
+                        // binding.swReminder.setChecked(state.getUserProfile().getSettings().isReminderEnabled());
+                        // binding.tvHour.setText(String.format("%02d", state.getUserProfile().getSettings().getReminderHour()));
+                        // binding.tvMinute.setText(String.format("%02d", state.getUserProfile().getSettings().getReminderMinute()));
+                    }
+
+                    if (state.getStatus() == ProfileUiState.Status.SUCCESS) {
+                        Toast.makeText(getContext(), R.string.profile_msg_save_success, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                case ERROR:
+                    Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    break;
             }
         });
 
@@ -63,17 +111,59 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                getActivity().finish();
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
             }
         });
     }
 
     private void setupListeners() {
+
+        // Bắt sự kiện khi nhấn nút OK/Done trên bàn phím ảo
+        binding.etDisplayName.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                hideKeyboard();
+                return true;
+            }
+            return false;
+        });
+
+        // Xử lý nút Lưu Profile
+        binding.btnSave.setOnClickListener(v -> {
+            hideKeyboard();
+
+            String newName = binding.etDisplayName.getText().toString().trim();
+
+            if (TextUtils.isEmpty(newName)) {
+                binding.etDisplayName.setError(getString(R.string.profile_error_name_empty));
+                binding.etDisplayName.requestFocus();
+                return;
+            }
+
+            // Gói các Settings hiện tại trên UI vào Object
+            UserProfile.Settings currentSettings = new UserProfile.Settings();
+
+            // TODO: Bổ sung logic lấy data từ UI truyền vào Settings ở đây
+            // currentSettings.setReminderEnabled(binding.swReminder.isChecked());
+            // currentSettings.setReminderHour(Integer.parseInt(binding.tvHour.getText().toString()));
+            // currentSettings.setReminderMinute(Integer.parseInt(binding.tvMinute.getText().toString()));
+
+            // Gọi ViewModel để lưu (Lên Firebase)
+            viewModel.onSaveProfile(newName, currentSettings);
+        });
+
+        // Xử lý nút chọn ảnh đại diện (Chuẩn bị cho Step 8)
+        binding.btnEditAvatar.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Tính năng chọn ảnh sẽ thêm ở Step 8", Toast.LENGTH_SHORT).show();
+        });
+
+        // Xử lý nút Đăng xuất
         binding.btnLogout.setOnClickListener(v -> {
             // Chạy animation click
             Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
             v.startAnimation(anim);
-            
+
             // Đợi animation chạy xong rồi mới thực hiện logout
             anim.setAnimationListener(new Animation.AnimationListener() {
                 @Override

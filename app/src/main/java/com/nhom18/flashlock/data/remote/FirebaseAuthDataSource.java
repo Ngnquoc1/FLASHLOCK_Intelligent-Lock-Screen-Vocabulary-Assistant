@@ -130,28 +130,41 @@ public class FirebaseAuthDataSource {
 
     private void syncUserProfile(FirebaseUser user, String provider, String name) {
         AuthUserProfile profile = AuthUserProfile.fromFirebaseUser(user, provider);
-        if (profile == null) {
-            return;
-        }
+        if (profile == null) return;
 
         String uid = profile.getUid();
         Map<String, Object> payload = profile.toFirestoreMap();
 
-        // Registration form name should overwrite empty FirebaseUser displayName.
-        if (!normalizeValue(name).isEmpty()) {
-            payload.put("displayName", normalizeValue(name));
+        // 1. Luôn cập nhật thời gian đăng nhập cuối
+        payload.put("lastLoginAt", FieldValue.serverTimestamp());
+
+        // 2. Xử lý logic ghi đè displayName
+        String normalizedName = normalizeValue(name);
+        if (!normalizedName.isEmpty()) {
+            // Nếu có tên truyền vào (tức là đang ĐĂNG KÝ mới), thì mới cho phép ghi tên này
+            payload.put("displayName", normalizedName);
+        } else {
+            // Nếu đang ĐĂNG NHẬP (name rỗng), hãy XÓA displayName khỏi payload
+            // để nó không ghi đè chuỗi rỗng lên tên cũ trong Firestore
+            payload.remove("displayName");
         }
 
         firestore.collection("users").document(uid).get()
                 .addOnSuccessListener(snapshot -> {
                     if (!snapshot.exists()) {
                         payload.put("createdAt", FieldValue.serverTimestamp());
+                        // Nếu chưa có document (User mới hoàn toàn), mới dùng .set()
+                        firestore.collection("users").document(uid).set(payload, SetOptions.merge());
+                    } else {
+                        // Nếu đã có document (User cũ đăng nhập lại), chỉ dùng .update()
+                        // để cập nhật lastLoginAt mà không đụng chạm đến displayName, avatar...
+                        firestore.collection("users").document(uid).update(payload);
                     }
-                    firestore.collection("users").document(uid)
-                            .set(payload, SetOptions.merge());
                 })
-                .addOnFailureListener(e -> firestore.collection("users").document(uid)
-                        .set(payload, SetOptions.merge()));
+                .addOnFailureListener(e -> {
+                    // Fallback an toàn
+                    firestore.collection("users").document(uid).set(payload, SetOptions.merge());
+                });
     }
 
     private void logAuthEvent(FirebaseUser user, String event, String result, String reason) {

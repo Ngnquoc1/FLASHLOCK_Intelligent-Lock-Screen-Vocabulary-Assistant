@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface">
+    android:background="@color/surface"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
 
-    <!-- Top App Bar (Fixed at top) -->
     <include
         android:id="@+id/top_app_bar"
         layout="@layout/layout_top_app_bar"
@@ -28,7 +30,6 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Header: Avatar & Name -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,18 +62,34 @@
                     app:srcCompat="@android:drawable/ic_menu_edit"
                     app:tint="@color/white" />
 
-                <TextView
-                    android:id="@+id/tv_display_name"
+                <EditText
+                    android:id="@+id/et_display_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
                     android:fontFamily="sans-serif-medium"
-                    android:text="User Name"
+                    android:hint="Nhập tên hiển thị"
+                    android:textColorHint="#80FFFFFF"
                     android:textColor="@color/white"
                     android:textSize="22sp"
+                    android:gravity="center"
+                    android:inputType="textPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_avatar" />
+
+                <TextView
+                    android:id="@+id/tv_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/primary"
+                    android:textSize="13sp"
+                    android:text="Đang tải email..."
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_display_name" />
 
                 <TextView
                     android:id="@+id/tv_membership"
@@ -84,11 +101,10 @@
                     android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_display_name" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_email" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Cloud Sync Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -139,7 +155,6 @@
                     app:iconGravity="textStart" />
             </LinearLayout>
 
-            <!-- Stats Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -175,7 +190,6 @@
                 android:letterSpacing="0.1"
                 android:alpha="0.5"/>
 
-            <!-- Settings: Lock Screen with VIBRATE icon -->
             <LinearLayout
                 android:id="@+id/btn_lock_screen_settings"
                 android:layout_width="match_parent"
@@ -224,7 +238,6 @@
                     android:alpha="0.5" />
             </LinearLayout>
 
-            <!-- Settings: Reminder with CLOCK icon -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -277,7 +290,6 @@
                         android:checked="true" />
                 </LinearLayout>
 
-                <!-- Time Picker Style Layout -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
@@ -338,13 +350,21 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Logout Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/profile_btn_save"
+                android:textSize="14sp"
+                app:cornerRadius="26dp" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_logout"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="32dp"
                 android:text="Đăng xuất"
                 android:textColor="#FF5252"

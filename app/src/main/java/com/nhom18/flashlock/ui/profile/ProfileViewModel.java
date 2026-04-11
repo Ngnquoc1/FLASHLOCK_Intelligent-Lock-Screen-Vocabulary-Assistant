@@ -39,7 +39,7 @@ public class ProfileViewModel extends ViewModel {
     public void onSaveProfile(String displayName, UserProfile.Settings settings) {
         UserProfile currentProfile = uiState.getValue() != null ? uiState.getValue().getUserProfile() : null;
         uiState.setValue(ProfileUiState.saving(currentProfile));
-        
+
         repository.updateProfile(displayName, settings).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 loadProfile();

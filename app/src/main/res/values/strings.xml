@@ -109,4 +109,9 @@
     <string name="google_web_client_id">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID</string>
 
     <string name="main_title">Ban da dang nhap thanh cong.</string>
+
+    <string name="profile_btn_save">Luu thay đoi</string>
+    <string name="profile_msg_save_success">Cap nhat ho so thanh cong!</string>
+    <string name="profile_msg_saving">Dang luu du lieu...</string>
+    <string name="profile_error_name_empty">Ten khong duoc de trong!</string>
 </resources>
