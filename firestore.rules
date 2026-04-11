@@ -14,8 +14,47 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.admin == true;
     }
 
+    function isValidSettings(settings) {
+      return settings is map
+        && settings.keys().hasOnly([
+          'lockScreenEnabled',
+          'reminderHour',
+          'reminderMinute'
+        ])
+        && settings.keys().hasAll([
+          'lockScreenEnabled',
+          'reminderHour',
+          'reminderMinute'
+        ])
+        && settings.lockScreenEnabled is bool
+        && settings.reminderHour is int
+        && settings.reminderHour >= 0
+        && settings.reminderHour <= 23
+        && settings.reminderMinute is int
+        && settings.reminderMinute >= 0
+        && settings.reminderMinute <= 59;
+    }
+
+    function hasValidSettings(data) {
+      return !('settings' in data) || isValidSettings(data.settings);
+    }
+
+    function canUpdateOwnProfile() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'displayName',
+          'avatarUrl',
+          'avatarPath',
+          'settings',
+          'updatedAt'
+        ])
+        && hasValidSettings(request.resource.data);
+    }
+
     match /users/{uid} {
-      allow read, write: if isOwner(uid);
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && hasValidSettings(request.resource.data);
+      allow update: if isOwner(uid) && canUpdateOwnProfile();
+      allow delete: if false;
 
       match /auth_logs/{logId} {
         allow read, create: if isOwner(uid);
