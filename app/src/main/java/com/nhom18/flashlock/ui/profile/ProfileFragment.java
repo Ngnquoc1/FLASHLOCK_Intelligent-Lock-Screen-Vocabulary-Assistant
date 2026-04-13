@@ -29,6 +29,21 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private ProfileViewModel viewModel;
 
+    // Khai báo bộ phóng (Launcher) để mở trình chọn tệp tin từ hệ thống
+    private final androidx.activity.result.ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
+            new androidx.activity.result.contract.ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    // Kiểm tra dung lượng ảnh trước khi upload
+                    if (isFileSizeValid(uri)) {
+                        viewModel.onAvatarPicked(uri);
+                    } else {
+                        Toast.makeText(getContext(), "Vui lòng chọn ảnh dưới 5MB.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -69,6 +84,20 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    // Hàm check dung lượng file (Giới hạn 5MB)
+    private boolean isFileSizeValid(android.net.Uri uri) {
+        try {
+            android.database.Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int sizeIndex = cursor.getColumnIndex(android.provider.OpenableColumns.SIZE);
+                long size = cursor.getLong(sizeIndex);
+                cursor.close();
+                return size <= 5 * 1024 * 1024; // 5MB
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return true;
+    }
+
     private void setupObservers() {
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
 
@@ -76,6 +105,9 @@ public class ProfileFragment extends Fragment {
             boolean isSaving = (state.getStatus() == ProfileUiState.Status.SAVING);
             binding.btnSave.setEnabled(!isSaving);
             binding.btnSave.setText(isSaving ? R.string.profile_msg_saving : R.string.profile_btn_save);
+
+            // Khóa luôn nút chọn ảnh để chống user bấm liên tục
+            binding.btnEditAvatar.setEnabled(!isSaving);
 
             switch (state.getStatus()) {
                 case CONTENT:
@@ -88,6 +120,18 @@ public class ProfileFragment extends Fragment {
 
                         // Hiển thị Email
                         binding.tvEmail.setText(state.getUserProfile().getEmail());
+
+                        String avatarUrl = state.getUserProfile().getAvatarUrl();
+                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                            com.bumptech.glide.Glide.with(this)
+                                    .load(avatarUrl)
+                                    .circleCrop()
+                                    .placeholder(R.drawable.ic_nav_profile)
+                                    .into(binding.ivAvatar);
+                        } else {
+                            // Nếu không có URL, hiển thị ảnh mặc định
+                            binding.ivAvatar.setImageResource(R.drawable.ic_nav_profile);
+                        }
 
                         // TODO: Nếu model Settings của bạn đã hoàn thiện, hãy gỡ comment bên dưới để set dữ liệu
                         // binding.swReminder.setChecked(state.getUserProfile().getSettings().isReminderEnabled());
@@ -153,9 +197,10 @@ public class ProfileFragment extends Fragment {
             viewModel.onSaveProfile(newName, currentSettings);
         });
 
-        // Xử lý nút chọn ảnh đại diện (Chuẩn bị cho Step 8)
+        // Xử lý nút chọn ảnh đại diện
         binding.btnEditAvatar.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Tính năng chọn ảnh sẽ thêm ở Step 8", Toast.LENGTH_SHORT).show();
+            // Kích hoạt Launcher để mở thư viện ảnh, lọc chỉ hiện các file hình ảnh
+            pickImageLauncher.launch("image/*");
         });
 
         // Xử lý nút Đăng xuất

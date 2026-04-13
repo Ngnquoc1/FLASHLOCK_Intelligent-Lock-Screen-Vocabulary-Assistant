@@ -41,8 +41,19 @@ public class FirebaseProfileDataSource {
         return db.collection("users").document(uid).update(updates);
     }
 
-    public Task<Uri> uploadAvatar(String uid, Uri imageUri) {
-        String path = "avatars/" + uid + "/avatar_" + System.currentTimeMillis() + ".jpg";
+//    public Task<Uri> uploadAvatar(String uid, Uri imageUri) {
+//        String path = "avatars/" + uid + "/avatar_" + System.currentTimeMillis() + ".jpg";
+//        StorageReference ref = storage.getReference().child(path);
+//
+//        return ref.putFile(imageUri).continueWithTask(task -> {
+//            if (!task.isSuccessful()) {
+//                throw task.getException();
+//            }
+//            return ref.getDownloadUrl();
+//        });
+//    }
+
+    public Task<Uri> uploadAvatar(String path, Uri imageUri) {
         StorageReference ref = storage.getReference().child(path);
 
         return ref.putFile(imageUri).continueWithTask(task -> {
@@ -51,6 +62,11 @@ public class FirebaseProfileDataSource {
             }
             return ref.getDownloadUrl();
         });
+    }
+
+    // Hàm dùng để Rollback (xóa ảnh rác)
+    public Task<Void> deleteFile(String path) {
+        return storage.getReference().child(path).delete();
     }
 
     public Task<Void> updateAvatarInfo(String uid, String url, String path) {

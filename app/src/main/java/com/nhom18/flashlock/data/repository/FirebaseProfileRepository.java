@@ -37,6 +37,30 @@ public class FirebaseProfileRepository implements ProfileRepository {
         return dataSource.updateProfile(uid, displayName, settings);
     }
 
+//    @Override
+//    public Task<String> uploadAvatar(Uri imageUri) {
+//        String uid = dataSource.getCurrentUid();
+//        if (uid == null) {
+//            return Tasks.forException(new Exception("User not logged in"));
+//        }
+//
+//        return dataSource.uploadAvatar(uid, imageUri).continueWithTask(task -> {
+//            if (!task.isSuccessful()) {
+//                throw task.getException();
+//            }
+//            Uri downloadUri = task.getResult();
+//            String url = downloadUri.toString();
+//            String path = "avatars/" + uid + "/" + imageUri.getLastPathSegment();
+//
+//            // Sau khi upload Storage xong, cap nhat URL vao Firestore
+//            return dataSource.updateAvatarInfo(uid, url, path).continueWith(updateTask -> {
+//                if (!updateTask.isSuccessful()) {
+//                    throw updateTask.getException();
+//                }
+//                return url;
+//            });
+//        });
+//    }
     @Override
     public Task<String> uploadAvatar(Uri imageUri) {
         String uid = dataSource.getCurrentUid();
@@ -44,20 +68,25 @@ public class FirebaseProfileRepository implements ProfileRepository {
             return Tasks.forException(new Exception("User not logged in"));
         }
 
-        return dataSource.uploadAvatar(uid, imageUri).continueWithTask(task -> {
+        // Tự sinh path chuẩn xác có timestamp tại đây
+        String path = "avatars/" + uid + "/avatar_" + System.currentTimeMillis() + ".jpg";
+
+        // Truyền path xuống DataSource
+        return dataSource.uploadAvatar(path, imageUri).continueWithTask(task -> {
             if (!task.isSuccessful()) {
                 throw task.getException();
             }
-            Uri downloadUri = task.getResult();
-            String url = downloadUri.toString();
-            String path = "avatars/" + uid + "/" + imageUri.getLastPathSegment();
-            
-            // Sau khi upload Storage xong, cap nhat URL vao Firestore
-            return dataSource.updateAvatarInfo(uid, url, path).continueWith(updateTask -> {
+
+            String url = task.getResult().toString();
+
+            // Dùng continueWithTask thay vì continueWith để xử lý ném lỗi chuẩn hơn
+            return dataSource.updateAvatarInfo(uid, url, path).continueWithTask(updateTask -> {
                 if (!updateTask.isSuccessful()) {
+                    // ROLLBACK STRATEGY: Ghi DB thất bại -> Lập tức xóa ảnh vừa up lên Storage
+                    dataSource.deleteFile(path);
                     throw updateTask.getException();
                 }
-                return url;
+                return Tasks.forResult(url);
             });
         });
     }
