@@ -36,7 +36,27 @@ public class ProfileFragment extends Fragment {
                 if (uri != null) {
                     // Kiểm tra dung lượng ảnh trước khi upload
                     if (isFileSizeValid(uri)) {
-                        viewModel.onAvatarPicked(uri);
+
+                        // Lưu Uri tạm vào ViewModel (CHƯA UPLOAD LÊN)
+                        viewModel.setPendingAvatarUri(uri);
+
+                        // Preview Avatar chính
+                        com.bumptech.glide.Glide.with(this)
+                                .load(uri)
+                                .transform(
+                                        new com.bumptech.glide.load.resource.bitmap.CenterCrop(),
+                                        new com.bumptech.glide.load.resource.bitmap.RoundedCorners(32)
+                                )
+                                .into(binding.ivAvatar);
+
+                        // Preview Avatar Top Bar
+                        if (binding.topAppBar.ivTopProfile != null) {
+                            com.bumptech.glide.Glide.with(this)
+                                    .load(uri)
+                                    .circleCrop()
+                                    .into(binding.topAppBar.ivTopProfile);
+                        }
+
                     } else {
                         Toast.makeText(getContext(), "Vui lòng chọn ảnh dưới 5MB.", Toast.LENGTH_SHORT).show();
                     }
@@ -90,11 +110,17 @@ public class ProfileFragment extends Fragment {
             android.database.Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 int sizeIndex = cursor.getColumnIndex(android.provider.OpenableColumns.SIZE);
-                long size = cursor.getLong(sizeIndex);
+                // Check an toàn: Đảm bảo cột SIZE có tồn tại trên thiết bị này
+                if (sizeIndex != -1) {
+                    long size = cursor.getLong(sizeIndex);
+                    cursor.close();
+                    return size <= 5 * 1024 * 1024; // 5MB
+                }
                 cursor.close();
-                return size <= 5 * 1024 * 1024; // 5MB
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -122,15 +148,34 @@ public class ProfileFragment extends Fragment {
                         binding.tvEmail.setText(state.getUserProfile().getEmail());
 
                         String avatarUrl = state.getUserProfile().getAvatarUrl();
+
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                            // Cập nhật Avatar chính
                             com.bumptech.glide.Glide.with(this)
                                     .load(avatarUrl)
-                                    .circleCrop()
+                                    // Gộp CenterCrop và RoundedCorners vào chung 1 transform để ảnh không bị méo
+                                    .transform(
+                                            new com.bumptech.glide.load.resource.bitmap.CenterCrop(),
+                                            new com.bumptech.glide.load.resource.bitmap.RoundedCorners(32)
+                                    )
                                     .placeholder(R.drawable.ic_nav_profile)
                                     .into(binding.ivAvatar);
+
+                            // Cập nhật Avatar trên Top Bar
+                            if (binding.topAppBar.ivTopProfile != null) {
+                                com.bumptech.glide.Glide.with(this)
+                                        .load(avatarUrl)
+                                        .circleCrop()
+                                        .placeholder(R.drawable.ic_nav_profile)
+                                        .into(binding.topAppBar.ivTopProfile);
+                            }
                         } else {
                             // Nếu không có URL, hiển thị ảnh mặc định
                             binding.ivAvatar.setImageResource(R.drawable.ic_nav_profile);
+
+                            if (binding.topAppBar.ivTopProfile != null) {
+                                binding.topAppBar.ivTopProfile.setImageResource(R.drawable.ic_nav_profile);
+                            }
                         }
 
                         // TODO: Nếu model Settings của bạn đã hoàn thiện, hãy gỡ comment bên dưới để set dữ liệu

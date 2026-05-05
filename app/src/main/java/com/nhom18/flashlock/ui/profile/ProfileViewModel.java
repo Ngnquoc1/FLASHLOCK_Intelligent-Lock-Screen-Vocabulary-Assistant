@@ -12,7 +12,11 @@ public class ProfileViewModel extends ViewModel {
     private final ProfileRepository repository;
     private final MutableLiveData<ProfileUiState> uiState = new MutableLiveData<>(ProfileUiState.idle());
     private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>(false);
+    private Uri pendingAvatarUri = null;
 
+    public void setPendingAvatarUri(Uri uri) {
+        this.pendingAvatarUri = uri;
+    }
     public ProfileViewModel(ProfileRepository repository) {
         this.repository = repository;
     }
@@ -27,6 +31,7 @@ public class ProfileViewModel extends ViewModel {
 
     public void loadProfile() {
         uiState.setValue(ProfileUiState.loading());
+        pendingAvatarUri = null;
         repository.getCurrentUserProfile().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 uiState.setValue(ProfileUiState.content(task.getResult()));
@@ -40,6 +45,21 @@ public class ProfileViewModel extends ViewModel {
         UserProfile currentProfile = uiState.getValue() != null ? uiState.getValue().getUserProfile() : null;
         uiState.setValue(ProfileUiState.saving(currentProfile));
 
+        if (pendingAvatarUri != null) {
+            repository.uploadAvatar(pendingAvatarUri).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    pendingAvatarUri = null;
+                    updateProfileData(displayName, settings);
+                } else {
+                    uiState.setValue(ProfileUiState.error(task.getException() != null ? task.getException().getMessage() : "Upload avatar failed"));
+                }
+            });
+        } else {
+            updateProfileData(displayName, settings);
+        }
+    }
+
+    private void updateProfileData(String displayName, UserProfile.Settings settings) {
         repository.updateProfile(displayName, settings).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 loadProfile();
@@ -49,18 +69,6 @@ public class ProfileViewModel extends ViewModel {
         });
     }
 
-    public void onAvatarPicked(Uri uri) {
-        UserProfile currentProfile = uiState.getValue() != null ? uiState.getValue().getUserProfile() : null;
-        uiState.setValue(ProfileUiState.saving(currentProfile));
-
-        repository.uploadAvatar(uri).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                loadProfile();
-            } else {
-                uiState.setValue(ProfileUiState.error(task.getException() != null ? task.getException().getMessage() : "Upload failed"));
-            }
-        });
-    }
 
     public void onLogout() {
         FirebaseAuth.getInstance().signOut();
