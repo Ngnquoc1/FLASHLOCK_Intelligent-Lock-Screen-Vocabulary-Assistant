@@ -15,12 +15,23 @@
 
     <color name="primary">#94cdf9</color>
     <color name="primary_container">#26658c</color>
-    <color name="on_primary_container">#00132f</color> <!-- inferred for contrast -->
+    <color name="on_primary_container">#00132f</color>
 
-    <color name="secondary">#007587</color> <!-- base for secondary -->
+    <color name="secondary">#007587</color>
     <color name="secondary_container">#007587</color>
     <color name="secondary_fixed_dim">#7dd3e7</color>
 
     <color name="accent">#023859</color>
     <color name="outline_variant">#41484e</color>
+
+    <!-- Vocabulary & Topics Custom Colors -->
+    <color name="chip_active_bg">#26658c</color> <!-- Cùng màu với primary -->
+    <color name="chip_inactive_bg">#122a4e</color> <!-- Cùng màu với surface_container_high -->
+    <color name="icon_button_bg">#122a4e</color> <!-- Cùng màu với surface_container_highest -->
+    <color name="card_border">#41484e</color> <!-- Màu xanh cyan cho viền thẻ -->
+
+    <!-- Status Tags -->
+    <color name="tag_remembered">#00897B</color>
+    <color name="tag_learning">#1976D2</color>
+    <color name="tag_new">#424242</color>
 </resources>

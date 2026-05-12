@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.ui.profile.ProfileFragment;
+import com.nhom18.flashlock.ui.vocabulary.VocabularyFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,16 +48,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectTab(int itemId, String title) {
         updateNavbarUI(itemId);
-        
+
         Fragment fragment;
         if (itemId == R.id.nav_profile_item) {
-            // Mở đúng Fragment Profile mà chúng ta đã làm
+            // Mở Fragment Profile
             fragment = ProfileFragment.newInstance();
+        } else if (itemId == R.id.nav_vocabulary_item) {
+            // Mở Fragment Vocabulary mới thiết kế
+            fragment = VocabularyFragment.newInstance();
         } else {
-            // Các tab khác tạm thời vẫn để MainFragment trống
+            // Các tab khác (Home, Library) tạm thời vẫn để MainFragment trống
             fragment = MainFragment.newInstance(title);
         }
-        
+
         loadFragment(fragment);
     }
 
