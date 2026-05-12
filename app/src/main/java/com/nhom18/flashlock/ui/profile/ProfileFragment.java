@@ -29,6 +29,9 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private ProfileViewModel viewModel;
 
+    private int currentHour = 20; // Từ 0 đến 23
+    private int currentMinute = 30; // Từ 0 đến 59
+
     // Khai báo bộ phóng (Launcher) để mở trình chọn tệp tin từ hệ thống
     private final androidx.activity.result.ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new androidx.activity.result.contract.ActivityResultContracts.GetContent(),
@@ -178,10 +181,16 @@ public class ProfileFragment extends Fragment {
                             }
                         }
 
-                        // TODO: Nếu model Settings của bạn đã hoàn thiện, hãy gỡ comment bên dưới để set dữ liệu
-                        // binding.swReminder.setChecked(state.getUserProfile().getSettings().isReminderEnabled());
-                        // binding.tvHour.setText(String.format("%02d", state.getUserProfile().getSettings().getReminderHour()));
-                        // binding.tvMinute.setText(String.format("%02d", state.getUserProfile().getSettings().getReminderMinute()));
+                        if (state.getUserProfile().getSettings() != null) {
+                            binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
+
+                            // Gán giá trị từ server vào biến tạm trong Fragment
+                            currentHour = state.getUserProfile().getSettings().getReminderHour();
+                            currentMinute = state.getUserProfile().getSettings().getReminderMinute();
+
+                            // Gọi hàm cập nhật hiển thị lên TextView
+                            updateTimeUI();
+                        }
                     }
 
                     if (state.getStatus() == ProfileUiState.Status.SUCCESS) {
@@ -208,7 +217,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupListeners() {
-
         // Bắt sự kiện khi nhấn nút OK/Done trên bàn phím ảo
         binding.etDisplayName.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
@@ -232,13 +240,13 @@ public class ProfileFragment extends Fragment {
 
             // Gói các Settings hiện tại trên UI vào Object
             UserProfile.Settings currentSettings = new UserProfile.Settings();
+            currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
 
-            // TODO: Bổ sung logic lấy data từ UI truyền vào Settings ở đây
-            // currentSettings.setReminderEnabled(binding.swReminder.isChecked());
-            // currentSettings.setReminderHour(Integer.parseInt(binding.tvHour.getText().toString()));
-            // currentSettings.setReminderMinute(Integer.parseInt(binding.tvMinute.getText().toString()));
+            // Lấy giá trị từ biến tạm đã thay đổi khi bấm nút Up/Down
+            currentSettings.setReminderHour(currentHour);
+            currentSettings.setReminderMinute(currentMinute);
 
-            // Gọi ViewModel để lưu (Lên Firebase)
+            // Gọi ViewModel để lưu
             viewModel.onSaveProfile(newName, currentSettings);
         });
 
@@ -250,11 +258,9 @@ public class ProfileFragment extends Fragment {
 
         // Xử lý nút Đăng xuất
         binding.btnLogout.setOnClickListener(v -> {
-            // Chạy animation click
             Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
             v.startAnimation(anim);
 
-            // Đợi animation chạy xong rồi mới thực hiện logout
             anim.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {}
@@ -272,6 +278,31 @@ public class ProfileFragment extends Fragment {
         binding.btnSyncNow.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Đang đồng bộ dữ liệu...", Toast.LENGTH_SHORT).show();
         });
+
+        // Tăng/Giảm Giờ
+        binding.btnHourUp.setOnClickListener(v -> {
+            currentHour = (currentHour + 1) % 24;
+            updateTimeUI();
+        });
+        binding.btnHourDown.setOnClickListener(v -> {
+            currentHour = (currentHour - 1 + 24) % 24; // +24 để tránh số âm khi về dưới 0
+            updateTimeUI();
+        });
+
+        // Tăng/Giảm Phút
+        binding.btnMinuteUp.setOnClickListener(v -> {
+            currentMinute = (currentMinute + 1) % 60;
+            updateTimeUI();
+        });
+        binding.btnMinuteDown.setOnClickListener(v -> {
+            currentMinute = (currentMinute - 1 + 60) % 60;
+            updateTimeUI();
+        });
+    }
+
+    private void updateTimeUI() {
+        binding.tvHour.setText(String.format("%02d", currentHour));
+        binding.tvMinute.setText(String.format("%02d", currentMinute));
     }
 
     @Override
