@@ -23,7 +23,6 @@
 - `users/{uid}`
   - `displayName: string`
   - `email: string`
-  - `phone: string`
   - `avatarUrl: string`
   - `createdAt: timestamp`
   - `updatedAt: timestamp`
@@ -107,4 +106,3 @@
 - Firestore and Storage rules validated in emulator tests.
 - Critical flows have telemetry (`traceId`) and retry strategy.
 - JOURNAL includes completion logs for each milestone.
-

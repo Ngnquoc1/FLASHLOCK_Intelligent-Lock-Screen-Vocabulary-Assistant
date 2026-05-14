@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- Dark Blue Gradient -->
+    <!-- Gradient chéo từ góc dưới bên phải (Start) lên góc trên bên trái (End) -->
+    <gradient
+        android:angle="135"
+        android:startColor="#01357C"
+        android:endColor="#000e26"
+        android:type="linear" />
+</shape>
