@@ -106,7 +106,7 @@
     <string name="auth_error_google_token_invalid">Dang nhap Google that bai. Vui long thu lai.</string>
     <string name="auth_error_google_cancelled">Ban da huy dang nhap Google.</string>
     <string name="auth_error_google_config_missing">Chua cau hinh Google Sign-In. Vui long cap nhat web client id.</string>
-    <string name="google_web_client_id">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID</string>
+    <string name="google_web_client_id">830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com</string>
 
     <string name="main_title">Ban da dang nhap thanh cong.</string>
 

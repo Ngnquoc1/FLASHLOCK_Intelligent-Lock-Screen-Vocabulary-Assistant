@@ -29,21 +29,17 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private ProfileViewModel viewModel;
 
-    private int currentHour = 20; // Từ 0 đến 23
-    private int currentMinute = 30; // Từ 0 đến 59
+    private int currentHour = 20;
+    private int currentMinute = 30;
 
-    // Khai báo bộ phóng (Launcher) để mở trình chọn tệp tin từ hệ thống
     private final androidx.activity.result.ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new androidx.activity.result.contract.ActivityResultContracts.GetContent(),
             uri -> {
                 if (uri != null) {
-                    // Kiểm tra dung lượng ảnh trước khi upload
                     if (isFileSizeValid(uri)) {
 
-                        // Lưu Uri tạm vào ViewModel (CHƯA UPLOAD LÊN)
                         viewModel.setPendingAvatarUri(uri);
 
-                        // Preview Avatar chính
                         com.bumptech.glide.Glide.with(this)
                                 .load(uri)
                                 .transform(
@@ -52,7 +48,6 @@ public class ProfileFragment extends Fragment {
                                 )
                                 .into(binding.ivAvatar);
 
-                        // Preview Avatar Top Bar
                         if (binding.topAppBar.ivTopProfile != null) {
                             com.bumptech.glide.Glide.with(this)
                                     .load(uri)
@@ -107,7 +102,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // Hàm check dung lượng file (Giới hạn 5MB)
     private boolean isFileSizeValid(android.net.Uri uri) {
         try {
             android.database.Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null);
@@ -117,7 +111,7 @@ public class ProfileFragment extends Fragment {
                 if (sizeIndex != -1) {
                     long size = cursor.getLong(sizeIndex);
                     cursor.close();
-                    return size <= 5 * 1024 * 1024; // 5MB
+                    return size <= 5 * 1024 * 1024;
                 }
                 cursor.close();
             }
@@ -130,33 +124,27 @@ public class ProfileFragment extends Fragment {
     private void setupObservers() {
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
 
-            // Xử lý bật/tắt nút Lưu dựa trên trạng thái (Khóa nút khi đang lưu)
             boolean isSaving = (state.getStatus() == ProfileUiState.Status.SAVING);
             binding.btnSave.setEnabled(!isSaving);
             binding.btnSave.setText(isSaving ? R.string.profile_msg_saving : R.string.profile_btn_save);
 
-            // Khóa luôn nút chọn ảnh để chống user bấm liên tục
             binding.btnEditAvatar.setEnabled(!isSaving);
 
             switch (state.getStatus()) {
                 case CONTENT:
                 case SUCCESS:
                     if (state.getUserProfile() != null) {
-                        // Chỉ set lại text nếu User không đang gõ (tránh việc con trỏ bị giật về đầu)
                         if (!binding.etDisplayName.hasFocus()) {
                             binding.etDisplayName.setText(state.getUserProfile().getDisplayName());
                         }
 
-                        // Hiển thị Email
                         binding.tvEmail.setText(state.getUserProfile().getEmail());
 
                         String avatarUrl = state.getUserProfile().getAvatarUrl();
 
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                            // Cập nhật Avatar chính
                             com.bumptech.glide.Glide.with(this)
                                     .load(avatarUrl)
-                                    // Gộp CenterCrop và RoundedCorners vào chung 1 transform để ảnh không bị méo
                                     .transform(
                                             new com.bumptech.glide.load.resource.bitmap.CenterCrop(),
                                             new com.bumptech.glide.load.resource.bitmap.RoundedCorners(32)
@@ -164,7 +152,6 @@ public class ProfileFragment extends Fragment {
                                     .placeholder(R.drawable.ic_nav_profile)
                                     .into(binding.ivAvatar);
 
-                            // Cập nhật Avatar trên Top Bar
                             if (binding.topAppBar.ivTopProfile != null) {
                                 com.bumptech.glide.Glide.with(this)
                                         .load(avatarUrl)
@@ -173,7 +160,6 @@ public class ProfileFragment extends Fragment {
                                         .into(binding.topAppBar.ivTopProfile);
                             }
                         } else {
-                            // Nếu không có URL, hiển thị ảnh mặc định
                             binding.ivAvatar.setImageResource(R.drawable.ic_nav_profile);
 
                             if (binding.topAppBar.ivTopProfile != null) {
@@ -184,11 +170,9 @@ public class ProfileFragment extends Fragment {
                         if (state.getUserProfile().getSettings() != null) {
                             binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
 
-                            // Gán giá trị từ server vào biến tạm trong Fragment
                             currentHour = state.getUserProfile().getSettings().getReminderHour();
                             currentMinute = state.getUserProfile().getSettings().getReminderMinute();
 
-                            // Gọi hàm cập nhật hiển thị lên TextView
                             updateTimeUI();
                         }
                     }
@@ -217,7 +201,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // Bắt sự kiện khi nhấn nút OK/Done trên bàn phím ảo
         binding.etDisplayName.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
                 hideKeyboard();
@@ -226,7 +209,6 @@ public class ProfileFragment extends Fragment {
             return false;
         });
 
-        // Xử lý nút Lưu Profile
         binding.btnSave.setOnClickListener(v -> {
             hideKeyboard();
 
@@ -238,25 +220,19 @@ public class ProfileFragment extends Fragment {
                 return;
             }
 
-            // Gói các Settings hiện tại trên UI vào Object
             UserProfile.Settings currentSettings = new UserProfile.Settings();
             currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
 
-            // Lấy giá trị từ biến tạm đã thay đổi khi bấm nút Up/Down
             currentSettings.setReminderHour(currentHour);
             currentSettings.setReminderMinute(currentMinute);
 
-            // Gọi ViewModel để lưu
             viewModel.onSaveProfile(newName, currentSettings);
         });
 
-        // Xử lý nút chọn ảnh đại diện
         binding.btnEditAvatar.setOnClickListener(v -> {
-            // Kích hoạt Launcher để mở thư viện ảnh, lọc chỉ hiện các file hình ảnh
             pickImageLauncher.launch("image/*");
         });
 
-        // Xử lý nút Đăng xuất
         binding.btnLogout.setOnClickListener(v -> {
             Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
             v.startAnimation(anim);
@@ -279,7 +255,6 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), "Đang đồng bộ dữ liệu...", Toast.LENGTH_SHORT).show();
         });
 
-        // Tăng/Giảm Giờ
         binding.btnHourUp.setOnClickListener(v -> {
             currentHour = (currentHour + 1) % 24;
             updateTimeUI();
@@ -289,7 +264,6 @@ public class ProfileFragment extends Fragment {
             updateTimeUI();
         });
 
-        // Tăng/Giảm Phút
         binding.btnMinuteUp.setOnClickListener(v -> {
             currentMinute = (currentMinute + 1) % 60;
             updateTimeUI();

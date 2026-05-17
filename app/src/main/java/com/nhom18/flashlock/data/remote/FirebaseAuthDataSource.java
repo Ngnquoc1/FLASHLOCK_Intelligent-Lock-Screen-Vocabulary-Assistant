@@ -97,22 +97,38 @@ public class FirebaseAuthDataSource {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
-                    syncUserProfile(authResult.getUser(), "google");
-                    logAuthEvent(authResult.getUser(), "login_google", "success", "");
-                    callback.onSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    if (e instanceof FirebaseAuthException) {
-                        String code = ((FirebaseAuthException) e).getErrorCode();
-                        if ("ERROR_INVALID_CREDENTIAL".equals(code)) {
-                            logAuthEvent(firebaseAuth.getCurrentUser(), "login_google", "failed", "AUTH_GOOGLE_TOKEN_INVALID");
-                            callback.onError("AUTH_GOOGLE_TOKEN_INVALID");
-                            return;
+                    FirebaseUser user = authResult.getUser();
+                    if (user == null) {
+                        callback.onError("AUTH_UNKNOWN_ERROR");
+                        return;
+                    }
+
+                    boolean isNewUser = authResult.getAdditionalUserInfo() != null &&
+                            authResult.getAdditionalUserInfo().isNewUser();
+
+                    if (isNewUser) {
+                        user.sendEmailVerification()
+                                .addOnSuccessListener(unused -> {
+                                    logAuthEvent(user, "register_google", "pending_verification", "");
+                                    firebaseAuth.signOut();
+                                    callback.onError("AUTH_EMAIL_NOT_VERIFIED");
+                                })
+                                .addOnFailureListener(e -> {
+                                    callback.onError("AUTH_VERIFY_EMAIL_SEND_FAILED");
+                                });
+                    } else {
+                        if (user.isEmailVerified()) {
+                            syncUserProfile(user, "google");
+                            logAuthEvent(user, "login_google", "success", "");
+                            callback.onSuccess();
+                        } else {
+                            firebaseAuth.signOut();
+                            callback.onError("AUTH_EMAIL_NOT_VERIFIED");
                         }
                     }
-                    String reason = resolveErrorMessage(e);
-                    logAuthEvent(firebaseAuth.getCurrentUser(), "login_google", "failed", reason);
-                    callback.onError(reason);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onError(resolveErrorMessage(e));
                 });
     }
 
@@ -129,41 +145,37 @@ public class FirebaseAuthDataSource {
     }
 
     private void syncUserProfile(FirebaseUser user, String provider, String name) {
-        AuthUserProfile profile = AuthUserProfile.fromFirebaseUser(user, provider);
-        if (profile == null) return;
+        AuthUserProfile authProfile = AuthUserProfile.fromFirebaseUser(user, provider);
+        if (authProfile == null) return;
 
-        String uid = profile.getUid();
-        Map<String, Object> payload = profile.toFirestoreMap();
-
-        // 1. Luôn cập nhật thời gian đăng nhập cuối
-        payload.put("lastLoginAt", FieldValue.serverTimestamp());
-
-        // 2. Xử lý logic ghi đè displayName
-        String normalizedName = normalizeValue(name);
-        if (!normalizedName.isEmpty()) {
-            // Nếu có tên truyền vào (tức là đang ĐĂNG KÝ mới), thì mới cho phép ghi tên này
-            payload.put("displayName", normalizedName);
-        } else {
-            // Nếu đang ĐĂNG NHẬP (name rỗng), hãy XÓA displayName khỏi payload
-            // để nó không ghi đè chuỗi rỗng lên tên cũ trong Firestore
-            payload.remove("displayName");
-        }
+        String uid = authProfile.getUid();
 
         firestore.collection("users").document(uid).get()
                 .addOnSuccessListener(snapshot -> {
                     if (!snapshot.exists()) {
+                        // USER MỚI
+                        Map<String, Object> payload = authProfile.toFirestoreMap();
                         payload.put("createdAt", FieldValue.serverTimestamp());
-                        // Nếu chưa có document (User mới hoàn toàn), mới dùng .set()
-                        firestore.collection("users").document(uid).set(payload, SetOptions.merge());
+                        payload.put("lastLoginAt", FieldValue.serverTimestamp());
+
+                        String normalizedName = normalizeValue(name);
+                        if (!provider.equals("google") && !normalizedName.isEmpty()) {
+                            payload.put("displayName", normalizedName);
+                        }
+
+                        firestore.collection("users").document(uid).set(payload);
                     } else {
-                        // Nếu đã có document (User cũ đăng nhập lại), chỉ dùng .update()
-                        // để cập nhật lastLoginAt mà không đụng chạm đến displayName, avatar...
-                        firestore.collection("users").document(uid).update(payload);
+                        // USER CŨ QUAY LẠI
+                        Map<String, Object> updateData = new HashMap<>();
+                        updateData.put("lastLoginAt", FieldValue.serverTimestamp());
+
+                        updateData.put("email", user.getEmail());
+
+                        firestore.collection("users").document(uid).update(updateData);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Fallback an toàn
-                    firestore.collection("users").document(uid).set(payload, SetOptions.merge());
+
                 });
     }
 
@@ -185,43 +197,33 @@ public class FirebaseAuthDataSource {
     }
 
     private String resolveErrorMessage(Exception exception) {
-        if (exception == null) {
-            return "AUTH_UNKNOWN_ERROR";
-        }
+        if (exception == null) return "AUTH_UNKNOWN_ERROR";
 
-        if (exception instanceof FirebaseNetworkException) {
-            return "AUTH_NETWORK_ERROR";
-        }
-
-        if (exception instanceof FirebaseTooManyRequestsException) {
-            return "AUTH_TOO_MANY_REQUESTS";
-        }
+        if (exception instanceof FirebaseNetworkException) return "AUTH_NETWORK_ERROR";
+        if (exception instanceof FirebaseTooManyRequestsException) return "AUTH_TOO_MANY_REQUESTS";
 
         if (exception instanceof FirebaseAuthException) {
             String code = ((FirebaseAuthException) exception).getErrorCode();
 
             switch (code) {
-                case "ERROR_INVALID_EMAIL":
-                    return "AUTH_INVALID_EMAIL";
-                case "ERROR_USER_NOT_FOUND":
-                    return "AUTH_USER_NOT_FOUND";
+                case "ERROR_INVALID_EMAIL": return "AUTH_INVALID_EMAIL";
+                case "ERROR_USER_NOT_FOUND": return "AUTH_USER_NOT_FOUND";
                 case "ERROR_WRONG_PASSWORD":
-                case "ERROR_INVALID_CREDENTIAL": // For newer Firebase versions
-                    return "AUTH_WRONG_PASSWORD";
+                case "ERROR_INVALID_CREDENTIAL": return "AUTH_WRONG_PASSWORD";
+
+                // Lỗi khi email đã liên kết với phương thức khác (Email vs Google)
+                case "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL":
+                case "ERROR_EMAIL_ALREADY_IN_USE": return "AUTH_EMAIL_ALREADY_IN_USE";
+
                 case "ERROR_INVALID_IDP_RESPONSE":
-                case "ERROR_CREDENTIAL_ALREADY_IN_USE":
-                    return "AUTH_GOOGLE_TOKEN_INVALID";
-                case "ERROR_EMAIL_ALREADY_IN_USE":
-                    return "AUTH_EMAIL_ALREADY_IN_USE";
-                case "ERROR_WEAK_PASSWORD":
-                    return "AUTH_WEAK_PASSWORD";
-                case "ERROR_USER_DISABLED":
-                    return "AUTH_USER_DISABLED";
+                case "ERROR_CREDENTIAL_ALREADY_IN_USE": return "AUTH_GOOGLE_TOKEN_INVALID";
+
+                case "ERROR_WEAK_PASSWORD": return "AUTH_WEAK_PASSWORD";
+                case "ERROR_USER_DISABLED": return "AUTH_USER_DISABLED";
                 default:
-                    return "AUTH_UNKNOWN_ERROR";
+                    return "AUTH_UNKNOWN_ERROR: " + code;
             }
         }
-
-        return "AUTH_UNKNOWN_ERROR";
+        return "AUTH_ACTION_FAILED: " + exception.getMessage();
     }
 }

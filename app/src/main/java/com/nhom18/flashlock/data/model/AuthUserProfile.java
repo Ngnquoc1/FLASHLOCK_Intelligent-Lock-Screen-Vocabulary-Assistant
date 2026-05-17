@@ -11,12 +11,14 @@ public class AuthUserProfile {
     private final String uid;
     private final String email;
     private final String displayName;
+    private final String avatarUrl;
     private final String provider;
 
-    public AuthUserProfile(String uid, String email, String displayName, String provider) {
+    public AuthUserProfile(String uid, String email, String displayName, String avatarUrl, String provider) {
         this.uid = uid;
         this.email = email;
         this.displayName = displayName;
+        this.avatarUrl = avatarUrl;
         this.provider = provider;
     }
 
@@ -24,10 +26,14 @@ public class AuthUserProfile {
         if (user == null) {
             return null;
         }
+
+        String photo = (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : "";
+
         return new AuthUserProfile(
                 user.getUid(),
                 user.getEmail() == null ? "" : user.getEmail(),
                 user.getDisplayName() == null ? "" : user.getDisplayName(),
+                photo,
                 provider
         );
     }
@@ -40,6 +46,7 @@ public class AuthUserProfile {
         Map<String, Object> payload = new HashMap<>();
         payload.put("email", email);
         payload.put("displayName", displayName);
+        payload.put("avatarUrl", avatarUrl);
         payload.put("provider", provider);
         payload.put("status", "active");
         payload.put("updatedAt", FieldValue.serverTimestamp());
