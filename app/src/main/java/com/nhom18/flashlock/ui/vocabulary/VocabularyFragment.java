@@ -1,12 +1,13 @@
 package com.nhom18.flashlock.ui.vocabulary;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +18,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.data.model.Word;
+import com.nhom18.flashlock.ui.vocabulary.AddWordBottomSheet.AddWordInput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +29,20 @@ import java.util.List;
 public class VocabularyFragment extends Fragment {
 
     private boolean isVocabularyTab = true;
+    private boolean isServerSearchActive = false;
     private String statusFilter = null;
+    private String searchQuery = "";
     private List<Word> cachedWords = new ArrayList<>();
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
 
     private VocabularyViewModel viewModel;
     private VocabularyAdapter vocabularyAdapter;
     private TopicAdapter topicAdapter;
+
+    private TextView tvEmptyState;
+    private TextView tvErrorState;
+    private View loadingView;
 
     public static VocabularyFragment newInstance() {
         return new VocabularyFragment();
@@ -54,23 +65,36 @@ public class VocabularyFragment extends Fragment {
         View filterScroll = view.findViewById(R.id.filter_scroll);
         View exploreFooter = view.findViewById(R.id.explore_footer);
         View fabAdd = view.findViewById(R.id.fab_add);
+        View btnExploreLibrary = view.findViewById(R.id.btn_explore_library);
 
         TextView chipAll = view.findViewById(R.id.chip_all_words);
         TextView chipNew = view.findViewById(R.id.chip_new_words);
         TextView chipLearning = view.findViewById(R.id.chip_learning_words);
+        TextView chipMastered = view.findViewById(R.id.chip_mastered_words);
+
+        TextView etSearch = view.findViewById(R.id.et_search);
+
+        tvEmptyState = view.findViewById(R.id.tv_empty_state);
+        tvErrorState = view.findViewById(R.id.tv_error_state);
+        loadingView = view.findViewById(R.id.progress_loading);
 
         RecyclerView recyclerView = view.findViewById(R.id.rv_content);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        tvTabVocab.setOnClickListener(v ->
+                switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView));
+        tvTabTopics.setOnClickListener(v ->
+                switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView));
+
         vocabularyAdapter = new VocabularyAdapter(new VocabularyAdapter.WordActionListener() {
             @Override
             public void onDelete(Word word) {
-                viewModel.deleteWord(word.getWordId());
+                showDeleteConfirm(word);
             }
 
             @Override
             public void onEdit(Word word) {
-                // Edit flow can be added later.
+                showEditWordBottomSheet(word);
             }
         });
         topicAdapter = new TopicAdapter();
@@ -81,29 +105,82 @@ public class VocabularyFragment extends Fragment {
             applyFilter();
         });
         viewModel.getTopics().observe(getViewLifecycleOwner(), topics -> topicAdapter.submitList(topics));
+        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            loadingView.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
+        });
         viewModel.getError().observe(getViewLifecycleOwner(), message -> {
-            if (message != null && !message.trim().isEmpty()) {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            String resolved = resolveErrorMessage(message);
+            if (resolved != null && !resolved.trim().isEmpty()) {
+                tvErrorState.setText(resolved);
+                tvErrorState.setVisibility(View.VISIBLE);
+                Toast.makeText(requireContext(), resolved, Toast.LENGTH_SHORT).show();
+            } else {
+                tvErrorState.setVisibility(View.GONE);
             }
         });
 
         chipAll.setOnClickListener(v -> {
             statusFilter = null;
+            updateFilterChips(chipAll, chipNew, chipLearning, chipMastered);
             applyFilter();
         });
         chipNew.setOnClickListener(v -> {
             statusFilter = Word.STATUS_NEW;
+            updateFilterChips(chipAll, chipNew, chipLearning, chipMastered);
             applyFilter();
         });
         chipLearning.setOnClickListener(v -> {
             statusFilter = Word.STATUS_LEARNING;
+            updateFilterChips(chipAll, chipNew, chipLearning, chipMastered);
+            applyFilter();
+        });
+        chipMastered.setOnClickListener(v -> {
+            statusFilter = Word.STATUS_MASTERED;
+            updateFilterChips(chipAll, chipNew, chipLearning, chipMastered);
             applyFilter();
         });
 
-        tvTabVocab.setOnClickListener(v -> switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView));
-        tvTabTopics.setOnClickListener(v -> switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView));
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
+            }
 
-        fabAdd.setOnClickListener(v -> showAddWordDialog());
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchQuery = s != null ? s.toString().trim() : "";
+                if (searchRunnable != null) {
+                    searchHandler.removeCallbacks(searchRunnable);
+                }
+                searchRunnable = () -> {
+                    if (searchQuery.length() >= 2) {
+                        isServerSearchActive = true;
+                        viewModel.searchVocabulary(searchQuery);
+                    } else {
+                        isServerSearchActive = false;
+                        if (searchQuery.isEmpty()) {
+                            viewModel.loadVocabulary();
+                        }
+                        applyFilter();
+                    }
+                };
+                searchHandler.postDelayed(searchRunnable, 300);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No-op
+            }
+        });
+
+        btnExploreLibrary.setOnClickListener(v -> {
+            View navLibrary = requireActivity().findViewById(R.id.nav_library_item);
+            if (navLibrary != null) {
+                navLibrary.performClick();
+            }
+        });
+
+        fabAdd.setOnClickListener(v -> showAddWordBottomSheet());
 
         switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView);
     }
@@ -114,8 +191,8 @@ public class VocabularyFragment extends Fragment {
             isVocabularyTab = true;
         }
         updateTabs(selected, unselected);
-        tvTitle.setText("My Vocabulary");
-        tvSubtitle.setText("Manage your saved words");
+        tvTitle.setText(getString(R.string.vocab_title_my));
+        tvSubtitle.setText(getString(R.string.vocab_subtitle_my));
         filterScroll.setVisibility(View.VISIBLE);
         exploreFooter.setVisibility(View.GONE);
         fabAdd.setVisibility(View.VISIBLE);
@@ -129,27 +206,64 @@ public class VocabularyFragment extends Fragment {
             isVocabularyTab = false;
         }
         updateTabs(selected, unselected);
-        tvTitle.setText("Saved Topics");
-        tvSubtitle.setText("Manage your specialized word collections");
+        tvTitle.setText(getString(R.string.vocab_title_topics));
+        tvSubtitle.setText(getString(R.string.vocab_subtitle_topics));
         filterScroll.setVisibility(View.GONE);
         exploreFooter.setVisibility(View.VISIBLE);
         fabAdd.setVisibility(View.GONE);
+        tvEmptyState.setVisibility(View.GONE);
         recyclerView.setAdapter(topicAdapter);
         viewModel.loadTopics();
     }
 
     private void applyFilter() {
-        if (statusFilter == null) {
-            vocabularyAdapter.submitList(cachedWords);
-            return;
-        }
-        List<Word> filtered = new ArrayList<>();
-        for (Word word : cachedWords) {
-            if (statusFilter.equals(word.getStatus())) {
-                filtered.add(word);
-            }
-        }
+        List<Word> filtered = WordFilter.apply(cachedWords, statusFilter, searchQuery, !isServerSearchActive);
         vocabularyAdapter.submitList(filtered);
+        if (isVocabularyTab) {
+            tvEmptyState.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private String resolveErrorMessage(String code) {
+        if (code == null) {
+            return null;
+        }
+        switch (code) {
+            case "WORD_REQUIRED":
+                return getString(R.string.vocab_error_word_required);
+            case "WORD_TERM_REQUIRED":
+                return getString(R.string.vocab_error_term_required);
+            case "WORD_DEFINITION_REQUIRED":
+                return getString(R.string.vocab_error_definition_required);
+            case "WORD_ID_REQUIRED":
+                return getString(R.string.vocab_error_word_id_required);
+            case "ADD_WORD_FAILED":
+                return getString(R.string.vocab_error_add_failed);
+            case "UPDATE_WORD_FAILED":
+                return getString(R.string.vocab_error_update_failed);
+            case "DELETE_WORD_FAILED":
+                return getString(R.string.vocab_error_delete_failed);
+            case "LOAD_WORDS_FAILED":
+                return getString(R.string.vocab_error_load_failed);
+            case "SEARCH_WORDS_FAILED":
+                return getString(R.string.vocab_error_search_failed);
+            case "LOAD_TOPICS_FAILED":
+                return getString(R.string.vocab_error_load_topics_failed);
+            default:
+                return code;
+        }
+    }
+
+    private void updateFilterChips(TextView chipAll, TextView chipNew, TextView chipLearning, TextView chipMastered) {
+        setChipSelected(chipAll, statusFilter == null);
+        setChipSelected(chipNew, Word.STATUS_NEW.equals(statusFilter));
+        setChipSelected(chipLearning, Word.STATUS_LEARNING.equals(statusFilter));
+        setChipSelected(chipMastered, Word.STATUS_MASTERED.equals(statusFilter));
+    }
+
+    private void setChipSelected(TextView chip, boolean selected) {
+        chip.setBackgroundResource(selected ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chip.setTextColor(getResources().getColor(selected ? R.color.on_primary_container : R.color.white));
     }
 
     private void updateTabs(TextView selected, TextView unselected) {
@@ -162,27 +276,54 @@ public class VocabularyFragment extends Fragment {
         unselected.setAlpha(0.6f);
     }
 
-    private void showAddWordDialog() {
-        LinearLayout container = new LinearLayout(requireContext());
-        container.setOrientation(LinearLayout.VERTICAL);
-        int padding = Math.round(16 * getResources().getDisplayMetrics().density);
-        container.setPadding(padding, padding, padding, padding);
+    private void showAddWordBottomSheet() {
+        AddWordBottomSheet bottomSheet = new AddWordBottomSheet();
+        bottomSheet.setListener(this::handleAddWordSubmit);
+        bottomSheet.show(getChildFragmentManager(), "AddWordBottomSheet");
+    }
 
-        EditText termInput = new EditText(requireContext());
-        termInput.setHint("Term");
-        container.addView(termInput);
+    private void showEditWordBottomSheet(Word word) {
+        AddWordBottomSheet bottomSheet = new AddWordBottomSheet();
+        bottomSheet.setEditingWord(word);
+        bottomSheet.setListener(this::handleAddWordSubmit);
+        bottomSheet.show(getChildFragmentManager(), "EditWordBottomSheet");
+    }
 
-        EditText definitionInput = new EditText(requireContext());
-        definitionInput.setHint("Definition");
-        container.addView(definitionInput);
+    private void handleAddWordSubmit(AddWordInput input) {
+        Word word = new Word();
+        word.setWordId(input.getWordId());
+        word.setTerm(input.getTerm());
+        word.setDefinition(input.getDefinition());
+        word.setPronunciation(input.getPronunciation());
+        word.setExample(input.getExample());
+        word.setStatus(input.getStatus());
+        word.setWordType(input.getWordType());
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Add word")
-                .setView(container)
-                .setPositiveButton("Save", (dialog, which) -> viewModel.addWord(
-                        termInput.getText().toString(),
-                        definitionInput.getText().toString()))
-                .setNegativeButton("Cancel", null)
+        if (input.getWordId() != null && !input.getWordId().trim().isEmpty()) {
+            viewModel.updateWord(word);
+        } else {
+            viewModel.addWord(word);
+        }
+    }
+
+    private void showDeleteConfirm(Word word) {
+        if (word == null) {
+            return;
+        }
+        String term = word.getTerm() != null ? word.getTerm() : "";
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.vocab_delete_title)
+                .setMessage(getString(R.string.vocab_delete_message, term))
+                .setPositiveButton(R.string.vocab_delete_confirm, (dialog, which) -> viewModel.deleteWord(word.getWordId()))
+                .setNegativeButton(R.string.vocab_delete_cancel, null)
                 .show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+        }
     }
 }

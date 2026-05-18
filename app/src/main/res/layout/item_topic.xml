@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="220dp"
     android:layout_marginHorizontal="16dp"
@@ -36,7 +37,7 @@
             android:background="@drawable/bg_nav_icon_selected"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"
-            android:text="PREMIUM"
+            android:text="@string/topic_badge_premium"
             android:textColor="@color/white"
             android:textSize="10sp"
             android:fontFamily="sans-serif-black" />
@@ -52,10 +53,11 @@
                 android:id="@+id/tv_topic_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="IELTS Academic Core"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="22sp"
-                android:fontFamily="sans-serif-black" />
+                android:fontFamily="sans-serif-black"
+                tools:text="@string/topic_preview_title" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -74,10 +76,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="1.200 WORDS"
+                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:alpha="0.8" />
+                    android:alpha="0.8"
+                    tools:text="@string/topic_preview_word_count" />
             </LinearLayout>
 
             <LinearLayout
@@ -92,7 +95,7 @@
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:text="Tiếp tục học"
+                    android:text="@string/topic_action_continue"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     app:cornerRadius="26dp"

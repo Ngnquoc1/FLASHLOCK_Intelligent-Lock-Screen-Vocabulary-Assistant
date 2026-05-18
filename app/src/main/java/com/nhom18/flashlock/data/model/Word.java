@@ -18,6 +18,7 @@ public class Word {
     private String pronunciation;
     private String audioUrl;
     private String topicId;
+    private String wordType;
 
     public Word() {}
 
@@ -50,5 +51,7 @@ public class Word {
 
     public String getTopicId() { return topicId; }
     public void setTopicId(String topicId) { this.topicId = topicId; }
-}
 
+    public String getWordType() { return wordType; }
+    public void setWordType(String wordType) { this.wordType = wordType; }
+}

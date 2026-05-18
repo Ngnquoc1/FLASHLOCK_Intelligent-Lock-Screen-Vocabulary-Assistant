@@ -73,13 +73,13 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Wo
 
             String status = word.getStatus();
             if (Word.STATUS_MASTERED.equals(status)) {
-                tvStatusTag.setText("DA NHO");
+                tvStatusTag.setText(itemView.getContext().getString(R.string.vocab_status_mastered_tag));
                 tvStatusTag.setBackgroundResource(R.drawable.bg_tag_remembered);
             } else if (Word.STATUS_LEARNING.equals(status)) {
-                tvStatusTag.setText("DANG HOC");
+                tvStatusTag.setText(itemView.getContext().getString(R.string.vocab_status_learning_tag));
                 tvStatusTag.setBackgroundResource(R.drawable.bg_tag_learning);
             } else {
-                tvStatusTag.setText("TU MOI");
+                tvStatusTag.setText(itemView.getContext().getString(R.string.vocab_status_new_tag));
                 tvStatusTag.setBackgroundResource(R.drawable.bg_tag_new);
             }
 
@@ -96,4 +96,3 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Wo
         }
     }
 }
-

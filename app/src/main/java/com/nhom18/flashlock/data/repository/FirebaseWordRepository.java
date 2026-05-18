@@ -45,6 +45,12 @@ public class FirebaseWordRepository implements WordRepository {
     }
 
     @Override
+    public Task<List<Word>> searchWordsByTerm(String query) {
+        String uid = dataSource.getCurrentUid();
+        return dataSource.searchWordsByTerm(uid, query);
+    }
+
+    @Override
     public ListenerRegistration observeAllWords(WordListListener listener) {
         String uid = dataSource.getCurrentUid();
         return dataSource.observeAllWords(uid, toDataSourceListener(listener));
@@ -70,4 +76,3 @@ public class FirebaseWordRepository implements WordRepository {
         };
     }
 }
-

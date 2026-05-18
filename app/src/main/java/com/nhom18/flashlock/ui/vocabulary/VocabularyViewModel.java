@@ -62,6 +62,23 @@ public class VocabularyViewModel extends ViewModel {
         });
     }
 
+    public void searchVocabulary(String query) {
+        String term = query == null ? "" : query.trim();
+        if (term.isEmpty()) {
+            loadVocabulary();
+            return;
+        }
+        loading.setValue(true);
+        wordRepository.searchWordsByTerm(term).addOnCompleteListener(task -> {
+            loading.postValue(false);
+            if (task.isSuccessful()) {
+                words.postValue(task.getResult());
+            } else {
+                error.postValue(task.getException() != null ? task.getException().getMessage() : "SEARCH_WORDS_FAILED");
+            }
+        });
+    }
+
     public void loadTopics() {
         loading.setValue(true);
         topicRepository.getAllTopics().addOnCompleteListener(task -> {
@@ -77,8 +94,12 @@ public class VocabularyViewModel extends ViewModel {
     public void addWord(String term, String definition) {
         String termValue = term == null ? "" : term.trim();
         String definitionValue = definition == null ? "" : definition.trim();
-        if (termValue.isEmpty() || definitionValue.isEmpty()) {
+        if (termValue.isEmpty()) {
             error.setValue("WORD_TERM_REQUIRED");
+            return;
+        }
+        if (definitionValue.isEmpty()) {
+            error.setValue("WORD_DEFINITION_REQUIRED");
             return;
         }
 
@@ -99,6 +120,70 @@ public class VocabularyViewModel extends ViewModel {
         });
     }
 
+    public void addWord(Word word) {
+        if (word == null) {
+            error.setValue("WORD_REQUIRED");
+            return;
+        }
+        String termValue = word.getTerm() == null ? "" : word.getTerm().trim();
+        String definitionValue = word.getDefinition() == null ? "" : word.getDefinition().trim();
+        if (termValue.isEmpty()) {
+            error.setValue("WORD_TERM_REQUIRED");
+            return;
+        }
+        if (definitionValue.isEmpty()) {
+            error.setValue("WORD_DEFINITION_REQUIRED");
+            return;
+        }
+        word.setTerm(termValue);
+        word.setDefinition(definitionValue);
+        if (word.getStatus() == null || word.getStatus().trim().isEmpty()) {
+            word.setStatus(Word.STATUS_NEW);
+        }
+        if (word.getNextReviewAt() == null) {
+            word.setNextReviewAt(Timestamp.now());
+        }
+
+        loading.setValue(true);
+        wordRepository.addWord(word).addOnCompleteListener(task -> {
+            loading.postValue(false);
+            if (task.isSuccessful()) {
+                loadVocabulary();
+            } else {
+                error.postValue(task.getException() != null ? task.getException().getMessage() : "ADD_WORD_FAILED");
+            }
+        });
+    }
+
+    public void updateWord(Word word) {
+        if (word == null || word.getWordId() == null || word.getWordId().trim().isEmpty()) {
+            error.setValue("WORD_ID_REQUIRED");
+            return;
+        }
+        String termValue = word.getTerm() == null ? "" : word.getTerm().trim();
+        String definitionValue = word.getDefinition() == null ? "" : word.getDefinition().trim();
+        if (termValue.isEmpty()) {
+            error.setValue("WORD_TERM_REQUIRED");
+            return;
+        }
+        if (definitionValue.isEmpty()) {
+            error.setValue("WORD_DEFINITION_REQUIRED");
+            return;
+        }
+        word.setTerm(termValue);
+        word.setDefinition(definitionValue);
+
+        loading.setValue(true);
+        wordRepository.updateWord(word).addOnCompleteListener(task -> {
+            loading.postValue(false);
+            if (task.isSuccessful()) {
+                loadVocabulary();
+            } else {
+                error.postValue(task.getException() != null ? task.getException().getMessage() : "UPDATE_WORD_FAILED");
+            }
+        });
+    }
+
     public void deleteWord(String wordId) {
         if (wordId == null || wordId.trim().isEmpty()) {
             error.setValue("WORD_ID_REQUIRED");
@@ -115,4 +200,3 @@ public class VocabularyViewModel extends ViewModel {
         });
     }
 }
-

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-black"
         android:letterSpacing="0.1"
-        android:text="FLASHLOCK"
+        android:text="@string/top_app_title"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

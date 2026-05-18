@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 
 public class FirebaseWordDataSource {
     private final FirebaseFirestore db;
@@ -148,6 +149,48 @@ public class FirebaseWordDataSource {
                 });
     }
 
+    public Task<List<Word>> searchWordsByTerm(String uid, String query) {
+        if (uid == null) {
+            return Tasks.forException(new Exception("User not logged in"));
+        }
+        String normalized = query == null ? "" : query.trim().toLowerCase(Locale.US);
+        if (normalized.isEmpty()) {
+            return getAllWords(uid);
+        }
+
+        return db.collection("users")
+                .document(uid)
+                .collection("my_words")
+                .orderBy("termLower")
+                .startAt(normalized)
+                .endAt(normalized + "\uf8ff")
+                .get()
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    List<Word> words = new ArrayList<>();
+                    for (DocumentSnapshot doc : task.getResult().getDocuments()) {
+                        Word word = doc.toObject(Word.class);
+                        if (word != null && (word.getWordId() == null || word.getWordId().isEmpty())) {
+                            word.setWordId(doc.getId());
+                        }
+                        if (word != null) {
+                            words.add(word);
+                        }
+                    }
+                    if (!words.isEmpty()) {
+                        return Tasks.forResult(words);
+                    }
+                    return getAllWords(uid).continueWith(filterTask -> {
+                        if (!filterTask.isSuccessful()) {
+                            throw filterTask.getException();
+                        }
+                        return filterWordsByQuery(filterTask.getResult(), normalized);
+                    });
+                });
+    }
+
     public ListenerRegistration observeAllWords(String uid, WordListListener listener) {
         if (uid == null) {
             listener.onError(new Exception("User not logged in"));
@@ -228,7 +271,10 @@ public class FirebaseWordDataSource {
             payload.put("wordId", wordId);
         }
         if (word != null) {
-            if (word.getTerm() != null) payload.put("term", word.getTerm());
+            if (word.getTerm() != null) {
+                payload.put("term", word.getTerm());
+                payload.put("termLower", word.getTerm().toLowerCase(Locale.US));
+            }
             if (word.getDefinition() != null) payload.put("definition", word.getDefinition());
             if (word.getStatus() != null) {
                 payload.put("status", word.getStatus());
@@ -245,8 +291,27 @@ public class FirebaseWordDataSource {
             if (word.getPronunciation() != null) payload.put("pronunciation", word.getPronunciation());
             if (word.getAudioUrl() != null) payload.put("audioUrl", word.getAudioUrl());
             if (word.getTopicId() != null) payload.put("topicId", word.getTopicId());
+            if (word.getWordType() != null) payload.put("wordType", word.getWordType());
         }
         return payload;
+    }
+
+    private List<Word> filterWordsByQuery(List<Word> source, String normalizedQuery) {
+        List<Word> filtered = new ArrayList<>();
+        if (source == null || normalizedQuery == null || normalizedQuery.isEmpty()) {
+            return filtered;
+        }
+        for (Word word : source) {
+            if (word == null) {
+                continue;
+            }
+            String term = word.getTerm() == null ? "" : word.getTerm().trim().toLowerCase(Locale.US);
+            String definition = word.getDefinition() == null ? "" : word.getDefinition().trim().toLowerCase(Locale.US);
+            if (term.contains(normalizedQuery) || definition.contains(normalizedQuery)) {
+                filtered.add(word);
+            }
+        }
+        return filtered;
     }
 
     public interface WordListListener {
@@ -254,4 +319,3 @@ public class FirebaseWordDataSource {
         void onError(Exception error);
     }
 }
-

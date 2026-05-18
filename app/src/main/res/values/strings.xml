@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">FlashLock</string>
+    <string name="top_app_title">FlashLock</string>
+    <string name="splash_title_flash">Flash</string>
+    <string name="splash_title_lock">Lock</string>
+    <string name="splash_subtitle_unlock">UNLOCK YOUR VOCABULARY</string>
+    <string name="home_content_placeholder">Main Content Area</string>
 
     <!-- Login Screen Strings -->
     <string name="login_title_welcome">Welcome back.</string>
@@ -60,7 +65,9 @@
     <string name="set_pwd_label_new">NEW PASSWORD</string>
     <string name="set_pwd_hint_pwd">••••••••</string>
     <string name="set_pwd_strength">Strength: </string>
+    <string name="set_pwd_strength_weak">Weak</string>
     <string name="set_pwd_strength_medium">Medium</string>
+    <string name="set_pwd_strength_strong">Strong</string>
     <string name="set_pwd_strength_percent">65%</string>
     <string name="set_pwd_hint_desc">Use 8+ characters with a mix of letters, numbers &amp; symbols.</string>
     <string name="set_pwd_label_confirm">CONFIRM NEW PASSWORD</string>
@@ -84,34 +91,120 @@
 
     <!-- Auth Status Strings -->
     <string name="auth_login_success">Login successful.</string>
-    <string name="auth_register_success">Dang ky thanh cong. Vui long kiem tra email de xac thuc tai khoan.</string>
+    <string name="auth_register_success">Registration successful. Please verify your email.</string>
     <string name="auth_reset_link_sent">Recovery email sent.</string>
     <string name="auth_action_failed">Request failed: %1$s</string>
-    <string name="auth_error_login_email_required">Vui long nhap email.</string>
-    <string name="auth_error_login_password_required">Vui long nhap mat khau.</string>
-    <string name="auth_error_register_name_required">Vui long nhap ho ten.</string>
-    <string name="auth_error_register_email_required">Vui long nhap email hop le.</string>
-    <string name="auth_error_register_password_required">Vui long nhap mat khau.</string>
+    <string name="auth_error_login_email_required">Please enter email.</string>
+    <string name="auth_error_login_password_required">Please enter password.</string>
+    <string name="auth_error_register_name_required">Please enter full name.</string>
+    <string name="auth_error_register_email_required">Please enter a valid email.</string>
+    <string name="auth_error_register_password_required">Please enter password.</string>
 
-    <string name="auth_error_invalid_email">Email khong dung dinh dang.</string>
-    <string name="auth_error_user_not_found">Tai khoan khong ton tai.</string>
-    <string name="auth_error_wrong_password">Mat khau khong dung hoac account da thay doi.</string>
-    <string name="auth_error_email_already_in_use">Email nay da duoc su dung boi tai khoan khac.</string>
-    <string name="auth_error_weak_password">Mat khau phai co it nhat 6 ky tu.</string>
-    <string name="auth_error_user_disabled">Tai khoan da bi vo hieu hoa.</string>
-    <string name="auth_error_email_not_verified">Tai khoan chua xac thuc email. Vui long kiem tra hop thu.</string>
-    <string name="auth_error_verify_email_send_failed">Khong gui duoc email xac thuc. Vui long thu lai.</string>
-    <string name="auth_error_network">Khong the ket noi toi may chu. Kiem tra lai mang.</string>
-    <string name="auth_error_too_many_requests">Vui long doi mot lat truoc khi thu lai.</string>
-    <string name="auth_error_google_token_invalid">Dang nhap Google that bai. Vui long thu lai.</string>
-    <string name="auth_error_google_cancelled">Ban da huy dang nhap Google.</string>
-    <string name="auth_error_google_config_missing">Chua cau hinh Google Sign-In. Vui long cap nhat web client id.</string>
+    <string name="auth_error_invalid_email">Invalid email format.</string>
+    <string name="auth_error_user_not_found">Account not found.</string>
+    <string name="auth_error_wrong_password">Incorrect password or account changed.</string>
+    <string name="auth_error_email_already_in_use">Email already in use by another account.</string>
+    <string name="auth_error_weak_password">Password must be at least 6 characters.</string>
+    <string name="auth_error_user_disabled">Account has been disabled.</string>
+    <string name="auth_error_email_not_verified">Email not verified. Please check your inbox.</string>
+    <string name="auth_error_verify_email_send_failed">Failed to send verification email. Please try again.</string>
+    <string name="auth_error_network">Cannot connect to server. Check your network.</string>
+    <string name="auth_error_too_many_requests">Please wait a moment before trying again.</string>
+    <string name="auth_error_google_token_invalid">Google sign-in failed. Please try again.</string>
+    <string name="auth_error_google_cancelled">Google sign-in cancelled.</string>
+    <string name="auth_error_google_config_missing">Google Sign-In is not configured. Please update web client id.</string>
     <string name="google_web_client_id">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID</string>
 
-    <string name="main_title">Ban da dang nhap thanh cong.</string>
+    <string name="main_title">You are logged in successfully.</string>
+    <string name="fragment_placeholder_title">Fragment Content</string>
 
-    <string name="profile_btn_save">Luu thay đoi</string>
-    <string name="profile_msg_save_success">Cap nhat ho so thanh cong!</string>
-    <string name="profile_msg_saving">Dang luu du lieu...</string>
-    <string name="profile_error_name_empty">Ten khong duoc de trong!</string>
+    <string name="profile_btn_save">Save changes</string>
+    <string name="profile_msg_save_success">Profile updated successfully!</string>
+    <string name="profile_msg_saving">Saving data...</string>
+    <string name="profile_error_name_empty">Name cannot be empty!</string>
+    <string name="profile_hint_display_name">Enter display name</string>
+    <string name="profile_email_loading">Loading email...</string>
+    <string name="profile_membership_label">Premium Scholar Member</string>
+    <string name="profile_cloud_sync_status">CLOUD SYNC STATUS</string>
+    <string name="profile_last_sync_default">Last synced at 10:00 AM</string>
+    <string name="profile_sync_now">Sync now</string>
+    <string name="profile_stats_count">1.2k</string>
+    <string name="profile_stats_label">WORDS MASTERED</string>
+    <string name="profile_section_settings">APPLICATION SETTINGS</string>
+    <string name="profile_lock_screen_title">Lock screen settings</string>
+    <string name="profile_lock_screen_subtitle">Show vocabulary on unlock</string>
+    <string name="profile_reminder_title">Study reminders</string>
+    <string name="profile_reminder_subtitle">Build daily habits</string>
+    <string name="profile_time_default_hour">08</string>
+    <string name="profile_time_separator">:</string>
+    <string name="profile_time_default_minute">30</string>
+    <string name="profile_time_am">AM</string>
+    <string name="profile_time_pm">PM</string>
+    <string name="profile_logout">Log out</string>
+
+    <!-- Vocabulary UI Strings -->
+    <string name="vocab_tab_vocabulary">Vocabulary</string>
+    <string name="vocab_tab_topics">Topics</string>
+    <string name="vocab_title_my">My Vocabulary</string>
+    <string name="vocab_subtitle_my">Manage your saved words</string>
+    <string name="vocab_title_topics">Saved Topics</string>
+    <string name="vocab_subtitle_topics">Manage your specialized word collections</string>
+    <string name="vocab_search_hint">Search your lexicon...</string>
+    <string name="vocab_chip_all">All Words</string>
+    <string name="vocab_chip_new">New</string>
+    <string name="vocab_chip_learning">Learning</string>
+    <string name="vocab_chip_mastered">Mastered</string>
+    <string name="vocab_empty_state">No words yet</string>
+    <string name="vocab_explore_prompt">Looking for more specific domains?</string>
+    <string name="vocab_explore_button">Explore Library</string>
+
+    <string name="vocab_sheet_add_title">Add new word</string>
+    <string name="vocab_sheet_add_subtitle">Add words to your vocabulary</string>
+    <string name="vocab_sheet_edit_title">Edit word</string>
+    <string name="vocab_sheet_edit_subtitle">Update word details</string>
+    <string name="vocab_label_term">WORD *</string>
+    <string name="vocab_hint_term">e.g. Ephemeral</string>
+    <string name="vocab_label_pronunciation">PRONUNCIATION · Optional</string>
+    <string name="vocab_hint_pronunciation">e.g. /ɪˈfem.ə.rəl/</string>
+    <string name="vocab_label_word_type">WORD TYPE</string>
+    <string name="vocab_hint_word_type">e.g. verb (v)</string>
+    <string name="vocab_label_definition">DEFINITION *</string>
+    <string name="vocab_hint_definition">e.g. Short-lived, fleeting</string>
+    <string name="vocab_label_example">EXAMPLE · Optional</string>
+    <string name="vocab_hint_example">e.g. The beauty of cherry blossoms is ephemeral</string>
+    <string name="vocab_label_status">LEARNING STATUS</string>
+    <string name="vocab_btn_add">Add word</string>
+    <string name="vocab_btn_save">Save changes</string>
+
+    <string name="vocab_status_new">New</string>
+    <string name="vocab_status_learning">Learning</string>
+    <string name="vocab_status_mastered">Mastered</string>
+    <string name="vocab_status_new_tag">NEW</string>
+    <string name="vocab_status_learning_tag">LEARNING</string>
+    <string name="vocab_status_mastered_tag">MASTERED</string>
+
+    <string name="vocab_delete_title">Delete word</string>
+    <string name="vocab_delete_message">Are you sure you want to delete "%1$s"?</string>
+    <string name="vocab_delete_confirm">Delete</string>
+    <string name="vocab_delete_cancel">Cancel</string>
+
+    <string name="vocab_preview_word">Ephemeral</string>
+    <string name="vocab_preview_meaning">Short-lived, fleeting</string>
+    <string name="vocab_preview_status">MASTERED</string>
+
+    <string name="topic_badge_premium">Premium</string>
+    <string name="topic_action_continue">Continue</string>
+
+    <!-- Vocabulary Error Strings -->
+    <string name="vocab_error_word_required">Word data is missing.</string>
+    <string name="vocab_error_term_required">Please enter a word.</string>
+    <string name="vocab_error_definition_required">Please enter a definition.</string>
+    <string name="vocab_error_status_required">Please select a learning status.</string>
+    <string name="vocab_error_word_id_required">Word id is missing.</string>
+    <string name="vocab_error_add_failed">Failed to add word. Please try again.</string>
+    <string name="vocab_error_update_failed">Failed to update word. Please try again.</string>
+    <string name="vocab_error_delete_failed">Failed to delete word. Please try again.</string>
+    <string name="vocab_error_load_failed">Failed to load words. Please try again.</string>
+    <string name="vocab_error_search_failed">Failed to search words. Please try again.</string>
+    <string name="vocab_error_load_topics_failed">Failed to load topics. Please try again.</string>
 </resources>

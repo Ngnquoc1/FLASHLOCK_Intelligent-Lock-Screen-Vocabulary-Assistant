@@ -13,6 +13,7 @@ public interface WordRepository {
 
     Task<List<Word>> getAllWords();
     Task<List<Word>> getDueWords(Timestamp currentTime);
+    Task<List<Word>> searchWordsByTerm(String query);
 
     ListenerRegistration observeAllWords(WordListListener listener);
     ListenerRegistration observeDueWords(Timestamp currentTime, WordListListener listener);
@@ -22,4 +23,3 @@ public interface WordRepository {
         void onError(Exception error);
     }
 }
-

@@ -37,7 +37,9 @@
             android:text="Vocabulary"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="sans-serif-medium"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/tv_tab_topics"
@@ -49,7 +51,9 @@
             android:textColor="@color/on_surface"
             android:textSize="14sp"
             android:alpha="0.6"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="sans-serif-medium"
+            android:clickable="true"
+            android:focusable="true" />
     </LinearLayout>
 
     <!-- Scrollable Content -->
@@ -168,6 +172,18 @@
                             android:text="Đang học"
                             android:textColor="@color/white"
                             android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/chip_mastered_words"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:background="@drawable/bg_chip_unselected"
+                            android:paddingHorizontal="20dp"
+                            android:paddingVertical="10dp"
+                            android:text="Đã nhớ"
+                            android:textColor="@color/white"
+                            android:textSize="13sp" />
                     </LinearLayout>
                 </HorizontalScrollView>
 
@@ -181,6 +197,34 @@
                 android:layout_marginTop="16dp"
                 android:paddingBottom="100dp"
                 android:nestedScrollingEnabled="false" />
+
+            <ProgressBar
+                android:id="@+id/progress_loading"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Chưa có từ vựng nào"
+                android:textColor="@color/on_surface"
+                android:alpha="0.7"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_error_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:textColor="@color/error"
+                android:visibility="gone" />
 
             <!-- Explore Library Footer (Visible for Topics) -->
             <LinearLayout
@@ -199,6 +243,7 @@
                     android:alpha="0.6"
                     android:textSize="13sp" />
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_explore_library"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -207,9 +252,8 @@
                     app:cornerRadius="20dp"
                     app:icon="@android:drawable/ic_menu_compass"
                     app:backgroundTint="@color/surface_container_high"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white" />
             </LinearLayout>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

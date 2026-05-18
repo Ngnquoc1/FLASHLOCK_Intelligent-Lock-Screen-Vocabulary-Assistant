@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.databinding.ActivitySetNewPasswordBinding;
 import com.nhom18.flashlock.ui.login.LoginActivity;
 
@@ -41,11 +42,11 @@ public class SetNewPasswordActivity extends AppCompatActivity {
             binding.tvStrengthPercent.setText(strengthValue + "%");
 
             if(strengthValue < 30) {
-                binding.tvStrengthLabel.setText("Weak");
+                binding.tvStrengthLabel.setText(getString(R.string.set_pwd_strength_weak));
             } else if (strengthValue < 80) {
-                binding.tvStrengthLabel.setText("Medium");
+                binding.tvStrengthLabel.setText(getString(R.string.set_pwd_strength_medium));
             } else {
-                binding.tvStrengthLabel.setText("Strong");
+                binding.tvStrengthLabel.setText(getString(R.string.set_pwd_strength_strong));
             }
         });
     }

@@ -34,4 +34,5 @@
     <color name="tag_remembered">#00897B</color>
     <color name="tag_learning">#1976D2</color>
     <color name="tag_new">#424242</color>
+    <color name="error">#FF5252</color>
 </resources>

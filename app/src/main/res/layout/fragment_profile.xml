@@ -69,7 +69,7 @@
                     android:layout_marginTop="16dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="sans-serif-medium"
-                    android:hint="Nhập tên hiển thị"
+                    android:hint="@string/profile_hint_display_name"
                     android:textColorHint="#80FFFFFF"
                     android:textColor="@color/white"
                     android:textSize="22sp"
@@ -86,7 +86,7 @@
                     android:layout_marginTop="4dp"
                     android:textColor="@color/primary"
                     android:textSize="13sp"
-                    android:text="Đang tải email..."
+                    android:text="@string/profile_email_loading"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/et_display_name" />
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Premium Scholar Member"
+                    android:text="@string/profile_membership_label"
                     android:textColor="@color/primary"
                     android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +126,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="CLOUD SYNC STATUS"
+                        android:text="@string/profile_cloud_sync_status"
                         android:textColor="@color/on_surface"
                         android:textSize="11sp"
                         android:letterSpacing="0.1"
@@ -138,7 +138,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Đồng bộ lần cuối lúc 10:00 AM"
+                    android:text="@string/profile_last_sync_default"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
@@ -147,7 +147,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="16dp"
-                    android:text="Đồng bộ ngay"
+                    android:text="@string/profile_sync_now"
                     android:textSize="14sp"
                     android:textAllCaps="false"
                     app:cornerRadius="25dp"
@@ -166,14 +166,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1.2k"
+                    android:text="@string/profile_stats_count"
                     android:textColor="@color/white"
                     android:textSize="32sp"
                     android:fontFamily="sans-serif-black" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="WORDS MASTERED"
+                    android:text="@string/profile_stats_label"
                     android:textColor="@color/on_surface"
                     android:textSize="11sp"
                     android:alpha="0.6"/>
@@ -184,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="APPLICATION SETTINGS"
+                android:text="@string/profile_section_settings"
                 android:textColor="@color/on_surface"
                 android:textSize="11sp"
                 android:letterSpacing="0.1"
@@ -219,13 +219,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cài đặt Màn hình khóa"
+                        android:text="@string/profile_lock_screen_title"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hiển thị từ vựng khi mở máy"
+                        android:text="@string/profile_lock_screen_subtitle"
                         android:textColor="@color/on_surface"
                         android:textSize="11sp"
                         android:alpha="0.6"/>
@@ -272,13 +272,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Nhắc nhở học tập"
+                            android:text="@string/profile_reminder_title"
                             android:textColor="@color/white"
                             android:textSize="15sp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Xây dựng thói quen hàng ngày"
+                            android:text="@string/profile_reminder_subtitle"
                             android:textColor="@color/on_surface"
                             android:textSize="11sp"
                             android:alpha="0.6"/>
@@ -303,7 +303,7 @@
                         android:id="@+id/tv_hour"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="08"
+                        android:text="@string/profile_time_default_hour"
                         android:textColor="@color/white"
                         android:textSize="28sp"
                         android:fontFamily="sans-serif-medium" />
@@ -312,14 +312,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:layout_marginEnd="6dp"
-                        android:text=":"
+                        android:text="@string/profile_time_separator"
                         android:textColor="@color/white"
                         android:textSize="28sp" />
                     <TextView
                         android:id="@+id/tv_minute"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="30"
+                        android:text="@string/profile_time_default_minute"
                         android:textColor="@color/white"
                         android:textSize="28sp"
                         android:fontFamily="sans-serif-medium" />
@@ -335,14 +335,14 @@
                             android:background="@drawable/bg_nav_icon_selected"
                             android:paddingHorizontal="6dp"
                             android:paddingVertical="2dp"
-                            android:text="AM"
+                            android:text="@string/profile_time_am"
                             android:textColor="@color/white"
                             android:textSize="11sp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="PM"
+                            android:text="@string/profile_time_pm"
                             android:textColor="@color/on_surface"
                             android:textSize="11sp"
                             android:alpha="0.5"/>
@@ -366,7 +366,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="32dp"
-                android:text="Đăng xuất"
+                android:text="@string/profile_logout"
                 android:textColor="#FF5252"
                 android:textSize="14sp"
                 app:cornerRadius="26dp"
