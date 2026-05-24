@@ -7,6 +7,9 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/claudeCodeTabState.xml
+/.idea/inspectionProfiles/
+/.idea/copilotDiffState.xml
 .DS_Store
 /build
 /captures
@@ -14,3 +17,7 @@
 .cxx
 local.properties
 /.idea/deviceManager.xml
+/data/raw/
+/data/processed/
+/data/raw-test/
+/data/processed-test/

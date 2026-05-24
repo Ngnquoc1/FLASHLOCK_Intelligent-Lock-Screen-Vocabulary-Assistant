@@ -1,0 +1,45 @@
+[
+  {
+    "id": "en_general",
+    "title": "General English",
+    "language": "en",
+    "filter": { "type": "prefix", "ranges": ["a-f"] }
+  },
+  {
+    "id": "en_academic",
+    "title": "Academic English",
+    "language": "en",
+    "filter": { "type": "prefix", "ranges": ["g-m"] }
+  },
+  {
+    "id": "en_ielts",
+    "title": "IELTS Core",
+    "language": "en",
+    "filter": { "type": "prefix", "ranges": ["n-r"] }
+  },
+  {
+    "id": "en_toeic",
+    "title": "TOEIC Core",
+    "language": "en",
+    "filter": { "type": "prefix", "ranges": ["s-z"] }
+  },
+  {
+    "id": "vi_general",
+    "title": "General English (VI Priority)",
+    "language": "vi",
+    "filter": { "type": "prefix", "ranges": ["a-f"] }
+  },
+  {
+    "id": "vi_ielts",
+    "title": "IELTS (VI Priority)",
+    "language": "vi",
+    "filter": { "type": "prefix", "ranges": ["g-m"] }
+  },
+  {
+    "id": "vi_toeic",
+    "title": "TOEIC (VI Priority)",
+    "language": "vi",
+    "filter": { "type": "prefix", "ranges": ["n-z"] }
+  }
+]
+

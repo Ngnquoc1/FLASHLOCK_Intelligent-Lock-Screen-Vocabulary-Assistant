@@ -1,0 +1,27 @@
+[
+  {
+    "topicId": "toeic_600",
+    "title": "TOEIC 600",
+    "category": "TOEIC",
+    "thumbnailUrl": "https://example.com/toeic_600.png",
+    "wordCount": 600,
+    "createdAt": "2026-05-07T00:00:00Z"
+  },
+  {
+    "topicId": "ielts_academic_core",
+    "title": "IELTS Academic Core",
+    "category": "IELTS",
+    "thumbnailUrl": "https://example.com/ielts_academic.png",
+    "wordCount": 1200,
+    "createdAt": "2026-05-07T00:00:00Z"
+  },
+  {
+    "topicId": "it_communication",
+    "title": "Giao tiep IT",
+    "category": "IT",
+    "thumbnailUrl": "https://example.com/it_communication.png",
+    "wordCount": 480,
+    "createdAt": "2026-05-07T00:00:00Z"
+  }
+]
+
