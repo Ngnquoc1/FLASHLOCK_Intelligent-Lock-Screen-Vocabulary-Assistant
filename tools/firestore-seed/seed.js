@@ -44,6 +44,7 @@ function buildTopicPayload(topic, admin) {
   if (topic.category) payload.category = topic.category;
   if (topic.thumbnailUrl) payload.thumbnailUrl = topic.thumbnailUrl;
   if (typeof topic.wordCount === "number") payload.wordCount = topic.wordCount;
+  if (topic.language) payload.language = topic.language;
 
   const createdAt = normalizeDate(topic.createdAt);
   if (admin) {
@@ -69,6 +70,7 @@ function buildWordPayload(word, admin) {
   if (word.pronunciation) payload.pronunciation = word.pronunciation;
   if (word.wordType) payload.wordType = word.wordType;
   if (word.topicId) payload.topicId = word.topicId;
+  if (word.language) payload.language = word.language;
   payload.status = word.status || "NEW";
 
   const createdAt = normalizeDate(word.createdAt);
@@ -97,11 +99,12 @@ function printHelp() {
   console.log("Options:");
   console.log("  --topics <path>        Path to topics JSON");
   console.log("  --words <path>         Path to words JSON");
-  console.log("  --uid <userId>         Target user id for words");
+  console.log("  --uid <userId>         Target user id for words (user mode)");
   console.log("  --service-account <p>  Firebase service account JSON");
   console.log("  --project <id>         Firebase project id");
   console.log("  --topics-only          Only import topics");
   console.log("  --words-only           Only import words");
+  console.log("  --topic-words          Import words into topics/{topicId}/words");
   console.log("  --limit <n>            Limit number of records per type");
   console.log("  --dry-run              Validate and print summary only");
   console.log("  --no-merge             Overwrite documents instead of merge");
@@ -123,8 +126,9 @@ async function run() {
   const merge = !hasFlag("--no-merge");
   const includeTopics = !hasFlag("--words-only");
   const includeWords = !hasFlag("--topics-only");
+  const useTopicWords = hasFlag("--topic-words");
 
-  if (includeWords && !uid) {
+  if (includeWords && !uid && !dryRun && !useTopicWords) {
     console.error("Missing --uid for words import.");
     process.exitCode = 1;
     return;
@@ -188,7 +192,7 @@ async function run() {
     console.log(`Imported ${counter} topics.`);
   }
 
-  async function writeWords() {
+  async function writeWordsToUser() {
     let batch = db.batch();
     let counter = 0;
     const wordsRef = db.collection("users").doc(uid).collection("my_words");
@@ -210,12 +214,42 @@ async function run() {
     console.log(`Imported ${counter} words to users/${uid}/my_words.`);
   }
 
+  async function writeWordsToTopics() {
+    let batch = db.batch();
+    let counter = 0;
+
+    for (const word of words) {
+      const topicId = word.topicId;
+      if (!topicId) {
+        continue;
+      }
+      const topicRef = db.collection("topics").doc(topicId).collection("words");
+      const docId = word.wordId || topicRef.doc().id;
+      const payload = buildWordPayload({ ...word, wordId: docId }, admin);
+      const ref = topicRef.doc(docId);
+      batch.set(ref, payload, { merge });
+      counter += 1;
+
+      if (counter % 450 === 0) {
+        await commitBatch(batch);
+        batch = db.batch();
+      }
+    }
+
+    await commitBatch(batch);
+    console.log(`Imported ${counter} words to topics/{topicId}/words.`);
+  }
+
   if (includeTopics) {
     await writeTopics();
   }
 
   if (includeWords) {
-    await writeWords();
+    if (useTopicWords) {
+      await writeWordsToTopics();
+    } else {
+      await writeWordsToUser();
+    }
   }
 }
 
@@ -223,4 +257,3 @@ run().catch((error) => {
   console.error("Seed failed:", error);
   process.exitCode = 1;
 });
-

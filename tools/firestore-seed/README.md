@@ -39,6 +39,14 @@ node seed.js --project <PROJECT_ID> --service-account <PATH_TO_SERVICE_ACCOUNT_J
 Pop-Location
 ```
 
+## Seed shared topic words (public library)
+
+```powershell
+Push-Location "C:\STUDY\FlashLock2\tools\firestore-seed"
+node seed.js --project <PROJECT_ID> --service-account <PATH_TO_SERVICE_ACCOUNT_JSON> --words "C:\STUDY\FlashLock2\data\processed\words.seed.json" --topic-words --words-only
+Pop-Location
+```
+
 ## Options
 
 - `--topics <path>`: custom topics JSON file
@@ -47,4 +55,3 @@ Pop-Location
 - `--limit <n>`: limit number of records per type
 - `--dry-run`: validate JSON without writing
 - `--no-merge`: overwrite documents instead of merge
-
