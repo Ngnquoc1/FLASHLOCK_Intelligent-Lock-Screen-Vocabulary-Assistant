@@ -155,6 +155,7 @@
     <string name="vocab_chip_learning">Đang học</string>
     <string name="vocab_chip_mastered">Đã nhớ</string>
     <string name="vocab_empty_state">Chưa có từ vựng nào</string>
+    <string name="vocab_empty_topics">Chưa có chủ đề nào được lưu</string>
     <string name="vocab_explore_prompt">Bạn đang tìm chủ đề cụ thể hơn?</string>
     <string name="vocab_explore_button">Khám phá thư viện</string>
 

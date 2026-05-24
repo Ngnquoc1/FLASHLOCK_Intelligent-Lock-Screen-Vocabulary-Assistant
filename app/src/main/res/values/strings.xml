@@ -155,6 +155,7 @@
     <string name="vocab_chip_learning">Learning</string>
     <string name="vocab_chip_mastered">Mastered</string>
     <string name="vocab_empty_state">No words yet</string>
+    <string name="vocab_empty_topics">No topics saved yet</string>
     <string name="vocab_explore_prompt">Looking for more specific domains?</string>
     <string name="vocab_explore_button">Explore Library</string>
 

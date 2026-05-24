@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.data.model.Word;
+import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.ui.vocabulary.AddWordBottomSheet.AddWordInput;
 
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ public class VocabularyFragment extends Fragment {
     private TextView tvEmptyState;
     private TextView tvErrorState;
     private View loadingView;
+
+    private List<Topic> cachedTopics = new ArrayList<>();
 
     public static VocabularyFragment newInstance() {
         return new VocabularyFragment();
@@ -106,7 +109,11 @@ public class VocabularyFragment extends Fragment {
             cachedWords = words != null ? words : new ArrayList<>();
             applyFilter();
         });
-        viewModel.getTopics().observe(getViewLifecycleOwner(), topics -> topicAdapter.submitList(topics));
+        viewModel.getTopics().observe(getViewLifecycleOwner(), topics -> {
+            cachedTopics = topics != null ? topics : new ArrayList<>();
+            topicAdapter.submitList(cachedTopics);
+            updateTopicsEmptyState();
+        });
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             loadingView.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
         });
@@ -214,6 +221,8 @@ public class VocabularyFragment extends Fragment {
         exploreFooter.setVisibility(View.VISIBLE);
         fabAdd.setVisibility(View.GONE);
         tvEmptyState.setVisibility(View.GONE);
+        tvEmptyState.setText(R.string.vocab_empty_topics);
+        updateTopicsEmptyState();
         recyclerView.setAdapter(topicAdapter);
         viewModel.loadTopics();
     }
@@ -222,7 +231,21 @@ public class VocabularyFragment extends Fragment {
         List<Word> filtered = WordFilter.apply(cachedWords, statusFilter, searchQuery, !isServerSearchActive);
         vocabularyAdapter.submitList(filtered);
         if (isVocabularyTab) {
+            tvEmptyState.setText(R.string.vocab_empty_state);
             tvEmptyState.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void updateTopicsEmptyState() {
+        if (isVocabularyTab) {
+            return;
+        }
+        boolean isEmpty = cachedTopics.isEmpty();
+        tvEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        tvEmptyState.setText(R.string.vocab_empty_topics);
+        View exploreFooter = requireView().findViewById(R.id.explore_footer);
+        if (exploreFooter != null) {
+            exploreFooter.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         }
     }
 
