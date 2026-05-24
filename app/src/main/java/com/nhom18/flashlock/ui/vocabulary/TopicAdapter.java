@@ -52,8 +52,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         void bind(Topic topic) {
             tvTitle.setText(topic.getTitle() != null ? topic.getTitle() : "");
             long count = topic.getWordCount();
-            tvWordCount.setText(count > 0 ? (count + " WORDS") : "");
+            if (count > 0) {
+                tvWordCount.setText(itemView.getContext().getString(R.string.topic_word_count_format, count));
+            } else {
+                tvWordCount.setText("");
+            }
         }
     }
 }
-

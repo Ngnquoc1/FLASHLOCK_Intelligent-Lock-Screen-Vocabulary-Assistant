@@ -26,6 +26,8 @@ import com.nhom18.flashlock.ui.vocabulary.AddWordBottomSheet.AddWordInput;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
+
 public class VocabularyFragment extends Fragment {
 
     private boolean isVocabularyTab = true;
@@ -263,16 +265,16 @@ public class VocabularyFragment extends Fragment {
 
     private void setChipSelected(TextView chip, boolean selected) {
         chip.setBackgroundResource(selected ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
-        chip.setTextColor(getResources().getColor(selected ? R.color.on_primary_container : R.color.white));
+        chip.setTextColor(ContextCompat.getColor(requireContext(), selected ? R.color.on_primary_container : R.color.white));
     }
 
     private void updateTabs(TextView selected, TextView unselected) {
         selected.setBackgroundResource(R.drawable.bg_tab_selected);
-        selected.setTextColor(getResources().getColor(R.color.white));
+        selected.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
         selected.setAlpha(1.0f);
 
         unselected.setBackground(null);
-        unselected.setTextColor(getResources().getColor(R.color.on_surface));
+        unselected.setTextColor(ContextCompat.getColor(requireContext(), R.color.on_surface));
         unselected.setAlpha(0.6f);
     }
 

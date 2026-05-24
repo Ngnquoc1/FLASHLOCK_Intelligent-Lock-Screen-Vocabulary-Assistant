@@ -194,6 +194,7 @@
 
     <string name="topic_badge_premium">Premium</string>
     <string name="topic_action_continue">Continue</string>
+    <string name="topic_word_count_format">%1$d WORDS</string>
 
     <!-- Vocabulary Error Strings -->
     <string name="vocab_error_word_required">Word data is missing.</string>

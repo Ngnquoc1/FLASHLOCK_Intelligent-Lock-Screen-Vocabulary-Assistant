@@ -1,0 +1,15 @@
+{
+  "name": "flashlock-firestore-seed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Seed FlashLock Firestore topics and user words",
+  "main": "seed.js",
+  "scripts": {
+    "dry-run": "node seed.js --dry-run --limit 3",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.2.0"
+  }
+}
+

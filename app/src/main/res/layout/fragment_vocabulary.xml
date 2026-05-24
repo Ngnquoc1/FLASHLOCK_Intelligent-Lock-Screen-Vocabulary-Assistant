@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_tab_selected"
             android:gravity="center"
-            android:text="Vocabulary"
+            android:text="@string/vocab_tab_vocabulary"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Topics"
+            android:text="@string/vocab_tab_topics"
             android:textColor="@color/on_surface"
             android:textSize="14sp"
             android:alpha="0.6"
@@ -81,7 +81,7 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="My Vocabulary"
+                    android:text="@string/vocab_title_my"
                     android:textColor="@color/white"
                     android:textSize="32sp"
                     android:fontFamily="sans-serif-black" />
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Managing 1,248 mastered words and counting."
+                    android:text="@string/vocab_subtitle_my"
                     android:textColor="@color/on_surface"
                     android:textSize="13sp"
                     android:alpha="0.5" />
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:background="@android:color/transparent"
-                        android:hint="Search your lexicon..."
+                        android:hint="@string/vocab_search_hint"
                         android:textColor="@color/white"
                         android:textColorHint="@color/on_surface"
                         android:textSize="14sp" />
@@ -144,7 +144,7 @@
                             android:background="@drawable/bg_chip_selected"
                             android:paddingHorizontal="20dp"
                             android:paddingVertical="10dp"
-                            android:text="All Words"
+                            android:text="@string/vocab_chip_all"
                             android:textColor="@color/on_primary_container"
                             android:textSize="13sp"
                             android:fontFamily="sans-serif-medium" />
@@ -157,7 +157,7 @@
                             android:background="@drawable/bg_chip_unselected"
                             android:paddingHorizontal="20dp"
                             android:paddingVertical="10dp"
-                            android:text="Từ mới"
+                            android:text="@string/vocab_chip_new"
                             android:textColor="@color/white"
                             android:textSize="13sp" />
 
@@ -169,7 +169,7 @@
                             android:background="@drawable/bg_chip_unselected"
                             android:paddingHorizontal="20dp"
                             android:paddingVertical="10dp"
-                            android:text="Đang học"
+                            android:text="@string/vocab_chip_learning"
                             android:textColor="@color/white"
                             android:textSize="13sp" />
 
@@ -181,7 +181,7 @@
                             android:background="@drawable/bg_chip_unselected"
                             android:paddingHorizontal="20dp"
                             android:paddingVertical="10dp"
-                            android:text="Đã nhớ"
+                            android:text="@string/vocab_chip_mastered"
                             android:textColor="@color/white"
                             android:textSize="13sp" />
                     </LinearLayout>
@@ -212,7 +212,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="Chưa có từ vựng nào"
+                android:text="@string/vocab_empty_state"
                 android:textColor="@color/on_surface"
                 android:alpha="0.7"
                 android:visibility="gone" />
@@ -238,7 +238,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Looking for more specific domains?"
+                    android:text="@string/vocab_explore_prompt"
                     android:textColor="@color/on_surface"
                     android:alpha="0.6"
                     android:textSize="13sp" />
@@ -247,7 +247,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Explore Library"
+                    android:text="@string/vocab_explore_button"
                     android:textAllCaps="false"
                     app:cornerRadius="20dp"
                     app:icon="@android:drawable/ic_menu_compass"
