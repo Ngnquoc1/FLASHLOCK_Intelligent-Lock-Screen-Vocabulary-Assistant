@@ -8,7 +8,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.data.model.Word;
-import com.nhom18.flashlock.data.repository.TopicRepository;
+import com.nhom18.flashlock.data.repository.SavedTopicRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
 import com.nhom18.flashlock.util.LiveDataTestUtil;
 
@@ -27,7 +27,7 @@ public class VocabularyViewModelTest {
     @Test
     public void addWord_missingTerm_setsError() throws InterruptedException {
         FakeWordRepository wordRepository = new FakeWordRepository();
-        VocabularyViewModel viewModel = new VocabularyViewModel(wordRepository, new FakeTopicRepository());
+        VocabularyViewModel viewModel = new VocabularyViewModel(wordRepository, new FakeSavedTopicRepository());
 
         Word word = new Word();
         word.setTerm(" ");
@@ -42,7 +42,7 @@ public class VocabularyViewModelTest {
 
     @Test
     public void deleteWord_missingId_setsError() throws InterruptedException {
-        VocabularyViewModel viewModel = new VocabularyViewModel(new FakeWordRepository(), new FakeTopicRepository());
+        VocabularyViewModel viewModel = new VocabularyViewModel(new FakeWordRepository(), new FakeSavedTopicRepository());
 
         viewModel.deleteWord(" ");
 
@@ -99,15 +99,10 @@ public class VocabularyViewModelTest {
         }
     }
 
-    private static class FakeTopicRepository implements TopicRepository {
+    private static class FakeSavedTopicRepository implements SavedTopicRepository {
         @Override
-        public Task<List<Topic>> getAllTopics() {
+        public Task<List<Topic>> getSavedTopics() {
             return Tasks.forResult(new ArrayList<>());
-        }
-
-        @Override
-        public ListenerRegistration observeTopics(TopicListListener listener) {
-            return null;
         }
     }
 }

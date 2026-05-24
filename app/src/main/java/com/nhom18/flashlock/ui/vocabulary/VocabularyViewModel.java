@@ -6,18 +6,18 @@ import androidx.lifecycle.ViewModel;
 import com.google.firebase.Timestamp;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.data.model.Word;
-import com.nhom18.flashlock.data.remote.FirebaseTopicDataSource;
+import com.nhom18.flashlock.data.remote.FirebaseSavedTopicDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseWordDataSource;
-import com.nhom18.flashlock.data.repository.FirebaseTopicRepository;
+import com.nhom18.flashlock.data.repository.FirebaseSavedTopicRepository;
 import com.nhom18.flashlock.data.repository.FirebaseWordRepository;
-import com.nhom18.flashlock.data.repository.TopicRepository;
+import com.nhom18.flashlock.data.repository.SavedTopicRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VocabularyViewModel extends ViewModel {
     private final WordRepository wordRepository;
-    private final TopicRepository topicRepository;
+    private final SavedTopicRepository topicRepository;
 
     private final MutableLiveData<List<Word>> words = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Topic>> topics = new MutableLiveData<>(new ArrayList<>());
@@ -26,10 +26,10 @@ public class VocabularyViewModel extends ViewModel {
 
     public VocabularyViewModel() {
         this(new FirebaseWordRepository(new FirebaseWordDataSource()),
-                new FirebaseTopicRepository(new FirebaseTopicDataSource()));
+                new FirebaseSavedTopicRepository(new FirebaseSavedTopicDataSource()));
     }
 
-    VocabularyViewModel(WordRepository wordRepository, TopicRepository topicRepository) {
+    VocabularyViewModel(WordRepository wordRepository, SavedTopicRepository topicRepository) {
         this.wordRepository = wordRepository;
         this.topicRepository = topicRepository;
     }
@@ -81,7 +81,7 @@ public class VocabularyViewModel extends ViewModel {
 
     public void loadTopics() {
         loading.setValue(true);
-        topicRepository.getAllTopics().addOnCompleteListener(task -> {
+        topicRepository.getSavedTopics().addOnCompleteListener(task -> {
             loading.postValue(false);
             if (task.isSuccessful()) {
                 topics.postValue(task.getResult());
