@@ -42,11 +42,13 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     static class TopicViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvTitle;
         private final TextView tvWordCount;
+        private final TextView tvLanguageBadge;
 
         TopicViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_topic_name);
             tvWordCount = itemView.findViewById(R.id.tv_word_count);
+            tvLanguageBadge = itemView.findViewById(R.id.tv_premium_badge);
         }
 
         void bind(Topic topic) {
@@ -56,6 +58,15 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
                 tvWordCount.setText(itemView.getContext().getString(R.string.topic_word_count_format, count));
             } else {
                 tvWordCount.setText("");
+            }
+
+            String language = topic.getLanguage();
+            if (language == null || language.trim().isEmpty()) {
+                tvLanguageBadge.setVisibility(View.GONE);
+            } else {
+                tvLanguageBadge.setVisibility(View.VISIBLE);
+                String label = language.equalsIgnoreCase("vi") ? "VI" : "EN";
+                tvLanguageBadge.setText(label);
             }
         }
     }

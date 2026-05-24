@@ -8,8 +8,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.data.model.Word;
+import com.nhom18.flashlock.data.model.TopicProgress;
 import com.nhom18.flashlock.data.repository.SavedTopicRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
+import com.nhom18.flashlock.data.repository.TopicProgressRepository;
 import com.nhom18.flashlock.util.LiveDataTestUtil;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class VocabularyViewModelTest {
     @Test
     public void addWord_missingTerm_setsError() throws InterruptedException {
         FakeWordRepository wordRepository = new FakeWordRepository();
-        VocabularyViewModel viewModel = new VocabularyViewModel(wordRepository, new FakeSavedTopicRepository());
+        VocabularyViewModel viewModel = new VocabularyViewModel(wordRepository, new FakeSavedTopicRepository(), new FakeTopicProgressRepository());
 
         Word word = new Word();
         word.setTerm(" ");
@@ -42,7 +44,7 @@ public class VocabularyViewModelTest {
 
     @Test
     public void deleteWord_missingId_setsError() throws InterruptedException {
-        VocabularyViewModel viewModel = new VocabularyViewModel(new FakeWordRepository(), new FakeSavedTopicRepository());
+        VocabularyViewModel viewModel = new VocabularyViewModel(new FakeWordRepository(), new FakeSavedTopicRepository(), new FakeTopicProgressRepository());
 
         viewModel.deleteWord(" ");
 
@@ -103,6 +105,23 @@ public class VocabularyViewModelTest {
         @Override
         public Task<List<Topic>> getSavedTopics() {
             return Tasks.forResult(new ArrayList<>());
+        }
+
+        @Override
+        public Task<Void> saveTopic(Topic topic) {
+            return Tasks.forResult(null);
+        }
+    }
+
+    private static class FakeTopicProgressRepository implements TopicProgressRepository {
+        @Override
+        public Task<List<TopicProgress>> getProgress() {
+            return Tasks.forResult(new ArrayList<>());
+        }
+
+        @Override
+        public Task<Void> saveProgress(TopicProgress progress) {
+            return Tasks.forResult(null);
         }
     }
 }

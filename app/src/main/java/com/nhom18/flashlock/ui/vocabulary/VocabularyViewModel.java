@@ -5,12 +5,16 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.google.firebase.Timestamp;
 import com.nhom18.flashlock.data.model.Topic;
+import com.nhom18.flashlock.data.model.TopicProgress;
 import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.data.remote.FirebaseSavedTopicDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseWordDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseSavedTopicRepository;
 import com.nhom18.flashlock.data.repository.FirebaseWordRepository;
 import com.nhom18.flashlock.data.repository.SavedTopicRepository;
+import com.nhom18.flashlock.data.repository.TopicProgressRepository;
+import com.nhom18.flashlock.data.remote.FirebaseTopicProgressDataSource;
+import com.nhom18.flashlock.data.repository.FirebaseTopicProgressRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,20 +22,30 @@ import java.util.List;
 public class VocabularyViewModel extends ViewModel {
     private final WordRepository wordRepository;
     private final SavedTopicRepository topicRepository;
+    private final TopicProgressRepository topicProgressRepository;
 
     private final MutableLiveData<List<Word>> words = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Topic>> topics = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<TopicProgress>> topicProgress = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>(null);
 
     public VocabularyViewModel() {
         this(new FirebaseWordRepository(new FirebaseWordDataSource()),
-                new FirebaseSavedTopicRepository(new FirebaseSavedTopicDataSource()));
+                new FirebaseSavedTopicRepository(new FirebaseSavedTopicDataSource()),
+                new FirebaseTopicProgressRepository(new FirebaseTopicProgressDataSource()));
     }
 
     VocabularyViewModel(WordRepository wordRepository, SavedTopicRepository topicRepository) {
+        this(wordRepository, topicRepository, new FirebaseTopicProgressRepository(new FirebaseTopicProgressDataSource()));
+    }
+
+    VocabularyViewModel(WordRepository wordRepository,
+                        SavedTopicRepository topicRepository,
+                        TopicProgressRepository topicProgressRepository) {
         this.wordRepository = wordRepository;
         this.topicRepository = topicRepository;
+        this.topicProgressRepository = topicProgressRepository;
     }
 
     public LiveData<List<Word>> getWords() {
@@ -40,6 +54,10 @@ public class VocabularyViewModel extends ViewModel {
 
     public LiveData<List<Topic>> getTopics() {
         return topics;
+    }
+
+    public LiveData<List<TopicProgress>> getTopicProgress() {
+        return topicProgress;
     }
 
     public LiveData<Boolean> getLoading() {
@@ -87,6 +105,44 @@ public class VocabularyViewModel extends ViewModel {
                 topics.postValue(task.getResult());
             } else {
                 error.postValue(task.getException() != null ? task.getException().getMessage() : "LOAD_TOPICS_FAILED");
+            }
+        });
+    }
+
+    public void saveTopic(Topic topic) {
+        if (topic == null || topic.getTopicId() == null || topic.getTopicId().trim().isEmpty()) {
+            error.setValue("TOPIC_ID_REQUIRED");
+            return;
+        }
+        loading.setValue(true);
+        topicRepository.saveTopic(topic).addOnCompleteListener(task -> {
+            loading.postValue(false);
+            if (task.isSuccessful()) {
+                loadTopics();
+            } else {
+                error.postValue(task.getException() != null ? task.getException().getMessage() : "SAVE_TOPIC_FAILED");
+            }
+        });
+    }
+
+    public void loadTopicProgress() {
+        topicProgressRepository.getProgress().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                topicProgress.postValue(task.getResult());
+            } else {
+                error.postValue(task.getException() != null ? task.getException().getMessage() : "LOAD_TOPIC_PROGRESS_FAILED");
+            }
+        });
+    }
+
+    public void saveTopicProgress(TopicProgress progress) {
+        if (progress == null || progress.getTopicId() == null || progress.getTopicId().trim().isEmpty()) {
+            error.setValue("TOPIC_ID_REQUIRED");
+            return;
+        }
+        topicProgressRepository.saveProgress(progress).addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                error.postValue(task.getException() != null ? task.getException().getMessage() : "SAVE_TOPIC_PROGRESS_FAILED");
             }
         });
     }

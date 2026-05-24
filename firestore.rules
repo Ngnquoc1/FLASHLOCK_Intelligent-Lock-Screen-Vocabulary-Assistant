@@ -79,6 +79,10 @@ service cloud.firestore {
       match /saved_topics/{topicId} {
         allow read, write: if isOwner(uid);
       }
+
+      match /topic_progress/{topicId} {
+        allow read, write: if isOwner(uid);
+      }
     }
 
     match /topics/{topicId} {

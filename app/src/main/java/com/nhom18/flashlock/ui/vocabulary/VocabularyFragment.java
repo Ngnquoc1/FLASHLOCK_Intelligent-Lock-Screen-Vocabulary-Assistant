@@ -274,6 +274,14 @@ public class VocabularyFragment extends Fragment {
                 return getString(R.string.vocab_error_search_failed);
             case "LOAD_TOPICS_FAILED":
                 return getString(R.string.vocab_error_load_topics_failed);
+            case "TOPIC_ID_REQUIRED":
+                return getString(R.string.vocab_error_topic_id_required);
+            case "SAVE_TOPIC_FAILED":
+                return getString(R.string.vocab_error_save_topic_failed);
+            case "LOAD_TOPIC_PROGRESS_FAILED":
+                return getString(R.string.vocab_error_load_topic_progress_failed);
+            case "SAVE_TOPIC_PROGRESS_FAILED":
+                return getString(R.string.vocab_error_save_topic_progress_failed);
             default:
                 return code;
         }

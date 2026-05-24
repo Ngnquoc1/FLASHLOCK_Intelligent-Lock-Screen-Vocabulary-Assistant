@@ -209,5 +209,8 @@
     <string name="vocab_error_load_failed">Tải dữ liệu từ vựng thất bại. Vui lòng thử lại.</string>
     <string name="vocab_error_search_failed">Tìm kiếm từ vựng thất bại. Vui lòng thử lại.</string>
     <string name="vocab_error_load_topics_failed">Tải danh sách chủ đề thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_topic_id_required">Thiếu thông tin chủ đề.</string>
+    <string name="vocab_error_save_topic_failed">Lưu chủ đề thất bại.</string>
+    <string name="vocab_error_load_topic_progress_failed">Tải tiến độ chủ đề thất bại.</string>
+    <string name="vocab_error_save_topic_progress_failed">Lưu tiến độ chủ đề thất bại.</string>
 </resources>
-

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SavedTopicRepository {
     Task<List<Topic>> getSavedTopics();
+    Task<Void> saveTopic(Topic topic);
 }
-

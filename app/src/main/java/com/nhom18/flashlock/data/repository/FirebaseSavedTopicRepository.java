@@ -17,5 +17,10 @@ public class FirebaseSavedTopicRepository implements SavedTopicRepository {
         String uid = dataSource.getCurrentUid();
         return dataSource.getSavedTopics(uid);
     }
-}
 
+    @Override
+    public Task<Void> saveTopic(Topic topic) {
+        String uid = dataSource.getCurrentUid();
+        return dataSource.saveTopic(uid, topic);
+    }
+}

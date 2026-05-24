@@ -9,6 +9,7 @@ public class Topic {
     private String thumbnailUrl;
     private long wordCount;
     private Timestamp createdAt;
+    private String language;
 
     public Topic() {}
 
@@ -29,5 +30,7 @@ public class Topic {
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-}
 
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
+}

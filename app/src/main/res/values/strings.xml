@@ -209,4 +209,8 @@
     <string name="vocab_error_load_failed">Failed to load words. Please try again.</string>
     <string name="vocab_error_search_failed">Failed to search words. Please try again.</string>
     <string name="vocab_error_load_topics_failed">Failed to load topics. Please try again.</string>
+    <string name="vocab_error_topic_id_required">Topic is required.</string>
+    <string name="vocab_error_save_topic_failed">Failed to save topic.</string>
+    <string name="vocab_error_load_topic_progress_failed">Failed to load topic progress.</string>
+    <string name="vocab_error_save_topic_progress_failed">Failed to save topic progress.</string>
 </resources>

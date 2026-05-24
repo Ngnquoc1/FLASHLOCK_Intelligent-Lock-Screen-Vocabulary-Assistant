@@ -5,15 +5,15 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nhom18.flashlock.data.model.Topic;
+import com.nhom18.flashlock.data.model.TopicProgress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirebaseSavedTopicDataSource {
+public class FirebaseTopicProgressDataSource {
     private final FirebaseFirestore db;
     private final FirebaseAuth auth;
 
-    public FirebaseSavedTopicDataSource() {
+    public FirebaseTopicProgressDataSource() {
         this.db = FirebaseFirestore.getInstance();
         this.auth = FirebaseAuth.getInstance();
     }
@@ -22,43 +22,43 @@ public class FirebaseSavedTopicDataSource {
         return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
     }
 
-    public Task<List<Topic>> getSavedTopics(String uid) {
+    public Task<List<TopicProgress>> getProgress(String uid) {
         if (uid == null) {
             return Tasks.forException(new Exception("User not logged in"));
         }
         return db.collection("users")
                 .document(uid)
-                .collection("saved_topics")
+                .collection("topic_progress")
                 .get()
                 .continueWith(task -> {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-                    List<Topic> topics = new ArrayList<>();
+                    List<TopicProgress> progressList = new ArrayList<>();
                     for (DocumentSnapshot doc : task.getResult().getDocuments()) {
-                        Topic topic = doc.toObject(Topic.class);
-                        if (topic != null && (topic.getTopicId() == null || topic.getTopicId().isEmpty())) {
-                            topic.setTopicId(doc.getId());
+                        TopicProgress progress = doc.toObject(TopicProgress.class);
+                        if (progress != null && (progress.getTopicId() == null || progress.getTopicId().isEmpty())) {
+                            progress.setTopicId(doc.getId());
                         }
-                        if (topic != null) {
-                            topics.add(topic);
+                        if (progress != null) {
+                            progressList.add(progress);
                         }
                     }
-                    return topics;
+                    return progressList;
                 });
     }
 
-    public Task<Void> saveTopic(String uid, Topic topic) {
+    public Task<Void> saveProgress(String uid, TopicProgress progress) {
         if (uid == null) {
             return Tasks.forException(new Exception("User not logged in"));
         }
-        if (topic == null || topic.getTopicId() == null || topic.getTopicId().trim().isEmpty()) {
+        if (progress == null || progress.getTopicId() == null || progress.getTopicId().trim().isEmpty()) {
             return Tasks.forException(new Exception("topicId is required"));
         }
         return db.collection("users")
                 .document(uid)
-                .collection("saved_topics")
-                .document(topic.getTopicId())
-                .set(topic);
+                .collection("topic_progress")
+                .document(progress.getTopicId())
+                .set(progress);
     }
 }
