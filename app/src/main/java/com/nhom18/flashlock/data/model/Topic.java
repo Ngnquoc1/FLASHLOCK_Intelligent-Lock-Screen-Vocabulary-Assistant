@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp;
 
 public class Topic {
     private String topicId;
+    private String documentId;
     private String title;
     private String category;
     private String thumbnailUrl;
@@ -15,6 +16,9 @@ public class Topic {
 
     public String getTopicId() { return topicId; }
     public void setTopicId(String topicId) { this.topicId = topicId; }
+
+    public String getDocumentId() { return documentId; }
+    public void setDocumentId(String documentId) { this.documentId = documentId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

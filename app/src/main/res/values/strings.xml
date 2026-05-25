@@ -39,7 +39,7 @@
     <string name="reset_title">Reset Access</string>
     <string name="reset_subtitle">Enter your registered email to receive a recovery link.</string>
     <string name="reset_label_email">EMAIL ADDRESS</string>
-    <string name="reset_hint_email">name\@example.com</string>
+    <string name="reset_hint_email">name\@domain.com</string>
     <string name="reset_btn_send">Send Reset Link</string>
     <string name="reset_btn_back">BACK TO LOGIN</string>
     <string name="reset_footer_text">SECURE RECOVERY PROTOCOL V4.2</string>
@@ -213,4 +213,27 @@
     <string name="vocab_error_save_topic_failed">Failed to save topic.</string>
     <string name="vocab_error_load_topic_progress_failed">Failed to load topic progress.</string>
     <string name="vocab_error_save_topic_progress_failed">Failed to save topic progress.</string>
+
+    <!-- Library Screen Strings -->
+    <string name="library_title">Vocabulary Library</string>
+    <string name="library_subtitle">Explore curated vocabulary packs for your goals.</string>
+    <string name="library_chip_all">All</string>
+    <string name="library_chip_conversation">Conversation</string>
+    <string name="library_chip_toeic">TOEIC</string>
+    <string name="library_action_study_now">Study now</string>
+    <string name="library_empty_state">No matching vocabulary packs</string>
+    <string name="library_error_load">Unable to load the library. Please try again.</string>
+    <string name="library_save_success">Added to your vocabulary</string>
+    <string name="library_save_missing_id">Topic is missing an id</string>
+    <string name="library_action_save">Save topic</string>
+    <string name="library_action_saved">Saved</string>
+    <string name="library_open_topic_missing_id">Topic is missing an id</string>
+    <string name="library_loading">Loading topics...</string>
+
+    <!-- Topic Words Screen Strings -->
+    <string name="topic_words_title">Topic words</string>
+    <string name="topic_words_fallback_title">Topic</string>
+    <string name="topic_words_empty">No words in this topic yet</string>
+    <string name="topic_words_load_failed">Failed to load words. Please try again.</string>
+    <string name="topic_words_count_format">%1$d words</string>
 </resources>

@@ -37,10 +37,11 @@ public class FirebaseSavedTopicDataSource {
                     List<Topic> topics = new ArrayList<>();
                     for (DocumentSnapshot doc : task.getResult().getDocuments()) {
                         Topic topic = doc.toObject(Topic.class);
-                        if (topic != null && (topic.getTopicId() == null || topic.getTopicId().isEmpty())) {
-                            topic.setTopicId(doc.getId());
-                        }
                         if (topic != null) {
+                            topic.setDocumentId(doc.getId());
+                            if (topic.getTopicId() == null || topic.getTopicId().isEmpty()) {
+                                topic.setTopicId(doc.getId());
+                            }
                             topics.add(topic);
                         }
                     }

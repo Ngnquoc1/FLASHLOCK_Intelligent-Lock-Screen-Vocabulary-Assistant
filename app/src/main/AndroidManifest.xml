@@ -16,6 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FlashLock">
         <activity
+            android:name=".ui.library.LibraryTopicWordsActivity" />
+        <activity
             android:name=".ui.main.MainActivity" />
 
         <!-- SplashActivity là màn hình khởi đầu -->
