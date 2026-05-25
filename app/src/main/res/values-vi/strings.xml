@@ -1,0 +1,230 @@
+<resources>
+    <string name="app_name">FlashLock</string>
+    <string name="top_app_title">FlashLock</string>
+    <string name="splash_title_flash">Flash</string>
+    <string name="splash_title_lock">Lock</string>
+    <string name="splash_subtitle_unlock">MỞ KHÓA TỪ VỰNG CỦA BẠN</string>
+    <string name="home_content_placeholder">Khu vực nội dung chính</string>
+
+    <!-- Login Screen Strings -->
+    <string name="login_title_welcome">Chào mừng bạn trở lại</string>
+    <string name="login_subtitle_welcome">Tiếp tục hành trình học từ vựng</string>
+    <string name="login_label_email">ĐỊA CHỈ EMAIL</string>
+    <string name="login_hint_email">name\@domain.com</string>
+    <string name="login_label_password">MẬT KHẨU</string>
+    <string name="login_btn_forgot_password">Quên mật khẩu?</string>
+    <string name="login_hint_password">••••••••</string>
+    <string name="login_btn_login">Đăng nhập</string>
+    <string name="login_text_or">HOẶC ĐĂNG NHẬP BẰNG</string>
+    <string name="login_btn_google">Đăng nhập với Google</string>
+    <string name="login_text_no_account">Chưa có tài khoản? </string>
+    <string name="login_btn_register">Đăng ký</string>
+
+    <!-- Register Screen Strings -->
+    <string name="register_title_help">Trợ giúp</string>
+    <string name="register_title_create_account">Tạo tài khoản</string>
+    <string name="register_subtitle_join">Gia nhập cộng đồng học từ vựng an toàn.</string>
+    <string name="register_label_full_name">HỌ TÊN</string>
+    <string name="register_hint_full_name">Nhập họ tên</string>
+    <string name="register_label_email">ĐỊA CHỈ EMAIL</string>
+    <string name="register_hint_email">you\@example.com</string>
+    <string name="register_label_password">MẬT KHẨU BẢO MẬT</string>
+    <string name="register_hint_password">••••••••••••</string>
+    <string name="register_btn_register">Đăng ký</string>
+    <string name="register_text_already_account">Đã có tài khoản? </string>
+    <string name="register_btn_login">Đăng nhập</string>
+
+    <!-- Reset Access Strings -->
+    <string name="reset_title_app_bar">Khôi phục truy cập</string>
+    <string name="reset_title">Khôi phục truy cập</string>
+    <string name="reset_subtitle">Nhập email đã đăng ký để nhận liên kết khôi phục.</string>
+    <string name="reset_label_email">ĐỊA CHỈ EMAIL</string>
+    <string name="reset_hint_email">name\@example.com</string>
+    <string name="reset_btn_send">Gửi liên kết khôi phục</string>
+    <string name="reset_btn_back">QUAY LẠI ĐĂNG NHẬP</string>
+    <string name="reset_footer_text">GIAO THỨC KHÔI PHỤC V4.2</string>
+
+    <!-- Reset Confirmation Strings -->
+    <string name="reset_confirm_title_app_bar">Khôi phục truy cập</string>
+    <string name="reset_confirm_title">Kiểm tra email</string>
+    <string name="reset_confirm_subtitle">Chúng tôi đã gửi liên kết khôi phục mật khẩu. Vui lòng kiểm tra mục spam nếu không thấy.</string>
+    <string name="reset_confirm_btn_back">Quay lại đăng nhập</string>
+    <string name="reset_confirm_btn_resend">GỬI LẠI EMAIL</string>
+    <string name="reset_confirm_security_title">BẢO MẬT</string>
+    <string name="reset_confirm_security_desc">Liên kết hết hạn sau 24h</string>
+    <string name="reset_confirm_support_title">HỖ TRỢ</string>
+    <string name="reset_confirm_support_desc">Hỗ trợ 24/7</string>
+    <string name="bottom_nav_support">HỖ TRỢ</string>
+    <string name="common_back">Quay lại</string>
+
+    <!-- Set New Password Strings -->
+    <string name="set_pwd_title_app_bar">Đặt lại mật khẩu</string>
+    <string name="set_pwd_app_name">FLASHLOCK</string>
+    <string name="set_pwd_title">Đặt mật khẩu mới</string>
+    <string name="set_pwd_subtitle">Tạo mật khẩu mạnh để bảo vệ tài khoản và tiến độ.</string>
+    <string name="set_pwd_label_new">MẬT KHẨU MỚI</string>
+    <string name="set_pwd_hint_pwd">••••••••</string>
+    <string name="set_pwd_strength">Độ mạnh: </string>
+    <string name="set_pwd_strength_weak">Yếu</string>
+    <string name="set_pwd_strength_medium">Trung bình</string>
+    <string name="set_pwd_strength_strong">Mạnh</string>
+    <string name="set_pwd_strength_percent">65%</string>
+    <string name="set_pwd_hint_desc">Dùng 8+ ký tự gồm chữ, số và ký tự đặc biệt.</string>
+    <string name="set_pwd_label_confirm">XÁC NHẬN MẬT KHẨU MỚI</string>
+    <string name="set_pwd_btn_update">Cập nhật mật khẩu</string>
+    <string name="set_pwd_trouble">Gặp vấn đề? </string>
+    <string name="set_pwd_contact_support">Liên hệ hỗ trợ</string>
+
+    <!-- Password Requirements Strings -->
+    <string name="req_8_chars">Ít nhất 8\nký tự</string>
+    <string name="req_one_number">Một chữ số</string>
+    <string name="req_one_upper">Một chữ hoa\n</string>
+    <string name="req_one_special">Một ký tự\nđặc biệt</string>
+
+    <!-- Navigation Strings -->
+    <string name="bottom_nav_login">ĐĂNG NHẬP</string>
+    <string name="bottom_nav_register">ĐĂNG KÝ</string>
+    <string name="nav_home">TRANG CHỦ</string>
+    <string name="nav_library">THƯ VIỆN</string>
+    <string name="nav_vocabulary">TỪ VỰNG</string>
+    <string name="nav_profile">HỒ SƠ</string>
+
+    <!-- Auth Status Strings -->
+    <string name="auth_login_success">Đăng nhập thành công.</string>
+    <string name="auth_register_success">Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.</string>
+    <string name="auth_reset_link_sent">Đã gửi email khôi phục.</string>
+    <string name="auth_action_failed">Yêu cầu thất bại: %1$s</string>
+    <string name="auth_error_login_email_required">Vui lòng nhập email.</string>
+    <string name="auth_error_login_password_required">Vui lòng nhập mật khẩu.</string>
+    <string name="auth_error_register_name_required">Vui lòng nhập họ tên.</string>
+    <string name="auth_error_register_email_required">Vui lòng nhập email hợp lệ.</string>
+    <string name="auth_error_register_password_required">Vui lòng nhập mật khẩu.</string>
+
+    <string name="auth_error_invalid_email">Email không đúng định dạng.</string>
+    <string name="auth_error_user_not_found">Tài khoản không tồn tại.</string>
+    <string name="auth_error_wrong_password">Mật khẩu không đúng hoặc tài khoản đã thay đổi.</string>
+    <string name="auth_error_email_already_in_use">Email đã được sử dụng bởi tài khoản khác.</string>
+    <string name="auth_error_weak_password">Mật khẩu phải có ít nhất 6 ký tự.</string>
+    <string name="auth_error_user_disabled">Tài khoản đã bị vô hiệu hóa.</string>
+    <string name="auth_error_email_not_verified">Tài khoản chưa xác thực email. Vui lòng kiểm tra hộp thư.</string>
+    <string name="auth_error_verify_email_send_failed">Không gửi được email xác thực. Vui lòng thử lại.</string>
+    <string name="auth_error_network">Không thể kết nối tới máy chủ. Kiểm tra lại mạng.</string>
+    <string name="auth_error_too_many_requests">Vui lòng đợi một lát trước khi thử lại.</string>
+    <string name="auth_error_google_token_invalid">Đăng nhập Google thất bại. Vui lòng thử lại.</string>
+    <string name="auth_error_google_cancelled">Bạn đã hủy đăng nhập Google.</string>
+    <string name="auth_error_google_config_missing">Chưa cấu hình Google Sign-In. Vui lòng cập nhật web client id.</string>
+    <string name="google_web_client_id">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID</string>
+
+    <string name="main_title">Bạn đã đăng nhập thành công.</string>
+    <string name="fragment_placeholder_title">Nội dung Fragment</string>
+
+    <string name="profile_btn_save">Lưu thay đổi</string>
+    <string name="profile_msg_save_success">Cập nhật hồ sơ thành công!</string>
+    <string name="profile_msg_saving">Đang lưu dữ liệu...</string>
+    <string name="profile_error_name_empty">Tên không được để trống!</string>
+    <string name="profile_hint_display_name">Nhập tên hiển thị</string>
+    <string name="profile_email_loading">Đang tải email...</string>
+    <string name="profile_membership_label">Thành viên Premium Scholar</string>
+    <string name="profile_cloud_sync_status">TRẠNG THÁI ĐỒNG BỘ</string>
+    <string name="profile_last_sync_default">Đồng bộ lần cuối lúc 10:00 AM</string>
+    <string name="profile_sync_now">Đồng bộ ngay</string>
+    <string name="profile_stats_count">1.2k</string>
+    <string name="profile_stats_label">TỪ ĐÃ NHỚ</string>
+    <string name="profile_section_settings">CÀI ĐẶT ỨNG DỤNG</string>
+    <string name="profile_lock_screen_title">Cài đặt Màn hình khóa</string>
+    <string name="profile_lock_screen_subtitle">Hiển thị từ vựng khi mở máy</string>
+    <string name="profile_reminder_title">Nhắc nhở học tập</string>
+    <string name="profile_reminder_subtitle">Xây dựng thói quen hàng ngày</string>
+    <string name="profile_time_default_hour">08</string>
+    <string name="profile_time_separator">:</string>
+    <string name="profile_time_default_minute">30</string>
+    <string name="profile_time_am">SA</string>
+    <string name="profile_time_pm">CH</string>
+    <string name="profile_logout">Đăng xuất</string>
+
+    <!-- Vocabulary UI Strings -->
+    <string name="vocab_tab_vocabulary">Từ vựng</string>
+    <string name="vocab_tab_topics">Chủ đề</string>
+    <string name="vocab_title_my">Từ vựng của tôi</string>
+    <string name="vocab_subtitle_my">Quản lý các từ đã lưu</string>
+    <string name="vocab_title_topics">Chủ đề đã lưu</string>
+    <string name="vocab_subtitle_topics">Quản lý bộ sưu tập từ chuyên ngành</string>
+    <string name="vocab_search_hint">Tìm kiếm từ vựng...</string>
+    <string name="vocab_chip_all">Tất cả</string>
+    <string name="vocab_chip_new">Từ mới</string>
+    <string name="vocab_chip_learning">Đang học</string>
+    <string name="vocab_chip_mastered">Đã nhớ</string>
+    <string name="vocab_empty_state">Chưa có từ vựng nào</string>
+    <string name="vocab_empty_topics">Chưa có chủ đề nào được lưu</string>
+    <string name="vocab_explore_prompt">Bạn đang tìm chủ đề cụ thể hơn?</string>
+    <string name="vocab_explore_button">Khám phá thư viện</string>
+
+    <string name="vocab_sheet_add_title">Thêm từ mới</string>
+    <string name="vocab_sheet_add_subtitle">Thêm từ vào kho từ vựng của bạn</string>
+    <string name="vocab_sheet_edit_title">Chỉnh sửa từ vựng</string>
+    <string name="vocab_sheet_edit_subtitle">Chỉnh sửa thông tin từ</string>
+    <string name="vocab_label_term">TỪ VỰNG *</string>
+    <string name="vocab_hint_term">vd: Ephemeral</string>
+    <string name="vocab_label_pronunciation">PHIÊN ÂM · Tùy chọn</string>
+    <string name="vocab_hint_pronunciation">vd: /ɪˈfem.ə.rəl/</string>
+    <string name="vocab_label_word_type">LOẠI TỪ</string>
+    <string name="vocab_hint_word_type">vd: verb (v)</string>
+    <string name="vocab_label_definition">NGHĨA *</string>
+    <string name="vocab_hint_definition">vd: Phù du, chóng tàn</string>
+    <string name="vocab_label_example">CÂU VÍ DỤ · Tùy chọn</string>
+    <string name="vocab_hint_example">vd: The beauty of cherry blossoms is ephemeral</string>
+    <string name="vocab_label_status">TRẠNG THÁI HỌC</string>
+    <string name="vocab_btn_add">Thêm từ vựng</string>
+    <string name="vocab_btn_save">Lưu thay đổi</string>
+
+    <string name="vocab_status_new">Từ mới</string>
+    <string name="vocab_status_learning">Đang học</string>
+    <string name="vocab_status_mastered">Đã nhớ</string>
+    <string name="vocab_status_new_tag">TỪ MỚI</string>
+    <string name="vocab_status_learning_tag">ĐANG HỌC</string>
+    <string name="vocab_status_mastered_tag">ĐÃ NHỚ</string>
+
+    <string name="vocab_delete_title">Xóa từ vựng</string>
+    <string name="vocab_delete_message">Bạn có chắc muốn xóa "%1$s"?</string>
+    <string name="vocab_delete_confirm">Xóa</string>
+    <string name="vocab_delete_cancel">Hủy</string>
+
+    <string name="vocab_preview_word">Ephemeral</string>
+    <string name="vocab_preview_meaning">Phù du, chóng tàn</string>
+    <string name="vocab_preview_status">ĐÃ NHỚ</string>
+
+    <string name="topic_badge_premium">Premium</string>
+    <string name="topic_action_continue">Tiếp tục</string>
+    <string name="topic_word_count_format">%1$d TỪ</string>
+
+    <!-- Vocabulary Error Strings -->
+    <string name="vocab_error_word_required">Thiếu dữ liệu từ.</string>
+    <string name="vocab_error_term_required">Vui lòng nhập từ vựng.</string>
+    <string name="vocab_error_definition_required">Vui lòng nhập nghĩa của từ.</string>
+    <string name="vocab_error_status_required">Vui lòng chọn trạng thái học.</string>
+    <string name="vocab_error_word_id_required">Không tìm thấy mã từ vựng.</string>
+    <string name="vocab_error_add_failed">Thêm từ vựng thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_update_failed">Cập nhật từ vựng thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_delete_failed">Xóa từ vựng thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_load_failed">Tải dữ liệu từ vựng thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_search_failed">Tìm kiếm từ vựng thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_load_topics_failed">Tải danh sách chủ đề thất bại. Vui lòng thử lại.</string>
+    <string name="vocab_error_topic_id_required">Thiếu thông tin chủ đề.</string>
+    <string name="vocab_error_save_topic_failed">Lưu chủ đề thất bại.</string>
+    <string name="vocab_error_load_topic_progress_failed">Tải tiến độ chủ đề thất bại.</string>
+    <string name="vocab_error_save_topic_progress_failed">Lưu tiến độ chủ đề thất bại.</string>
+
+    <!-- Library Screen Strings -->
+    <string name="library_title">Thư viện Từ vựng</string>
+    <string name="library_subtitle">Khám phá các gói từ vựng được biên soạn chuyên sâu cho mục tiêu của bạn.</string>
+    <string name="library_chip_all">Tất cả</string>
+    <string name="library_chip_conversation">Giao tiếp</string>
+    <string name="library_chip_toeic">TOEIC</string>
+    <string name="library_action_study_now">Học ngay</string>
+    <string name="library_empty_state">Không có gói từ vựng phù hợp</string>
+    <string name="library_error_load">Không thể tải thư viện. Vui lòng thử lại.</string>
+    <string name="library_save_success">Đã thêm vào từ vựng của bạn</string>
+    <string name="library_save_missing_id">Thiếu mã chủ đề</string>
+    <string name="library_action_save">Lưu chủ đề</string>
+    <string name="library_action_saved">Đã lưu</string>
+</resources>

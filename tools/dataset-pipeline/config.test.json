@@ -1,0 +1,10 @@
+{
+  "rawDir": "C:\\STUDY\\FlashLock2\\data\\raw-test",
+  "processedDir": "C:\\STUDY\\FlashLock2\\data\\processed-test",
+  "topicRulesPath": "C:\\STUDY\\FlashLock2\\tools\\dataset-pipeline\\topic-rules.example.json",
+  "wortFile": "C:\\STUDY\\FlashLock2\\data\\raw-test\\wort.sample.jsonl",
+  "kaikkiFile": "C:\\STUDY\\FlashLock2\\data\\raw-test\\kaikki.sample.jsonl",
+  "useKaikkiForEnglish": true,
+  "maxPerTopic": 2,
+  "limit": 0
+}

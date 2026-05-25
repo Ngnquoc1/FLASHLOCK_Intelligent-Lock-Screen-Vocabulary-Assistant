@@ -1,0 +1,12 @@
+{
+  "wortUrl": "https://example.com/wort.jsonl.gz",
+  "kaikkiUrl": "https://example.com/kaikki-english.jsonl.gz",
+  "rawDir": "C:/STUDY/FlashLock2/data/raw",
+  "processedDir": "C:/STUDY/FlashLock2/data/processed",
+  "topicRulesPath": "C:/STUDY/FlashLock2/tools/dataset-pipeline/topic-rules.example.json",
+  "useKaikkiForEnglish": true,
+  "wortFile": "",
+  "kaikkiFile": "",
+  "maxPerTopic": 500,
+  "limit": 0
+}

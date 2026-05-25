@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="@color/surface_container"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Dải màu Cyan ở mép trái -->
+        <View
+            android:id="@+id/indicator"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="@color/card_border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_word"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintStart_toEndOf="@id/indicator"
+            app:layout_constraintEnd_toStartOf="@id/tv_status_tag"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/vocab_preview_word" />
+
+        <TextView
+            android:id="@+id/tv_meaning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:text=""
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:alpha="0.7"
+            android:fontStyle="italic"
+            app:layout_constraintStart_toStartOf="@id/tv_word"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_word"
+            tools:text="@string/vocab_preview_meaning" />
+
+        <TextView
+            android:id="@+id/tv_status_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tag_remembered"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/vocab_preview_status" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/btn_edit"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_nav_icon_unselected"
+                android:backgroundTint="@color/icon_button_bg"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_vocab_edit"
+                app:tint="@color/primary" />
+
+            <ImageButton
+                android:id="@+id/btn_delete"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_nav_icon_unselected"
+                android:backgroundTint="@color/icon_button_bg"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_vocab_delete"
+                app:tint="#FF5252" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

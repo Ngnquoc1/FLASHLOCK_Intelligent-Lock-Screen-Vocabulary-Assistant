@@ -1,0 +1,13 @@
+{
+  "name": "flashlock-dataset-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dataset pipeline for Wort + Kaikki (EN->VI)",
+  "main": "process.js",
+  "scripts": {
+    "download": "node download.js --config config.json",
+    "process": "node process.js --config config.json",
+    "test": "node test.js"
+  }
+}
+

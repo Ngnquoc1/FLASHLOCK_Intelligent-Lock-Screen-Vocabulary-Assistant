@@ -11,5 +11,5 @@
         android:layout_gravity="center"
         android:textColor="@color/on_surface"
         android:textSize="24sp"
-        android:text="Fragment Content" />
+        android:text="@string/fragment_placeholder_title" />
 </FrameLayout>

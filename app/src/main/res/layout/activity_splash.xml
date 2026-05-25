@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
-            android:text="Flash"
+            android:text="@string/splash_title_flash"
             android:textColor="@color/white"
             android:textSize="48sp" />
 
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
-            android:text="Lock"
+            android:text="@string/splash_title_lock"
             android:textColor="#94cdf9"
             android:textSize="48sp" />
     </LinearLayout>
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:letterSpacing="0.2"
-        android:text="UNLOCK YOUR VOCABULARY"
+        android:text="@string/splash_subtitle_unlock"
         android:textColor="#B0FFFFFF"
         android:textSize="12sp"
         android:fontFamily="sans-serif-medium"

@@ -1,0 +1,9 @@
+{
+  "rawDir": "C:/STUDY/FlashLock2/data/raw",
+  "processedDir": "C:/STUDY/FlashLock2/data/processed",
+  "topicRulesPath": "C:/STUDY/FlashLock2/tools/dataset-pipeline/topic-rules.example.json",
+  "useKaikkiForEnglish": true,
+  "kaikkiFile": "C:/STUDY/FlashLock2/data/raw/kaikki.org-dictionary-English.jsonl",
+  "maxPerTopic": 500,
+  "limit": 0
+}

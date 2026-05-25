@@ -1,0 +1,113 @@
+[
+  {
+    "wordId": "ielts_001",
+    "topicId": "ielts_academic_core",
+    "term": "analyze",
+    "definition": "phan tich ky luong",
+    "example": "The report will analyze the results.",
+    "pronunciation": "/ˈæn.ə.laɪz/",
+    "wordType": "verb",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "ielts_002",
+    "topicId": "ielts_academic_core",
+    "term": "coherent",
+    "definition": "mach lac, ro rang",
+    "example": "Her argument was coherent and well structured.",
+    "pronunciation": "/kəʊˈhɪə.rənt/",
+    "wordType": "adjective",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "ielts_003",
+    "topicId": "ielts_academic_core",
+    "term": "mitigate",
+    "definition": "giam nhe, lam nhe",
+    "example": "Policies aim to mitigate climate risks.",
+    "pronunciation": "/ˈmɪt.ɪ.ɡeɪt/",
+    "wordType": "verb",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "ielts_004",
+    "topicId": "ielts_academic_core",
+    "term": "prevalent",
+    "definition": "pho bien",
+    "example": "Online learning is prevalent worldwide.",
+    "pronunciation": "/ˈprev.əl.ənt/",
+    "wordType": "adjective",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "ielts_005",
+    "topicId": "ielts_academic_core",
+    "term": "sustainable",
+    "definition": "ben vung",
+    "example": "We need sustainable energy sources.",
+    "pronunciation": "/səˈsteɪ.nə.bəl/",
+    "wordType": "adjective",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "it_001",
+    "topicId": "it_communication",
+    "term": "deploy",
+    "definition": "trien khai phan mem len moi truong san xuat",
+    "example": "We deploy the service after testing.",
+    "pronunciation": "/dɪˈplɔɪ/",
+    "wordType": "verb",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "it_002",
+    "topicId": "it_communication",
+    "term": "rollback",
+    "definition": "quay lai phien ban truoc",
+    "example": "We rolled back after the outage.",
+    "pronunciation": "/ˈrəʊl.bæk/",
+    "wordType": "noun",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "it_003",
+    "topicId": "it_communication",
+    "term": "latency",
+    "definition": "do tre",
+    "example": "High latency affects video calls.",
+    "pronunciation": "/ˈleɪ.tən.si/",
+    "wordType": "noun",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "it_004",
+    "topicId": "it_communication",
+    "term": "throughput",
+    "definition": "thong luong",
+    "example": "We increased throughput by caching.",
+    "pronunciation": "/ˈθruː.pʊt/",
+    "wordType": "noun",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  },
+  {
+    "wordId": "it_005",
+    "topicId": "it_communication",
+    "term": "scalable",
+    "definition": "co kha nang mo rong",
+    "example": "The system is scalable under load.",
+    "pronunciation": "/ˈskeɪ.lə.bəl/",
+    "wordType": "adjective",
+    "status": "NEW",
+    "createdAt": "2026-05-12T00:00:00Z"
+  }
+]
+
