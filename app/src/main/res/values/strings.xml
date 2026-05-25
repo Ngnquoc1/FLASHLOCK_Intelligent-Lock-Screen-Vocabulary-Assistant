@@ -113,7 +113,7 @@
     <string name="auth_error_google_token_invalid">Google sign-in failed. Please try again.</string>
     <string name="auth_error_google_cancelled">Google sign-in cancelled.</string>
     <string name="auth_error_google_config_missing">Google Sign-In is not configured. Please update web client id.</string>
-    <string name="google_web_client_id">830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com</string>
+    <string name="google_web_client_id">830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com</string>
 
     <string name="main_title">You are logged in successfully.</string>
     <string name="fragment_placeholder_title">Fragment Content</string>
