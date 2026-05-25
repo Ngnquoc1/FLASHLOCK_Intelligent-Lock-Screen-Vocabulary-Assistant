@@ -1,5 +1,6 @@
 package com.nhom18.flashlock.ui.vocabulary;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +24,7 @@ import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.ui.vocabulary.AddWordBottomSheet.AddWordInput;
+import com.nhom18.flashlock.ui.library.LibraryTopicWordsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,8 @@ import androidx.core.content.ContextCompat;
 
 public class VocabularyFragment extends Fragment {
 
+    private static final String ARG_OPEN_TOPICS = "open_topics";
+
     private boolean isVocabularyTab = true;
     private boolean isServerSearchActive = false;
     private String statusFilter = null;
@@ -38,6 +42,8 @@ public class VocabularyFragment extends Fragment {
     private List<Word> cachedWords = new ArrayList<>();
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
+
+    private boolean openTopicsOnStart = false;
 
     private VocabularyViewModel viewModel;
     private VocabularyAdapter vocabularyAdapter;
@@ -48,9 +54,26 @@ public class VocabularyFragment extends Fragment {
     private View loadingView;
 
     private List<Topic> cachedTopics = new ArrayList<>();
+    private boolean isLoading = false;
 
     public static VocabularyFragment newInstance() {
         return new VocabularyFragment();
+    }
+
+    public static VocabularyFragment newInstance(boolean openTopicsTab) {
+        VocabularyFragment fragment = new VocabularyFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_OPEN_TOPICS, openTopicsTab);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            openTopicsOnStart = getArguments().getBoolean(ARG_OPEN_TOPICS, false);
+        }
     }
 
     @Nullable
@@ -102,7 +125,7 @@ public class VocabularyFragment extends Fragment {
                 showEditWordBottomSheet(word);
             }
         });
-        topicAdapter = new TopicAdapter();
+        topicAdapter = new TopicAdapter(this::openTopicWords);
 
         viewModel = new ViewModelProvider(this).get(VocabularyViewModel.class);
         viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
@@ -114,8 +137,10 @@ public class VocabularyFragment extends Fragment {
             topicAdapter.submitList(cachedTopics);
             updateTopicsEmptyState();
         });
-        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            loadingView.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
+        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoadingValue -> {
+            isLoading = Boolean.TRUE.equals(isLoadingValue);
+            loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            updateTopicsEmptyState();
         });
         viewModel.getError().observe(getViewLifecycleOwner(), message -> {
             String resolved = resolveErrorMessage(message);
@@ -191,7 +216,11 @@ public class VocabularyFragment extends Fragment {
 
         fabAdd.setOnClickListener(v -> showAddWordBottomSheet());
 
-        switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView);
+        if (openTopicsOnStart) {
+            switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView);
+        } else {
+            switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView);
+        }
     }
 
     private void switchToVocabularyTab(TextView selected, TextView unselected, TextView tvTitle, TextView tvSubtitle,
@@ -222,6 +251,8 @@ public class VocabularyFragment extends Fragment {
         fabAdd.setVisibility(View.GONE);
         tvEmptyState.setVisibility(View.GONE);
         tvEmptyState.setText(R.string.vocab_empty_topics);
+        isLoading = true;
+        loadingView.setVisibility(View.VISIBLE);
         updateTopicsEmptyState();
         recyclerView.setAdapter(topicAdapter);
         viewModel.loadTopics();
@@ -238,6 +269,14 @@ public class VocabularyFragment extends Fragment {
 
     private void updateTopicsEmptyState() {
         if (isVocabularyTab) {
+            return;
+        }
+        if (isLoading) {
+            tvEmptyState.setVisibility(View.GONE);
+            View exploreFooter = requireView().findViewById(R.id.explore_footer);
+            if (exploreFooter != null) {
+                exploreFooter.setVisibility(View.GONE);
+            }
             return;
         }
         boolean isEmpty = cachedTopics.isEmpty();
@@ -307,6 +346,20 @@ public class VocabularyFragment extends Fragment {
         unselected.setBackground(null);
         unselected.setTextColor(ContextCompat.getColor(requireContext(), R.color.on_surface));
         unselected.setAlpha(0.6f);
+    }
+
+    private void openTopicWords(Topic topic) {
+        if (topic == null || topic.getTopicId() == null || topic.getTopicId().trim().isEmpty()) {
+            Toast.makeText(requireContext(), R.string.library_open_topic_missing_id, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(requireContext(), LibraryTopicWordsActivity.class);
+        intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_ID, topic.getTopicId());
+        intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_TITLE, topic.getTitle());
+        intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_CATEGORY, topic.getCategory());
+        intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_LANGUAGE, topic.getLanguage());
+        intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_WORD_COUNT, topic.getWordCount());
+        startActivity(intent);
     }
 
     private void showAddWordBottomSheet() {

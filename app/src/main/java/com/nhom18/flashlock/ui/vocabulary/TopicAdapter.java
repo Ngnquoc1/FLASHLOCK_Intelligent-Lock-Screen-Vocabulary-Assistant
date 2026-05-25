@@ -12,7 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> {
+    public interface TopicClickListener {
+        void onTopicSelected(Topic topic);
+    }
+
     private final List<Topic> items = new ArrayList<>();
+    private final TopicClickListener listener;
+
+    public TopicAdapter(TopicClickListener listener) {
+        this.listener = listener;
+    }
 
     public void submitList(List<Topic> topics) {
         items.clear();
@@ -31,7 +40,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
     @Override
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
-        holder.bind(items.get(position));
+        holder.bind(items.get(position), listener);
     }
 
     @Override
@@ -51,7 +60,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
             tvLanguageBadge = itemView.findViewById(R.id.tv_premium_badge);
         }
 
-        void bind(Topic topic) {
+        void bind(Topic topic, TopicClickListener listener) {
             tvTitle.setText(topic.getTitle() != null ? topic.getTitle() : "");
             long count = topic.getWordCount();
             if (count > 0) {
@@ -68,6 +77,12 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
                 String label = language.equalsIgnoreCase("vi") ? "VI" : "EN";
                 tvLanguageBadge.setText(label);
             }
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onTopicSelected(topic);
+                }
+            });
         }
     }
 }

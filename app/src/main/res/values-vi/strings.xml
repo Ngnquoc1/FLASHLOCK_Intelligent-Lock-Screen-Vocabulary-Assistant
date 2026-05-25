@@ -213,4 +213,18 @@
     <string name="vocab_error_save_topic_failed">Lưu chủ đề thất bại.</string>
     <string name="vocab_error_load_topic_progress_failed">Tải tiến độ chủ đề thất bại.</string>
     <string name="vocab_error_save_topic_progress_failed">Lưu tiến độ chủ đề thất bại.</string>
+
+    <!-- Library Screen Strings -->
+    <string name="library_title">Thư viện Từ vựng</string>
+    <string name="library_subtitle">Khám phá các gói từ vựng được biên soạn chuyên sâu cho mục tiêu của bạn.</string>
+    <string name="library_chip_all">Tất cả</string>
+    <string name="library_chip_conversation">Giao tiếp</string>
+    <string name="library_chip_toeic">TOEIC</string>
+    <string name="library_action_study_now">Học ngay</string>
+    <string name="library_empty_state">Không có gói từ vựng phù hợp</string>
+    <string name="library_error_load">Không thể tải thư viện. Vui lòng thử lại.</string>
+    <string name="library_save_success">Đã thêm vào từ vựng của bạn</string>
+    <string name="library_save_missing_id">Thiếu mã chủ đề</string>
+    <string name="library_action_save">Lưu chủ đề</string>
+    <string name="library_action_saved">Đã lưu</string>
 </resources>
