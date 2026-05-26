@@ -125,7 +125,17 @@ public class VocabularyFragment extends Fragment {
                 showEditWordBottomSheet(word);
             }
         });
-        topicAdapter = new TopicAdapter(this::openTopicWords);
+        topicAdapter = new TopicAdapter(new TopicAdapter.TopicClickListener() {
+            @Override
+            public void onTopicSelected(Topic topic) {
+                openTopicWords(topic);
+            }
+
+            @Override
+            public void onStudyNow(Topic topic) {
+                openStudyNow(topic);
+            }
+        });
 
         viewModel = new ViewModelProvider(this).get(VocabularyViewModel.class);
         viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
@@ -359,6 +369,18 @@ public class VocabularyFragment extends Fragment {
         intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_CATEGORY, topic.getCategory());
         intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_LANGUAGE, topic.getLanguage());
         intent.putExtra(LibraryTopicWordsActivity.EXTRA_TOPIC_WORD_COUNT, topic.getWordCount());
+        startActivity(intent);
+    }
+
+    private void openStudyNow(Topic topic) {
+        if (topic == null || topic.getTopicId() == null || topic.getTopicId().trim().isEmpty()) {
+            Toast.makeText(requireContext(), R.string.library_open_topic_missing_id, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(requireContext(), com.nhom18.flashlock.ui.study.StudyFlashcardActivity.class);
+        intent.putExtra(com.nhom18.flashlock.ui.study.StudyFlashcardActivity.EXTRA_TOPIC_ID, topic.getTopicId());
+        intent.putExtra(com.nhom18.flashlock.ui.study.StudyFlashcardActivity.EXTRA_TOPIC_TITLE, topic.getTitle());
+        intent.putExtra(com.nhom18.flashlock.ui.study.StudyFlashcardActivity.EXTRA_TOPIC_CATEGORY, topic.getCategory());
         startActivity(intent);
     }
 

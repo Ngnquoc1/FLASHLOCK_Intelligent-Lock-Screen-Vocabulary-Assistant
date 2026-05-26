@@ -171,13 +171,13 @@ public class AddWordBottomSheet extends BottomSheetDialogFragment {
 
     private String statusLabelFromCode(String code) {
         if (Word.STATUS_MASTERED.equals(code)) return getString(R.string.vocab_status_mastered);
-        if (Word.STATUS_LEARNING.equals(code)) return getString(R.string.vocab_status_learning);
+        if (Word.STATUS_LEARNING.equals(code) || Word.STATUS_REVIEW.equals(code)) return getString(R.string.vocab_status_learning);
         return getString(R.string.vocab_status_new);
     }
 
     private String statusCodeFromLabel(String label) {
         if (getString(R.string.vocab_status_mastered).equals(label)) return Word.STATUS_MASTERED;
-        if (getString(R.string.vocab_status_learning).equals(label)) return Word.STATUS_LEARNING;
+        if (getString(R.string.vocab_status_learning).equals(label)) return Word.STATUS_REVIEW;
         return Word.STATUS_NEW;
     }
 }

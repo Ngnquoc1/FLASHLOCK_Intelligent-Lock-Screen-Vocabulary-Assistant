@@ -15,8 +15,18 @@ public final class WordFilter {
         }
         String normalizedQuery = applyQuery ? normalize(searchQuery) : "";
         for (Word word : source) {
-            if (statusFilter != null && (word == null || !statusFilter.equals(word.getStatus()))) {
-                continue;
+            if (statusFilter != null) {
+                if (word == null) {
+                    continue;
+                }
+                String status = word.getStatus();
+                boolean match = statusFilter.equals(status);
+                if (!match && Word.STATUS_LEARNING.equals(statusFilter)) {
+                    match = Word.STATUS_REVIEW.equals(status);
+                }
+                if (!match) {
+                    continue;
+                }
             }
             if (word != null && matchesQuery(word, normalizedQuery)) {
                 filtered.add(word);

@@ -14,6 +14,7 @@ import java.util.List;
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> {
     public interface TopicClickListener {
         void onTopicSelected(Topic topic);
+        void onStudyNow(Topic topic);
     }
 
     private final List<Topic> items = new ArrayList<>();
@@ -52,12 +53,14 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         private final TextView tvTitle;
         private final TextView tvWordCount;
         private final TextView tvLanguageBadge;
+        private final View btnStudyNow;
 
         TopicViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_topic_name);
             tvWordCount = itemView.findViewById(R.id.tv_word_count);
             tvLanguageBadge = itemView.findViewById(R.id.tv_premium_badge);
+            btnStudyNow = itemView.findViewById(R.id.btn_study_now);
         }
 
         void bind(Topic topic, TopicClickListener listener) {
@@ -81,6 +84,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onTopicSelected(topic);
+                }
+            });
+            btnStudyNow.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onStudyNow(topic);
                 }
             });
         }

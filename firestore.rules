@@ -65,6 +65,10 @@ service cloud.firestore {
         allow read, write: if isOwner(uid);
       }
 
+      match /word_progress/{wordId} {
+        allow read, write: if isOwner(uid);
+      }
+
       match /study_events/{eventId} {
         allow read, create: if isOwner(uid);
         allow update, delete: if false;

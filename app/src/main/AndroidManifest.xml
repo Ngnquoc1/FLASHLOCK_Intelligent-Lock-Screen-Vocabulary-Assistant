@@ -18,6 +18,8 @@
         <activity
             android:name=".ui.library.LibraryTopicWordsActivity" />
         <activity
+            android:name=".ui.study.StudyFlashcardActivity" />
+        <activity
             android:name=".ui.main.MainActivity" />
 
         <!-- SplashActivity là màn hình khởi đầu -->

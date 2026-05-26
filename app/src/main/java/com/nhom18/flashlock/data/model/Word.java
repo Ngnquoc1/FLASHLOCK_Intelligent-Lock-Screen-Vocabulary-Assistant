@@ -4,11 +4,13 @@ import com.google.firebase.Timestamp;
 
 public class Word {
     public static final String STATUS_NEW = "NEW";
+    public static final String STATUS_REVIEW = "REVIEW";
     public static final String STATUS_LEARNING = "LEARNING";
     public static final String STATUS_MASTERED = "MASTERED";
 
     private String wordId;
     private String term;
+    private String termLower;
     private String definition;
     private String status;
     private Timestamp nextReviewAt;
@@ -19,6 +21,7 @@ public class Word {
     private String audioUrl;
     private String topicId;
     private String wordType;
+    private String language;
 
     public Word() {}
 
@@ -27,6 +30,9 @@ public class Word {
 
     public String getTerm() { return term; }
     public void setTerm(String term) { this.term = term; }
+
+    public String getTermLower() { return termLower; }
+    public void setTermLower(String termLower) { this.termLower = termLower; }
 
     public String getDefinition() { return definition; }
     public void setDefinition(String definition) { this.definition = definition; }
@@ -54,4 +60,7 @@ public class Word {
 
     public String getWordType() { return wordType; }
     public void setWordType(String wordType) { this.wordType = wordType; }
+
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
 }

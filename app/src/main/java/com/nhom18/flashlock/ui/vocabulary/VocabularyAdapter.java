@@ -75,7 +75,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Wo
             if (Word.STATUS_MASTERED.equals(status)) {
                 tvStatusTag.setText(itemView.getContext().getString(R.string.vocab_status_mastered_tag));
                 tvStatusTag.setBackgroundResource(R.drawable.bg_tag_remembered);
-            } else if (Word.STATUS_LEARNING.equals(status)) {
+            } else if (Word.STATUS_LEARNING.equals(status) || Word.STATUS_REVIEW.equals(status)) {
                 tvStatusTag.setText(itemView.getContext().getString(R.string.vocab_status_learning_tag));
                 tvStatusTag.setBackgroundResource(R.drawable.bg_tag_learning);
             } else {

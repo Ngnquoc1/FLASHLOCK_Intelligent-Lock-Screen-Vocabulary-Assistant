@@ -30,11 +30,10 @@ public class WordFilterTest {
     public void apply_handlesEmptyQuery() {
         Word word1 = new Word();
         word1.setTerm("coherent");
-        word1.setStatus(Word.STATUS_LEARNING);
+        word1.setStatus(Word.STATUS_REVIEW);
 
         List<Word> result = WordFilter.apply(Arrays.asList(word1), Word.STATUS_LEARNING, "");
 
         Assert.assertEquals(1, result.size());
     }
 }
-

@@ -227,4 +227,23 @@
     <string name="library_save_missing_id">Thiếu mã chủ đề</string>
     <string name="library_action_save">Lưu chủ đề</string>
     <string name="library_action_saved">Đã lưu</string>
+
+    <!-- Study Screen Strings -->
+    <string name="study_label_vocab_mastery">Làm chủ từ vựng</string>
+    <string name="study_label_english_meaning">Nghĩa</string>
+    <string name="study_tap_to_flip">Chạm để lật thẻ</string>
+    <string name="study_tap_to_flip_back">Chạm để lật lại</string>
+    <string name="study_speaker">Phát âm</string>
+    <string name="study_status_new">Từ mới</string>
+    <string name="study_status_learning">Đang học</string>
+    <string name="study_status_mastered">Đã nhớ</string>
+    <string name="study_action_forget">Chưa nhớ</string>
+    <string name="study_action_remember">Đã nhớ</string>
+    <string name="study_title_fallback">Học</string>
+    <string name="study_word_type_unknown">Chưa rõ</string>
+    <string name="study_example_format">Ví dụ (%2$s): %1$s</string>
+    <string name="study_empty_no_due">Chưa có từ cần ôn tập.</string>
+    <string name="study_error_save_failed">Lưu tiến độ thất bại.</string>
+    <string name="study_error_load_failed">Không thể tải flashcard.</string>
+    <string name="study_tts_unavailable">Không thể phát âm.</string>
 </resources>

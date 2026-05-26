@@ -236,4 +236,33 @@
     <string name="topic_words_empty">No words in this topic yet</string>
     <string name="topic_words_load_failed">Failed to load words. Please try again.</string>
     <string name="topic_words_count_format">%1$d words</string>
+
+    <!-- Study Screen Strings -->
+    <string name="study_title">Study</string>
+    <string name="study_subtitle">Review and master your vocabulary</string>
+    <string name="study_label_term">Word</string>
+    <string name="study_label_definition">Definition</string>
+    <string name="study_label_example">Example</string>
+    <string name="study_label_english_meaning">Meaning</string>
+    <string name="study_label_vocab_mastery">Vocab mastery</string>
+    <string name="study_tap_to_flip">Tap to flip</string>
+    <string name="study_tap_to_flip_back">Tap to flip back</string>
+    <string name="study_speaker">Speak</string>
+    <string name="study_status_new">New</string>
+    <string name="study_status_learning">Learning</string>
+    <string name="study_status_mastered">Mastered</string>
+    <string name="study_action_forget">Not yet</string>
+    <string name="study_action_remember">Remembered</string>
+    <string name="study_btn_next">Next</string>
+    <string name="study_btn_finish">Finish</string>
+    <string name="study_msg_mastered">Congratulations! You have mastered this word.</string>
+    <string name="study_msg_review_later">Review this word later.</string>
+    <string name="study_msg_no_more_words">You have reviewed all the words in this topic.</string>
+    <string name="study_title_fallback">Study</string>
+    <string name="study_word_type_unknown">Unknown</string>
+    <string name="study_example_format">Example (%2$s): %1$s</string>
+    <string name="study_empty_no_due">No words due for review.</string>
+    <string name="study_error_save_failed">Failed to save progress.</string>
+    <string name="study_error_load_failed">Unable to load flashcard.</string>
+    <string name="study_tts_unavailable">Text to speech is unavailable.</string>
 </resources>
