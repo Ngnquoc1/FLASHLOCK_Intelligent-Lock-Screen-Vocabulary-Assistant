@@ -5,6 +5,8 @@
     android:layout_height="match_parent"
     android:background="@color/surface">
 
+    <!-- Top Bar is now managed by MainActivity in activity_homebatch.xml -->
+
     <LinearLayout
         android:id="@+id/library_header"
         android:layout_width="0dp"

@@ -7,14 +7,12 @@
     android:background="@color/surface"
     tools:context=".ui.library.LibraryTopicWordsActivity">
 
-    <LinearLayout
+    <!-- Standardized Top Bar for Detail Screen -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topic_words_top_bar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:layout_height="56dp"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,6 +23,9 @@
             android:layout_height="24dp"
             android:contentDescription="@string/common_back"
             android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/primary" />
 
         <TextView
@@ -32,11 +33,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif-medium"
             android:text="@string/topic_words_title"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:fontFamily="sans-serif-medium" />
-    </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_topic_words_back"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_top_profile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="1dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_nav_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImage"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="1.5dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/topic_words_header"
@@ -106,4 +124,3 @@
         app:layout_constraintTop_toBottomOf="@id/topic_words_header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

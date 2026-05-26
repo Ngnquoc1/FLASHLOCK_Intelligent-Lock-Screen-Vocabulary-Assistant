@@ -14,6 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.data.model.Word;
 
@@ -36,6 +39,7 @@ public class LibraryTopicWordsActivity extends AppCompatActivity {
     private TextView tvTopicMeta;
     private TextView tvEmptyState;
     private View loadingView;
+    private ImageView ivTopProfile;
 
     private LibraryTopicWordsViewModel viewModel;
     private LibraryTopicWordAdapter adapter;
@@ -45,13 +49,8 @@ public class LibraryTopicWordsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library_topic_words);
 
-        ImageView btnBack = findViewById(R.id.iv_topic_words_back);
-        tvTopicTitle = findViewById(R.id.tv_topic_words_topic_title);
-        tvTopicMeta = findViewById(R.id.tv_topic_words_meta);
-        tvEmptyState = findViewById(R.id.tv_topic_words_empty);
-        loadingView = findViewById(R.id.progress_topic_words_loading);
-
-        btnBack.setOnClickListener(v -> finish());
+        initViews();
+        loadTopBarProfile();
 
         Intent intent = getIntent();
         String topicId = intent != null ? intent.getStringExtra(EXTRA_TOPIC_ID) : null;
@@ -101,6 +100,38 @@ public class LibraryTopicWordsActivity extends AppCompatActivity {
         viewModel.loadTopicWords(topicId);
     }
 
+    private void initViews() {
+        ImageView btnBack = findViewById(R.id.iv_topic_words_back);
+        tvTopicTitle = findViewById(R.id.tv_topic_words_topic_title);
+        tvTopicMeta = findViewById(R.id.tv_topic_words_meta);
+        tvEmptyState = findViewById(R.id.tv_topic_words_empty);
+        loadingView = findViewById(R.id.progress_topic_words_loading);
+        ivTopProfile = findViewById(R.id.iv_top_profile);
+
+        btnBack.setOnClickListener(v -> finish());
+    }
+
+    private void loadTopBarProfile() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null && ivTopProfile != null) {
+            FirebaseFirestore.getInstance().collection("users").document(uid)
+                    .addSnapshotListener(this, (snapshot, e) -> {
+                        if (snapshot != null && snapshot.exists()) {
+                            String avatarUrl = snapshot.getString("avatarUrl");
+                            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                Glide.with(this)
+                                        .load(avatarUrl)
+                                        .circleCrop()
+                                        .placeholder(R.drawable.ic_nav_profile)
+                                        .into(ivTopProfile);
+                            } else {
+                                ivTopProfile.setImageResource(R.drawable.ic_nav_profile);
+                            }
+                        }
+                    });
+        }
+    }
+
     private void bindMeta(String category, String language, long wordCount) {
         List<String> parts = new ArrayList<>();
         if (!isBlank(category)) {
@@ -130,6 +161,7 @@ public class LibraryTopicWordsActivity extends AppCompatActivity {
             return;
         }
         boolean isEmpty = cachedWords.isEmpty();
+        tvTopicMeta.setVisibility(isEmpty && isBlank(tvTopicMeta.getText().toString()) ? View.GONE : View.VISIBLE);
         tvEmptyState.setText(R.string.topic_words_empty);
         tvEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
     }
@@ -148,4 +180,3 @@ public class LibraryTopicWordsActivity extends AppCompatActivity {
         return value == null || value.trim().isEmpty();
     }
 }
-

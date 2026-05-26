@@ -6,15 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/surface">
 
-    <!-- Top App Bar (Included) -->
-    <include
-        android:id="@+id/top_app_bar"
-        layout="@layout/layout_top_app_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Tab Toggle -->
+    <!-- Tab Toggle - Căn chỉnh lại vì Activity đã có Top Bar -->
     <LinearLayout
         android:id="@+id/tab_toggle_container"
         android:layout_width="240dp"
@@ -25,7 +17,7 @@
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_app_bar">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tv_tab_vocabulary"
@@ -56,7 +48,6 @@
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -69,7 +60,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Dynamic Header Section -->
             <LinearLayout
                 android:id="@+id/header_section"
                 android:layout_width="match_parent"
@@ -96,7 +86,6 @@
                     android:textSize="13sp"
                     android:alpha="0.5" />
 
-                <!-- Search Bar -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
@@ -124,7 +113,6 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Filter Chips (Visible for Vocabulary) -->
                 <HorizontalScrollView
                     android:id="@+id/filter_scroll"
                     android:layout_width="match_parent"
@@ -186,10 +174,8 @@
                             android:textSize="13sp" />
                     </LinearLayout>
                 </HorizontalScrollView>
-
             </LinearLayout>
 
-            <!-- Placeholder for RecyclerView / Content List -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_content"
                 android:layout_width="match_parent"
@@ -226,7 +212,6 @@
                 android:textColor="@color/error"
                 android:visibility="gone" />
 
-            <!-- Explore Library Footer (Visible for Topics) -->
             <LinearLayout
                 android:id="@+id/explore_footer"
                 android:layout_width="match_parent"
@@ -257,7 +242,6 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
