@@ -113,7 +113,7 @@
     <string name="auth_error_google_token_invalid">Đăng nhập Google thất bại. Vui lòng thử lại.</string>
     <string name="auth_error_google_cancelled">Bạn đã hủy đăng nhập Google.</string>
     <string name="auth_error_google_config_missing">Chưa cấu hình Google Sign-In. Vui lòng cập nhật web client id.</string>
-    <string name="google_web_client_id">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID</string>
+    <string name="google_web_client_id">830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com</string>
 
     <string name="main_title">Bạn đã đăng nhập thành công.</string>
     <string name="fragment_placeholder_title">Nội dung Fragment</string>

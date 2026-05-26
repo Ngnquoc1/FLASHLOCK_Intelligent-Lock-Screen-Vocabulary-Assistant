@@ -12,7 +12,20 @@
           "package_name": "com.nhom18.flashlock"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "830784065426-ul7mihjir9lalbt5vmsi7a9mfciics59.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nhom18.flashlock",
+            "certificate_hash": "bec9fb4357a33ed57721b20c84c4d5b0f166b14b"
+          }
+        },
+        {
+          "client_id": "830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB2lzpI0VWVNzqJTWqLWC55wByYnDlfe5Q"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830784065426-jq5lgrkbdulgkrlbskm0kaibsdieigb1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
