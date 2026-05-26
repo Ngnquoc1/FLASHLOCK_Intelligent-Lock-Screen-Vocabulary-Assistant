@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.ui.library.LibraryFragment;
 import com.nhom18.flashlock.ui.profile.ProfileFragment;
@@ -18,6 +21,7 @@ import com.nhom18.flashlock.ui.vocabulary.VocabularyFragment;
 public class MainActivity extends AppCompatActivity {
 
     private View navHome, navLibrary, navVocabulary, navProfile;
+    private ImageView ivTopProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         setupListeners();
+        loadTopBarProfile();
 
         // Mặc định khi vào app sẽ ở tab HOME
         if (savedInstanceState == null) {
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         navLibrary = findViewById(R.id.nav_library_item);
         navVocabulary = findViewById(R.id.nav_vocabulary_item);
         navProfile = findViewById(R.id.nav_profile_item);
+        ivTopProfile = findViewById(R.id.iv_top_profile);
     }
 
     private void setupListeners() {
@@ -45,6 +51,27 @@ public class MainActivity extends AppCompatActivity {
         navLibrary.setOnClickListener(v -> selectTab(R.id.nav_library_item, "LIBRARY"));
         navVocabulary.setOnClickListener(v -> selectTab(R.id.nav_vocabulary_item, "VOCABULARY"));
         navProfile.setOnClickListener(v -> selectTab(R.id.nav_profile_item, "PROFILE"));
+    }
+
+    private void loadTopBarProfile() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null && ivTopProfile != null) {
+            FirebaseFirestore.getInstance().collection("users").document(uid)
+                    .addSnapshotListener((snapshot, e) -> {
+                        if (snapshot != null && snapshot.exists()) {
+                            String avatarUrl = snapshot.getString("avatarUrl");
+                            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                Glide.with(this)
+                                        .load(avatarUrl)
+                                        .circleCrop()
+                                        .placeholder(R.drawable.ic_nav_profile)
+                                        .into(ivTopProfile);
+                            } else {
+                                ivTopProfile.setImageResource(R.drawable.ic_nav_profile);
+                            }
+                        }
+                    });
+        }
     }
 
     public void openVocabularyTopics() {
@@ -60,15 +87,12 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment fragment;
         if (itemId == R.id.nav_profile_item) {
-            // Mở Fragment Profile
             fragment = ProfileFragment.newInstance();
         } else if (itemId == R.id.nav_vocabulary_item) {
-            // Mở Fragment Vocabulary mới thiết kế
             fragment = VocabularyFragment.newInstance(openTopicsTab);
         } else if (itemId == R.id.nav_library_item) {
             fragment = LibraryFragment.newInstance();
         } else {
-            // Các tab khác (Home, Library) tạm thời vẫn để MainFragment trống
             fragment = MainFragment.newInstance(title);
         }
 

@@ -40,6 +40,7 @@ public class ProfileFragment extends Fragment {
 
                         viewModel.setPendingAvatarUri(uri);
 
+                        // Chỉ cập nhật preview ảnh chính trong fragment
                         com.bumptech.glide.Glide.with(this)
                                 .load(uri)
                                 .transform(
@@ -48,13 +49,7 @@ public class ProfileFragment extends Fragment {
                                 )
                                 .into(binding.ivAvatar);
 
-                        if (binding.topAppBar.ivTopProfile != null) {
-                            com.bumptech.glide.Glide.with(this)
-                                    .load(uri)
-                                    .circleCrop()
-                                    .into(binding.topAppBar.ivTopProfile);
-                        }
-
+                        // Top Bar Avatar sẽ được MainActivity tự động cập nhật sau khi upload thành công
                     } else {
                         Toast.makeText(getContext(), "Vui lòng chọn ảnh dưới 5MB.", Toast.LENGTH_SHORT).show();
                     }
@@ -107,7 +102,6 @@ public class ProfileFragment extends Fragment {
             android.database.Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 int sizeIndex = cursor.getColumnIndex(android.provider.OpenableColumns.SIZE);
-                // Check an toàn: Đảm bảo cột SIZE có tồn tại trên thiết bị này
                 if (sizeIndex != -1) {
                     long size = cursor.getLong(sizeIndex);
                     cursor.close();
@@ -123,11 +117,9 @@ public class ProfileFragment extends Fragment {
 
     private void setupObservers() {
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
-
             boolean isSaving = (state.getStatus() == ProfileUiState.Status.SAVING);
             binding.btnSave.setEnabled(!isSaving);
             binding.btnSave.setText(isSaving ? R.string.profile_msg_saving : R.string.profile_btn_save);
-
             binding.btnEditAvatar.setEnabled(!isSaving);
 
             switch (state.getStatus()) {
@@ -137,11 +129,9 @@ public class ProfileFragment extends Fragment {
                         if (!binding.etDisplayName.hasFocus()) {
                             binding.etDisplayName.setText(state.getUserProfile().getDisplayName());
                         }
-
                         binding.tvEmail.setText(state.getUserProfile().getEmail());
 
                         String avatarUrl = state.getUserProfile().getAvatarUrl();
-
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
                             com.bumptech.glide.Glide.with(this)
                                     .load(avatarUrl)
@@ -151,28 +141,14 @@ public class ProfileFragment extends Fragment {
                                     )
                                     .placeholder(R.drawable.ic_nav_profile)
                                     .into(binding.ivAvatar);
-
-                            if (binding.topAppBar.ivTopProfile != null) {
-                                com.bumptech.glide.Glide.with(this)
-                                        .load(avatarUrl)
-                                        .circleCrop()
-                                        .placeholder(R.drawable.ic_nav_profile)
-                                        .into(binding.topAppBar.ivTopProfile);
-                            }
                         } else {
                             binding.ivAvatar.setImageResource(R.drawable.ic_nav_profile);
-
-                            if (binding.topAppBar.ivTopProfile != null) {
-                                binding.topAppBar.ivTopProfile.setImageResource(R.drawable.ic_nav_profile);
-                            }
                         }
 
                         if (state.getUserProfile().getSettings() != null) {
                             binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
-
                             currentHour = state.getUserProfile().getSettings().getReminderHour();
                             currentMinute = state.getUserProfile().getSettings().getReminderMinute();
-
                             updateTimeUI();
                         }
                     }
@@ -211,67 +187,41 @@ public class ProfileFragment extends Fragment {
 
         binding.btnSave.setOnClickListener(v -> {
             hideKeyboard();
-
             String newName = binding.etDisplayName.getText().toString().trim();
-
             if (TextUtils.isEmpty(newName)) {
                 binding.etDisplayName.setError(getString(R.string.profile_error_name_empty));
                 binding.etDisplayName.requestFocus();
                 return;
             }
-
             UserProfile.Settings currentSettings = new UserProfile.Settings();
             currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
-
             currentSettings.setReminderHour(currentHour);
             currentSettings.setReminderMinute(currentMinute);
-
             viewModel.onSaveProfile(newName, currentSettings);
         });
 
-        binding.btnEditAvatar.setOnClickListener(v -> {
-            pickImageLauncher.launch("image/*");
-        });
+        binding.btnEditAvatar.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
 
         binding.btnLogout.setOnClickListener(v -> {
             Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
             v.startAnimation(anim);
-
             anim.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {}
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     viewModel.onLogout();
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {}
             });
         });
 
-        binding.btnSyncNow.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Đang đồng bộ dữ liệu...", Toast.LENGTH_SHORT).show();
-        });
-
-        binding.btnHourUp.setOnClickListener(v -> {
-            currentHour = (currentHour + 1) % 24;
-            updateTimeUI();
-        });
-        binding.btnHourDown.setOnClickListener(v -> {
-            currentHour = (currentHour - 1 + 24) % 24; // +24 để tránh số âm khi về dưới 0
-            updateTimeUI();
-        });
-
-        binding.btnMinuteUp.setOnClickListener(v -> {
-            currentMinute = (currentMinute + 1) % 60;
-            updateTimeUI();
-        });
-        binding.btnMinuteDown.setOnClickListener(v -> {
-            currentMinute = (currentMinute - 1 + 60) % 60;
-            updateTimeUI();
-        });
+        binding.btnSyncNow.setOnClickListener(v -> Toast.makeText(getContext(), "Đang đồng bộ dữ liệu...", Toast.LENGTH_SHORT).show());
+        binding.btnHourUp.setOnClickListener(v -> { currentHour = (currentHour + 1) % 24; updateTimeUI(); });
+        binding.btnHourDown.setOnClickListener(v -> { currentHour = (currentHour - 1 + 24) % 24; updateTimeUI(); });
+        binding.btnMinuteUp.setOnClickListener(v -> { currentMinute = (currentMinute + 1) % 60; updateTimeUI(); });
+        binding.btnMinuteDown.setOnClickListener(v -> { currentMinute = (currentMinute - 1 + 60) % 60; updateTimeUI(); });
     }
 
     private void updateTimeUI() {

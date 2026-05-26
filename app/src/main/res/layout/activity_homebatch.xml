@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     android:background="@color/surface">
 
+    <!-- Top App Bar (Managed by MainActivity) -->
+    <include
+        android:id="@+id/top_app_bar"
+        layout="@layout/layout_top_app_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Content Area -->
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -14,7 +22,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/top_app_bar">
 
         <TextView
             android:layout_width="wrap_content"
