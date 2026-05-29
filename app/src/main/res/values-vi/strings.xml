@@ -290,4 +290,8 @@
     <string name="study_cram_toast">Đã bật Cram Mode</string>
     <string name="study_empty_action_weak">Ôn từ chưa nhớ</string>
     <string name="study_empty_no_weak">Không có từ chưa nhớ nào trong chủ đề này.</string>
+
+    <string name="home_continue_format">Tiếp tục học: %1$s</string>
+    <string name="home_my_words">Từ của tôi</string>
+    <string name="home_latest_topic">chủ đề gần nhất</string>
 </resources>

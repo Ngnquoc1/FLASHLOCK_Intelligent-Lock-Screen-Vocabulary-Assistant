@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.databinding.FragmentHomeDashboardBinding;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.ui.study.StudyFlashcardActivity;
@@ -58,11 +59,11 @@ public class HomeDashboardFragment extends Fragment {
         );
 
         viewModel.getLatestTopicProgress().observe(getViewLifecycleOwner(), progress -> {
-            if (progress != null) {
-                binding.tvFlashcardSubtitle.setText("Continue learning: " + progress.getTopicId());
-            } else {
-                binding.tvFlashcardSubtitle.setText("Continue learning: My Words");
-            }
+            String topicId = progress != null ? progress.getTopicId() : null;
+            String name = (topicId == null || Topic.MY_WORDS_TOPIC_ID.equals(topicId))
+                    ? getString(R.string.home_my_words)
+                    : getString(R.string.home_latest_topic);
+            binding.tvFlashcardSubtitle.setText(getString(R.string.home_continue_format, name));
         });
 
         viewModel.getWordOfTheDay().observe(getViewLifecycleOwner(), word -> {
@@ -114,6 +115,9 @@ public class HomeDashboardFragment extends Fragment {
 
             Intent intent = new Intent(getContext(), StudyFlashcardActivity.class);
             intent.putExtra(StudyFlashcardActivity.EXTRA_TOPIC_ID, topicId);
+            if (Topic.MY_WORDS_TOPIC_ID.equals(topicId)) {
+                intent.putExtra(StudyFlashcardActivity.EXTRA_TOPIC_TITLE, getString(R.string.home_my_words));
+            }
             startActivity(intent);
         });
 
