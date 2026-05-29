@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/surface">
 
-    <!-- Tab Toggle - Căn chỉnh lại vì Activity đã có Top Bar -->
     <LinearLayout
         android:id="@+id/tab_toggle_container"
         android:layout_width="240dp"
@@ -175,6 +174,22 @@
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_learn_my_words"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Learn now"
+                android:textColor="@color/on_primary_container"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_arrow_right"
+                app:iconGravity="textEnd"
+                app:iconTint="@color/on_primary_container" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_content"
