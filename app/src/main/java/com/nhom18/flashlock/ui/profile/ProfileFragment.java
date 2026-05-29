@@ -18,11 +18,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.nhom18.flashlock.R;
-import com.nhom18.flashlock.data.model.UserProfile; // Nhớ import model UserProfile
+import com.nhom18.flashlock.data.model.UserProfile;
 import com.nhom18.flashlock.data.remote.FirebaseProfileDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
 import com.nhom18.flashlock.databinding.FragmentProfileBinding;
 import com.nhom18.flashlock.ui.login.LoginActivity;
+import com.nhom18.flashlock.ui.lockscreen.LockScreenConfigActivity;
 
 public class ProfileFragment extends Fragment {
 
@@ -31,6 +32,7 @@ public class ProfileFragment extends Fragment {
 
     private int currentHour = 20;
     private int currentMinute = 30;
+    private UserProfile currentProfile;
 
     private final androidx.activity.result.ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new androidx.activity.result.contract.ActivityResultContracts.GetContent(),
@@ -126,6 +128,7 @@ public class ProfileFragment extends Fragment {
                 case CONTENT:
                 case SUCCESS:
                     if (state.getUserProfile() != null) {
+                        currentProfile = state.getUserProfile();
                         if (!binding.etDisplayName.hasFocus()) {
                             binding.etDisplayName.setText(state.getUserProfile().getDisplayName());
                         }
@@ -146,9 +149,9 @@ public class ProfileFragment extends Fragment {
                         }
 
                         if (state.getUserProfile().getSettings() != null) {
-                            binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
                             currentHour = state.getUserProfile().getSettings().getReminderHour();
                             currentMinute = state.getUserProfile().getSettings().getReminderMinute();
+                            binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
                             updateTimeUI();
                         }
                     }
@@ -193,10 +196,11 @@ public class ProfileFragment extends Fragment {
                 binding.etDisplayName.requestFocus();
                 return;
             }
-            UserProfile.Settings currentSettings = new UserProfile.Settings();
-            currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
+            UserProfile.Settings currentSettings = currentProfile != null && currentProfile.getSettings() != null
+                    ? currentProfile.getSettings() : new UserProfile.Settings();
             currentSettings.setReminderHour(currentHour);
             currentSettings.setReminderMinute(currentMinute);
+            currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
             viewModel.onSaveProfile(newName, currentSettings);
         });
 
@@ -222,6 +226,11 @@ public class ProfileFragment extends Fragment {
         binding.btnHourDown.setOnClickListener(v -> { currentHour = (currentHour - 1 + 24) % 24; updateTimeUI(); });
         binding.btnMinuteUp.setOnClickListener(v -> { currentMinute = (currentMinute + 1) % 60; updateTimeUI(); });
         binding.btnMinuteDown.setOnClickListener(v -> { currentMinute = (currentMinute - 1 + 60) % 60; updateTimeUI(); });
+
+        binding.btnLockScreenSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), LockScreenConfigActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void updateTimeUI() {

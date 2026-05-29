@@ -17,6 +17,16 @@
 
     <style name="Theme.FlashLock" parent="Base.Theme.FlashLock" />
 
+    <style name="Theme.FlashLock.LockScreen" parent="Base.Theme.FlashLock">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
     <style name="RoundedSquare">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">24dp</item>

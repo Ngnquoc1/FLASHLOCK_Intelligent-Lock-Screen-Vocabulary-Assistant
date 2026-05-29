@@ -1,8 +1,10 @@
 package com.nhom18.flashlock.data.model;
 
 import com.google.firebase.firestore.PropertyName;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserProfile {
@@ -53,6 +55,8 @@ public class UserProfile {
         private boolean lockScreenEnabled = true;
         private int reminderHour = 20;
         private int reminderMinute = 30;
+        private int lockScreenShowEvery = 3;
+        private List<String> lockScreenTopicIds = new ArrayList<>();
 
         public Settings() {}
 
@@ -66,5 +70,13 @@ public class UserProfile {
 
         public int getReminderMinute() { return reminderMinute; }
         public void setReminderMinute(int reminderMinute) { this.reminderMinute = reminderMinute; }
+
+        public int getLockScreenShowEvery() { return lockScreenShowEvery; }
+        public void setLockScreenShowEvery(int lockScreenShowEvery) { this.lockScreenShowEvery = lockScreenShowEvery; }
+
+        public List<String> getLockScreenTopicIds() { return lockScreenTopicIds; }
+        public void setLockScreenTopicIds(List<String> lockScreenTopicIds) {
+            this.lockScreenTopicIds = lockScreenTopicIds != null ? lockScreenTopicIds : new ArrayList<>();
+        }
     }
 }

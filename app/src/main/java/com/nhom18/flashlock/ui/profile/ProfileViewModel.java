@@ -17,6 +17,7 @@ public class ProfileViewModel extends ViewModel {
     public void setPendingAvatarUri(Uri uri) {
         this.pendingAvatarUri = uri;
     }
+
     public ProfileViewModel(ProfileRepository repository) {
         this.repository = repository;
     }

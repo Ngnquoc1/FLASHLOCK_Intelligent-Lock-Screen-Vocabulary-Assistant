@@ -197,7 +197,9 @@
                 android:background="@drawable/bg_profile_card"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true">
                 <FrameLayout
                     android:layout_width="36dp"
                     android:layout_height="36dp"

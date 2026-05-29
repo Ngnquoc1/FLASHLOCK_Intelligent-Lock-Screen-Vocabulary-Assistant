@@ -1,0 +1,167 @@
+package com.nhom18.flashlock.ui.lockscreen;
+
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.google.android.material.slider.Slider;
+import com.nhom18.flashlock.R;
+import com.nhom18.flashlock.data.model.Topic;
+import com.nhom18.flashlock.data.model.UserProfile;
+import com.nhom18.flashlock.data.remote.FirebaseProfileDataSource;
+import com.nhom18.flashlock.data.remote.FirebaseSavedTopicDataSource;
+import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
+import com.nhom18.flashlock.data.repository.FirebaseSavedTopicRepository;
+import com.nhom18.flashlock.databinding.ActivityLockScreenConfigBinding;
+import com.nhom18.flashlock.ui.profile.LockScreenTopicAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class LockScreenConfigActivity extends AppCompatActivity {
+
+    private ActivityLockScreenConfigBinding binding;
+    private LockScreenConfigViewModel viewModel;
+    private LockScreenTopicAdapter adapter;
+    private UserProfile currentProfile;
+
+    private int showEvery = 3;
+    private List<String> selectedTopicIds = new ArrayList<>();
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityLockScreenConfigBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        viewModel = new ViewModelProvider(this, new LockScreenConfigViewModelFactory(
+                new FirebaseProfileRepository(new FirebaseProfileDataSource()),
+                new FirebaseSavedTopicRepository(new FirebaseSavedTopicDataSource())
+        )).get(LockScreenConfigViewModel.class);
+
+        setupRecycler();
+        setupListeners();
+        setupObservers();
+
+        viewModel.load();
+    }
+
+    private void setupRecycler() {
+        adapter = new LockScreenTopicAdapter(new ArrayList<>(), new ArrayList<>());
+        adapter.setOnSelectionChangedListener(count -> updateSelectedCount());
+        binding.recyclerTopics.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerTopics.setAdapter(adapter);
+    }
+
+    private void setupListeners() {
+        binding.btnBack.setOnClickListener(v -> finish());
+        binding.sliderFrequency.addOnChangeListener((slider, value, fromUser) -> {
+            showEvery = (int) value;
+            updateFrequencyHint();
+        });
+
+        binding.btnApply.setOnClickListener(v -> saveConfig());
+        binding.btnReset.setOnClickListener(v -> resetDefaults());
+    }
+
+    private void setupObservers() {
+        viewModel.getProfile().observe(this, profile -> {
+            currentProfile = profile;
+            if (profile == null || profile.getSettings() == null) {
+                return;
+            }
+            UserProfile.Settings settings = profile.getSettings();
+            binding.swEnableLockScreen.setChecked(settings.isLockScreenEnabled());
+            int storedEvery = settings.getLockScreenShowEvery();
+            showEvery = storedEvery > 0 ? storedEvery : 3;
+            binding.sliderFrequency.setValue(showEvery);
+            selectedTopicIds = settings.getLockScreenTopicIds() != null
+                    ? settings.getLockScreenTopicIds() : new ArrayList<>();
+            updateFrequencyHint();
+            updateSelectedCount();
+        });
+
+        viewModel.getTopics().observe(this, topics -> {
+            List<Topic> items = topics != null ? topics : new ArrayList<>();
+            adapter = new LockScreenTopicAdapter(items, selectedTopicIds);
+            adapter.setOnSelectionChangedListener(count -> updateSelectedCount());
+            binding.recyclerTopics.setAdapter(adapter);
+            updateSelectedCount();
+        });
+
+        viewModel.getSaving().observe(this, saving -> {
+            boolean isSaving = Boolean.TRUE.equals(saving);
+            binding.btnApply.setEnabled(!isSaving);
+        });
+
+        viewModel.getError().observe(this, message -> {
+            if (message != null && !message.trim().isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateFrequencyHint() {
+        binding.tvFrequencyHint.setText(getString(R.string.lock_screen_frequency_hint, showEvery));
+    }
+
+    private void updateSelectedCount() {
+        int count = adapter != null ? adapter.getSelectedIds().size() : 0;
+        if (count == 0) {
+            binding.tvSelectedCount.setText(getString(R.string.lock_screen_topics_all));
+            return;
+        }
+        binding.tvSelectedCount.setText(getString(R.string.lock_screen_topics_selected_format, count));
+    }
+
+    private void saveConfig() {
+        if (currentProfile == null) {
+            return;
+        }
+        UserProfile.Settings currentSettings = currentProfile.getSettings() != null
+                ? currentProfile.getSettings() : new UserProfile.Settings();
+
+        currentSettings.setLockScreenEnabled(binding.swEnableLockScreen.isChecked());
+        currentSettings.setLockScreenShowEvery(showEvery);
+        currentSettings.setLockScreenTopicIds(new ArrayList<>(adapter.getSelectedIds()));
+
+        String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
+        viewModel.saveSettings(displayName, currentSettings);
+        Toast.makeText(this, R.string.lock_screen_config_saved, Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetDefaults() {
+        binding.swEnableLockScreen.setChecked(true);
+        showEvery = 3;
+        binding.sliderFrequency.setValue(showEvery);
+        adapter = new LockScreenTopicAdapter(
+                viewModel.getTopics().getValue() != null ? viewModel.getTopics().getValue() : new ArrayList<>(),
+                new ArrayList<>()
+        );
+        adapter.setOnSelectionChangedListener(count -> updateSelectedCount());
+        binding.recyclerTopics.setAdapter(adapter);
+        updateFrequencyHint();
+        updateSelectedCount();
+    }
+
+    private static class LockScreenConfigViewModelFactory implements ViewModelProvider.Factory {
+        private final FirebaseProfileRepository profileRepository;
+        private final FirebaseSavedTopicRepository savedTopicRepository;
+
+        LockScreenConfigViewModelFactory(FirebaseProfileRepository profileRepository,
+                                         FirebaseSavedTopicRepository savedTopicRepository) {
+            this.profileRepository = profileRepository;
+            this.savedTopicRepository = savedTopicRepository;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T extends androidx.lifecycle.ViewModel> T create(Class<T> modelClass) {
+            return (T) new LockScreenConfigViewModel(profileRepository, savedTopicRepository);
+        }
+    }
+}
