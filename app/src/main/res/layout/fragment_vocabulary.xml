@@ -187,7 +187,6 @@
                 android:textStyle="bold"
                 app:backgroundTint="@color/primary"
                 app:cornerRadius="16dp"
-                app:icon="@drawable/ic_arrow_right"
                 app:iconGravity="textEnd"
                 app:iconTint="@color/on_primary_container" />
 
