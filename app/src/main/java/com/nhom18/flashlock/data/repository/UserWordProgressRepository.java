@@ -7,5 +7,5 @@ import java.util.List;
 public interface UserWordProgressRepository {
     Task<List<UserWordProgress>> getProgressByTopic(String topicId);
     Task<Void> upsertProgress(UserWordProgress progress);
+    Task<Integer> getStudiedWordsCountToday();
 }
-

@@ -22,6 +22,7 @@ import com.nhom18.flashlock.service.LockScreenStudyService;
 import com.nhom18.flashlock.ui.library.LibraryFragment;
 import com.nhom18.flashlock.ui.profile.ProfileFragment;
 import com.nhom18.flashlock.ui.vocabulary.VocabularyFragment;
+import com.nhom18.flashlock.ui.home.HomeDashboardFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.nav_library_item) {
             fragment = LibraryFragment.newInstance();
         } else {
-            fragment = MainFragment.newInstance(title);
+            fragment = new HomeDashboardFragment();
         }
 
         loadFragment(fragment);

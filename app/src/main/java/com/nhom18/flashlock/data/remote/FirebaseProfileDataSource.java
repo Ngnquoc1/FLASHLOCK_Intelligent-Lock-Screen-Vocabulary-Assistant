@@ -41,18 +41,6 @@ public class FirebaseProfileDataSource {
         return db.collection("users").document(uid).update(updates);
     }
 
-//    public Task<Uri> uploadAvatar(String uid, Uri imageUri) {
-//        String path = "avatars/" + uid + "/avatar_" + System.currentTimeMillis() + ".jpg";
-//        StorageReference ref = storage.getReference().child(path);
-//
-//        return ref.putFile(imageUri).continueWithTask(task -> {
-//            if (!task.isSuccessful()) {
-//                throw task.getException();
-//            }
-//            return ref.getDownloadUrl();
-//        });
-//    }
-
     public Task<Uri> uploadAvatar(String path, Uri imageUri) {
         StorageReference ref = storage.getReference().child(path);
 
@@ -64,7 +52,6 @@ public class FirebaseProfileDataSource {
         });
     }
 
-    // Hàm dùng để Rollback (xóa ảnh rác)
     public Task<Void> deleteFile(String path) {
         return storage.getReference().child(path).delete();
     }
@@ -73,6 +60,17 @@ public class FirebaseProfileDataSource {
         Map<String, Object> updates = new HashMap<>();
         updates.put("avatarUrl", url);
         updates.put("avatarPath", path);
+        updates.put("updatedAt", FieldValue.serverTimestamp());
+
+        return db.collection("users").document(uid).update(updates);
+    }
+
+    public Task<Void> updateUserStreak(String uid, int newStreak, java.util.Date lastCompletedDate) {
+        if (uid == null) return Tasks.forException(new Exception("User not logged in"));
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("currentStreak", newStreak);
+        updates.put("lastGoalCompletedDate", lastCompletedDate);
         updates.put("updatedAt", FieldValue.serverTimestamp());
 
         return db.collection("users").document(uid).update(updates);

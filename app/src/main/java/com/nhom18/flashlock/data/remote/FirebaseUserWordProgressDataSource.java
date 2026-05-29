@@ -6,8 +6,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.nhom18.flashlock.data.model.UserWordProgress;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +74,31 @@ public class FirebaseUserWordProgressDataSource {
                 .set(payload);
     }
 
+    public Task<Integer> getStudiedWordsCountToday(String uid) {
+        if (uid == null) {
+            return Tasks.forException(new Exception("User not logged in"));
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Timestamp startOfDay = new Timestamp(calendar.getTime());
+
+        return db.collection("users")
+                .document(uid)
+                .collection("word_progress")
+                .whereGreaterThanOrEqualTo("updatedAt", startOfDay)
+                .get()
+                .continueWith(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return task.getResult().size();
+                });
+    }
+
     private Map<String, Object> toFirestoreMap(String uid, UserWordProgress progress) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", uid);
@@ -94,4 +121,3 @@ public class FirebaseUserWordProgressDataSource {
         return payload;
     }
 }
-

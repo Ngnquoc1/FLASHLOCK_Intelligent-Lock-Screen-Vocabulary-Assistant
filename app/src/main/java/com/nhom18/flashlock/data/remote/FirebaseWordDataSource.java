@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Locale;
+import java.util.Random; // Đã thêm import cho hàm Random
 
 public class FirebaseWordDataSource {
     private final FirebaseFirestore db;
@@ -188,6 +189,33 @@ public class FirebaseWordDataSource {
                         }
                         return filterWordsByQuery(filterTask.getResult(), normalized);
                     });
+                });
+    }
+
+    public Task<Word> getRandomWordOfDay(String uid) {
+        if (uid == null) {
+            return Tasks.forException(new Exception("User not logged in"));
+        }
+        return db.collection("users")
+                .document(uid)
+                .collection("my_words")
+                .whereNotEqualTo("status", Word.STATUS_MASTERED)
+                .limit(20)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        List<DocumentSnapshot> docs = task.getResult().getDocuments();
+
+                        int randomIndex = new Random().nextInt(docs.size());
+                        DocumentSnapshot randomDoc = docs.get(randomIndex);
+
+                        Word word = randomDoc.toObject(Word.class);
+                        if (word != null && (word.getWordId() == null || word.getWordId().isEmpty())) {
+                            word.setWordId(randomDoc.getId());
+                        }
+                        return word;
+                    }
+                    return null;
                 });
     }
 

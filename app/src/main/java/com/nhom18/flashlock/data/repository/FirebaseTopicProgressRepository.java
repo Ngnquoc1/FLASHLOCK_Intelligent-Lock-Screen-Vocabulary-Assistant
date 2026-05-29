@@ -23,5 +23,10 @@ public class FirebaseTopicProgressRepository implements TopicProgressRepository 
         String uid = dataSource.getCurrentUid();
         return dataSource.saveProgress(uid, progress);
     }
-}
 
+    @Override
+    public Task<TopicProgress> getLatestTopicProgress() {
+        String uid = dataSource.getCurrentUid();
+        return dataSource.getLatestTopicProgress(uid);
+    }
+}
