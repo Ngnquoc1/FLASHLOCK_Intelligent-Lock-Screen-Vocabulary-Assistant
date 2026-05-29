@@ -37,4 +37,6 @@ public class Topic {
 
     public String getLanguage() { return language; }
     public void setLanguage(String language) { this.language = language; }
+
+    public static final String MY_WORDS_TOPIC_ID = "topic_my_words_default";
 }

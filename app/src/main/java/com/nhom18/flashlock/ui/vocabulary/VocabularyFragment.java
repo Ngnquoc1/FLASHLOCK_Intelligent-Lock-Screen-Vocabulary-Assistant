@@ -95,6 +95,9 @@ public class VocabularyFragment extends Fragment {
         View fabAdd = view.findViewById(R.id.fab_add);
         View btnExploreLibrary = view.findViewById(R.id.btn_explore_library);
 
+        // TÌM THẺ "LEARN NOW" (Sử dụng ID mới là card_learn_my_words)
+        View btnLearnMyWords = view.findViewById(R.id.btn_learn_my_words);
+
         TextView chipAll = view.findViewById(R.id.chip_all_words);
         TextView chipNew = view.findViewById(R.id.chip_new_words);
         TextView chipLearning = view.findViewById(R.id.chip_learning_words);
@@ -109,10 +112,21 @@ public class VocabularyFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.rv_content);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        // TRUYỀN THÊM cardLearnMyWords VÀO HÀM CHUYỂN TAB ĐỂ ẨN/HIỆN
         tvTabVocab.setOnClickListener(v ->
-                switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView));
+                switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, btnLearnMyWords, recyclerView));
         tvTabTopics.setOnClickListener(v ->
-                switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView));
+                switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, btnLearnMyWords, recyclerView));
+
+        // XỬ LÝ SỰ KIỆN CLICK VÀO THẺ "LEARN NOW"
+        btnLearnMyWords.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.nhom18.flashlock.ui.study.StudyFlashcardActivity.class);
+            // Gửi dữ liệu qua Activity học Flashcard
+            intent.putExtra(com.nhom18.flashlock.ui.study.StudyFlashcardActivity.EXTRA_TOPIC_ID, Topic.MY_WORDS_TOPIC_ID);
+            intent.putExtra(com.nhom18.flashlock.ui.study.StudyFlashcardActivity.EXTRA_TOPIC_TITLE, getString(R.string.vocab_title_my));
+            intent.putExtra(com.nhom18.flashlock.ui.study.StudyFlashcardActivity.EXTRA_TOPIC_CATEGORY, "Personal");
+            startActivity(intent);
+        });
 
         vocabularyAdapter = new VocabularyAdapter(new VocabularyAdapter.WordActionListener() {
             @Override
@@ -227,38 +241,46 @@ public class VocabularyFragment extends Fragment {
         fabAdd.setOnClickListener(v -> showAddWordBottomSheet());
 
         if (openTopicsOnStart) {
-            switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView);
+            switchToTopicsTab(tvTabTopics, tvTabVocab, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, btnLearnMyWords, recyclerView);
         } else {
-            switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, recyclerView);
+            switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, btnLearnMyWords, recyclerView);
         }
     }
 
     private void switchToVocabularyTab(TextView selected, TextView unselected, TextView tvTitle, TextView tvSubtitle,
-                                       View filterScroll, View exploreFooter, View fabAdd, RecyclerView recyclerView) {
+                                       View filterScroll, View exploreFooter, View fabAdd, View cardLearnMyWords, RecyclerView recyclerView) {
         if (!isVocabularyTab) {
             isVocabularyTab = true;
         }
         updateTabs(selected, unselected);
         tvTitle.setText(getString(R.string.vocab_title_my));
         tvSubtitle.setText(getString(R.string.vocab_subtitle_my));
+
+        // HIỆN các thành phần của tab Vocabulary
         filterScroll.setVisibility(View.VISIBLE);
-        exploreFooter.setVisibility(View.GONE);
+        cardLearnMyWords.setVisibility(View.VISIBLE);
         fabAdd.setVisibility(View.VISIBLE);
+
+        exploreFooter.setVisibility(View.GONE);
         recyclerView.setAdapter(vocabularyAdapter);
         viewModel.loadVocabulary();
     }
 
     private void switchToTopicsTab(TextView selected, TextView unselected, TextView tvTitle, TextView tvSubtitle,
-                                   View filterScroll, View exploreFooter, View fabAdd, RecyclerView recyclerView) {
+                                   View filterScroll, View exploreFooter, View fabAdd, View cardLearnMyWords, RecyclerView recyclerView) {
         if (isVocabularyTab) {
             isVocabularyTab = false;
         }
         updateTabs(selected, unselected);
         tvTitle.setText(getString(R.string.vocab_title_topics));
         tvSubtitle.setText(getString(R.string.vocab_subtitle_topics));
+
+        // ẨN các thành phần của tab Vocabulary
         filterScroll.setVisibility(View.GONE);
-        exploreFooter.setVisibility(View.VISIBLE);
+        cardLearnMyWords.setVisibility(View.GONE);
         fabAdd.setVisibility(View.GONE);
+
+        exploreFooter.setVisibility(View.VISIBLE);
         tvEmptyState.setVisibility(View.GONE);
         tvEmptyState.setText(R.string.vocab_empty_topics);
         isLoading = true;
