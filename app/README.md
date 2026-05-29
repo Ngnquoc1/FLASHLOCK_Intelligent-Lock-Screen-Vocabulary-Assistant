@@ -6,9 +6,12 @@
 - Adapter: `com.nhom18.flashlock.ui.library.LibraryTopicWordAdapter`
 - ViewModel: `com.nhom18.flashlock.ui.library.LibraryTopicWordsViewModel`
 
+## Lock screen study (Notification-based)
+- Service: `com.nhom18.flashlock.service.LockScreenStudyService`
+- Receiver: `com.nhom18.flashlock.receiver.LockScreenStudyReceiver`
+
 ## Tests
 Run:
 ```
 ./gradlew :app:testDebugUnitTest
 ```
-

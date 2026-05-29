@@ -1,5 +1,9 @@
 package com.nhom18.flashlock.ui.main;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +18,14 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nhom18.flashlock.R;
+import com.nhom18.flashlock.service.LockScreenStudyService;
 import com.nhom18.flashlock.ui.library.LibraryFragment;
 import com.nhom18.flashlock.ui.profile.ProfileFragment;
 import com.nhom18.flashlock.ui.vocabulary.VocabularyFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQ_POST_NOTIFICATIONS = 901;
 
     private View navHome, navLibrary, navVocabulary, navProfile;
     private ImageView ivTopProfile;
@@ -31,10 +38,45 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupListeners();
         loadTopBarProfile();
+        ensureNotificationPermissionThenStart();
 
         // Mặc định khi vào app sẽ ở tab HOME
         if (savedInstanceState == null) {
             selectTab(R.id.nav_home_item, "HOME");
+        }
+    }
+
+    private void ensureNotificationPermissionThenStart() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    REQ_POST_NOTIFICATIONS);
+            // Vẫn thử start service: chỉ notification sẽ tạm thời không hiện cho tới khi user cấp quyền.
+        }
+        startLockScreenService();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @androidx.annotation.NonNull String[] permissions,
+                                           @androidx.annotation.NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_POST_NOTIFICATIONS) {
+            // Restart service để post lại notification sau khi user cấp quyền
+            startLockScreenService();
+        }
+    }
+
+    private void startLockScreenService() {
+        Intent serviceIntent = new Intent(this, LockScreenStudyService.class);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
+        } catch (Exception ignored) {
+            // Android 12+ có thể chặn FGS từ background trong vài kịch bản hiếm
         }
     }
 

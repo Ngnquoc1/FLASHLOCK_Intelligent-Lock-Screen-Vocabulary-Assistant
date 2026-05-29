@@ -228,6 +228,48 @@
     <string name="library_action_save">Lưu chủ đề</string>
     <string name="library_action_saved">Đã lưu</string>
 
+    <string name="library_open_topic_missing_id">Topic is missing an id</string>
+    <string name="library_loading">Loading topics...</string>
+
+    <!-- Topic Words Screen Strings -->
+    <string name="topic_words_title">Topic words</string>
+    <string name="topic_words_fallback_title">Topic</string>
+    <string name="topic_words_empty">No words in this topic yet</string>
+    <string name="topic_words_load_failed">Failed to load words. Please try again.</string>
+    <string name="topic_words_count_format">%1$d words</string>
+
+    <!-- Lock screen study -->
+    <string name="lock_screen_placeholder_term">TỪ VỰNG</string>
+    <string name="lock_screen_placeholder_definition">Nghĩa</string>
+    <string name="lock_screen_notification_title">FlashLock học từ</string>
+    <string name="lock_screen_notification_text">Đang chuẩn bị thẻ từ vựng</string>
+    <string name="lock_screen_notification_empty">Chưa có từ vựng. Thêm từ để bắt đầu học.</string>
+    <string name="lock_screen_notification_disabled">Học qua màn hình khóa đang tắt. Bật trong cài đặt.</string>
+    <string name="lock_screen_action_next">Tiếp ›</string>
+    <string name="lock_screen_action_prev">‹ Trước</string>
+    <string name="lock_screen_channel_name">Học qua màn hình khóa</string>
+    <string name="lock_screen_channel_description">Thẻ từ vựng hiển thị trên màn hình khóa.</string>
+
+    <string name="lock_screen_topics_title">Chủ đề màn hình khóa</string>
+    <string name="lock_screen_topics_title_short">Lock screen topics</string>
+    <string name="lock_screen_topics_subtitle">Choose topics to show on lock screen</string>
+    <string name="lock_screen_topics_save">Save topics</string>
+    <string name="lock_screen_topics_all">All topics</string>
+    <string name="lock_screen_topics_empty">No saved topics yet.</string>
+    <string name="lock_screen_topics_selected_format">%1$d topics selected</string>
+
+    <string name="lock_screen_config_title">Lock Screen Configuration</string>
+    <string name="lock_screen_config_subtitle">Turn your passive screen time into active learning moments.</string>
+    <string name="lock_screen_config_enable">Enable lock screen study</string>
+    <string name="lock_screen_frequency_title">Display Frequency</string>
+    <string name="lock_screen_frequency_subtitle">How often new words appear on unlock</string>
+    <string name="lock_screen_frequency_hint_default">Every 3rd unlock will show a word.</string>
+    <string name="lock_screen_frequency_hint">Every %1$d unlock will show a word.</string>
+    <string name="lock_screen_config_apply">Apply Configuration</string>
+    <string name="lock_screen_config_reset">Reset to Default</string>
+    <string name="lock_screen_config_saved">Configuration saved</string>
+    <string name="lock_screen_swipe_hint">Quẹt trái để xem từ mới</string>
+
     <!-- Study Screen Strings -->
     <string name="study_label_vocab_mastery">Làm chủ từ vựng</string>
     <string name="study_label_english_meaning">Nghĩa</string>

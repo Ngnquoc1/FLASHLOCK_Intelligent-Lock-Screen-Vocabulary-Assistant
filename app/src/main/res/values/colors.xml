@@ -35,4 +35,10 @@
     <color name="tag_learning">#1976D2</color>
     <color name="tag_new">#424242</color>
     <color name="error">#FF5252</color>
+
+    <!-- Lock screen study -->
+    <color name="lock_screen_card_bg">#B0000000</color>
+    <color name="lock_screen_text_primary">#E6FFFFFF</color>
+    <color name="lock_screen_text_secondary">#C8FFFFFF</color>
+    <color name="lock_screen_button_bg">#1AFFFFFF</color>
 </resources>

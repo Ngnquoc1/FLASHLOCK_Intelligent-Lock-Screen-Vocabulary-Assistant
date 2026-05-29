@@ -237,6 +237,39 @@
     <string name="topic_words_load_failed">Failed to load words. Please try again.</string>
     <string name="topic_words_count_format">%1$d words</string>
 
+    <!-- Lock screen study -->
+    <string name="lock_screen_placeholder_term">VOCAB</string>
+    <string name="lock_screen_placeholder_definition">Quick meaning</string>
+    <string name="lock_screen_notification_title">FlashLock study</string>
+    <string name="lock_screen_notification_text">Preparing lock screen card</string>
+    <string name="lock_screen_notification_empty">No vocabulary yet. Add words to start learning.</string>
+    <string name="lock_screen_notification_disabled">Lock screen study is off. Enable it in settings.</string>
+    <string name="lock_screen_action_next">Next ›</string>
+    <string name="lock_screen_action_prev">‹ Prev</string>
+    <string name="lock_screen_channel_name">Lock screen study</string>
+    <string name="lock_screen_channel_description">Vocabulary cards shown on your lock screen.</string>
+
+    <string name="lock_screen_topics_title">Lock screen topics</string>
+    <string name="lock_screen_topics_title_short">Lock screen topics</string>
+    <string name="lock_screen_topics_subtitle">Choose topics to show on lock screen</string>
+    <string name="lock_screen_topics_save">Save topics</string>
+    <string name="lock_screen_topics_all">All topics</string>
+    <string name="lock_screen_topics_empty">No saved topics yet.</string>
+    <string name="lock_screen_topics_selected_format">%1$d topics selected</string>
+
+    <string name="lock_screen_config_title">Lock Screen Configuration</string>
+    <string name="lock_screen_config_subtitle">Turn your passive screen time into active learning moments.</string>
+    <string name="lock_screen_config_enable">Enable lock screen study</string>
+    <string name="lock_screen_frequency_title">Display Frequency</string>
+    <string name="lock_screen_frequency_subtitle">How often new words appear on unlock</string>
+    <string name="lock_screen_frequency_hint_default">Every 3rd unlock will show a word.</string>
+    <string name="lock_screen_frequency_hint">Every %1$d unlock will show a word.</string>
+    <string name="lock_screen_config_apply">Apply Configuration</string>
+    <string name="lock_screen_config_reset">Reset to Default</string>
+    <string name="lock_screen_config_saved">Configuration saved</string>
+
+    <string name="lock_screen_swipe_hint">Left swipe for new word</string>
+
     <!-- Study Screen Strings -->
     <string name="study_title">Study</string>
     <string name="study_subtitle">Review and master your vocabulary</string>
