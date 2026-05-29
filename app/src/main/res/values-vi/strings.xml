@@ -247,7 +247,7 @@
     <string name="study_error_load_failed">Không thể tải flashcard.</string>
     <string name="study_tts_unavailable">Không thể phát âm.</string>
     <string name="study_empty_title">Bạn đã hoàn thành mục tiêu hôm nay cho topic này!</string>
-    <string name="study_empty_action_home">Trở về</string>
+    <string name="study_empty_action_home">Quay lại</string>
     <string name="study_empty_action_cram">Ôn lại - Không lưu tiến độ</string>
     <string name="study_cram_toast">Đã bật Cram Mode</string>
 </resources>
