@@ -298,4 +298,8 @@
     <string name="study_error_save_failed">Failed to save progress.</string>
     <string name="study_error_load_failed">Unable to load flashcard.</string>
     <string name="study_tts_unavailable">Text to speech is unavailable.</string>
+    <string name="study_empty_title">You have finished todays goal for the topic!</string>
+    <string name="study_empty_action_home">Back</string>
+    <string name="study_empty_action_cram">Review Again - No Progress Saved</string>
+    <string name="study_cram_toast">Cram Mode activated</string>
 </resources>

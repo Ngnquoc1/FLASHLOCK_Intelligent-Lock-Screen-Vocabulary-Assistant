@@ -18,6 +18,7 @@ import com.nhom18.flashlock.data.repository.UserWordProgressRepository;
 import com.nhom18.flashlock.domain.srs.SrsScheduler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ public class StudyViewModel extends ViewModel {
     private Map<String, UserWordProgress> progressByWord = new HashMap<>();
     private String topicId;
 
+    private boolean isCramMode = false;
+
     public StudyViewModel() {
         this(new FirebaseTopicWordRepository(new FirebaseTopicWordDataSource()),
                 new FirebaseUserWordProgressRepository(new FirebaseUserWordProgressDataSource()),
@@ -58,6 +61,7 @@ public class StudyViewModel extends ViewModel {
     }
 
     public void loadTopic(String topicId) {
+        isCramMode = false;
         if (topicId == null || topicId.trim().isEmpty()) {
             state.setValue(new StudyUiState(false, "TOPIC_ID_REQUIRED", null, 0, 0, 0, 0, 0));
             return;
@@ -81,7 +85,30 @@ public class StudyViewModel extends ViewModel {
                 });
     }
 
+    public void startCramMode(String topicId) {
+        isCramMode = true;
+        if (topicId == null || topicId.trim().isEmpty()) {
+            state.setValue(new StudyUiState(false, "TOPIC_ID_REQUIRED", null, 0, 0, 0, 0, 0));
+            return;
+        }
+        this.topicId = topicId;
+        state.setValue(new StudyUiState(true, null, null, 0, 0, 0, 0, 0));
+        topicRepository.getTopicWords(topicId)
+                .addOnCompleteListener(DIRECT_EXECUTOR, task -> {
+                    if (!task.isSuccessful()) {
+                        state.postValue(new StudyUiState(false, "LOAD_STUDY_FAILED", null, 0, 0, 0, 0, 0));
+                        return;
+                    }
+                    List<Word> words = task.getResult() != null ? task.getResult() : new ArrayList<>();
+                    buildCramSession(words);
+                });
+    }
+
     public void onRemembered() {
+        if (isCramMode) {
+            moveNext();
+            return;
+        }
         StudyCard card = getCurrentCard();
         if (card == null) {
             return;
@@ -96,6 +123,10 @@ public class StudyViewModel extends ViewModel {
     }
 
     public void onForgot() {
+        if (isCramMode) {
+            moveNext();
+            return;
+        }
         StudyCard card = getCurrentCard();
         if (card == null) {
             return;
@@ -109,19 +140,19 @@ public class StudyViewModel extends ViewModel {
     }
 
     private void updateProgressAndAdvance(UserWordProgress progress) {
+        progressByWord.put(progress.getWordId(), progress);
+        moveNext();
         progressRepository.upsertProgress(progress).addOnCompleteListener(DIRECT_EXECUTOR, task -> {
             if (!task.isSuccessful()) {
                 state.postValue(new StudyUiState(false, "SAVE_PROGRESS_FAILED",
                         getCurrentCard(), currentIndex + 1, queue.size(),
                         getNewCount(), getLearningCount(), getMasteredCount()));
-                return;
             }
-            progressByWord.put(progress.getWordId(), progress);
-            moveNext();
         });
     }
 
     private void buildSession(List<Word> words, List<UserWordProgress> progress) {
+        isCramMode = false;
         progressByWord = new HashMap<>();
         if (progress != null) {
             for (UserWordProgress item : progress) {
@@ -147,6 +178,28 @@ public class StudyViewModel extends ViewModel {
                 }
             }
         }
+        currentIndex = 0;
+        if (queue.isEmpty()) {
+            state.postValue(new StudyUiState(false, "NO_DUE_WORDS", null, 0, 0,
+                    getNewCount(), getLearningCount(), getMasteredCount()));
+        } else {
+            state.postValue(new StudyUiState(false, null, queue.get(0), 1, queue.size(),
+                    getNewCount(), getLearningCount(), getMasteredCount()));
+        }
+    }
+
+    private void buildCramSession(List<Word> words) {
+        queue = new ArrayList<>();
+        allWords = words != null ? new ArrayList<>(words) : new ArrayList<>();
+        if (words != null) {
+            for (Word word : words) {
+                if (word == null) {
+                    continue;
+                }
+                queue.add(new StudyCard(word, progressByWord.get(word.getWordId())));
+            }
+        }
+        Collections.shuffle(queue);
         currentIndex = 0;
         if (queue.isEmpty()) {
             state.postValue(new StudyUiState(false, "NO_DUE_WORDS", null, 0, 0,

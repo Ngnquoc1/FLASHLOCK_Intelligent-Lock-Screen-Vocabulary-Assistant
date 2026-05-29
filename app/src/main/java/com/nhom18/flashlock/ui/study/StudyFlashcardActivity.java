@@ -36,6 +36,9 @@ public class StudyFlashcardActivity extends AppCompatActivity {
     private View cardContainer;
     private View btnRemember;
     private View btnForget;
+    private View studyStats;
+    private View studyActions;
+    private View emptyStateLayout;
     private boolean isAnimating = false;
 
     private TextView tvFrontLabel;
@@ -83,6 +86,9 @@ public class StudyFlashcardActivity extends AppCompatActivity {
         cardFront = findViewById(R.id.card_front);
         cardBack = findViewById(R.id.card_back);
         cardContainer = findViewById(R.id.card_container);
+        studyStats = findViewById(R.id.study_stats);
+        studyActions = findViewById(R.id.study_actions);
+        emptyStateLayout = findViewById(R.id.layout_empty_state);
 
         // Gán lệnh click cho container và mặt thẻ
         cardContainer.setOnClickListener(v -> flipCard());
@@ -125,7 +131,18 @@ public class StudyFlashcardActivity extends AppCompatActivity {
         btnRemember.setOnClickListener(v -> handleAnswer(true));
         btnForget.setOnClickListener(v -> handleAnswer(false));
 
-        setAnswerButtonsEnabled(false);
+        View btnReturnHome = findViewById(R.id.btn_return_home);
+        if (btnReturnHome != null) {
+            btnReturnHome.setOnClickListener(v -> finish());
+        }
+        View btnCramMode = findViewById(R.id.btn_cram_mode);
+        if (btnCramMode != null) {
+            btnCramMode.setOnClickListener(v -> {
+                viewModel.startCramMode(currentTopicId);
+                showStudyState();
+                Toast.makeText(this, R.string.study_cram_toast, Toast.LENGTH_SHORT).show();
+            });
+        }
 
         tvTitle.setText("");
         tvSubtitle.setText("");
@@ -166,9 +183,9 @@ public class StudyFlashcardActivity extends AppCompatActivity {
             showEmptyState();
             return;
         }
+        showStudyState();
         String status = card.getProgress() != null ? card.getProgress().getStatus() : null;
         isCurrentNew = status == null || Word.STATUS_NEW.equals(status);
-        setAnswerButtonsEnabled(true);
 
         tvFrontLabel.setText(R.string.study_label_vocab_mastery);
         String term = resolveTerm(word);
@@ -183,14 +200,36 @@ public class StudyFlashcardActivity extends AppCompatActivity {
         }
     }
 
+    private void showStudyState() {
+        if (cardContainer != null) {
+            cardContainer.setVisibility(View.VISIBLE);
+        }
+        if (studyStats != null) {
+            studyStats.setVisibility(View.VISIBLE);
+        }
+        if (studyActions != null) {
+            studyActions.setVisibility(View.VISIBLE);
+        }
+        if (emptyStateLayout != null) {
+            emptyStateLayout.setVisibility(View.GONE);
+        }
+    }
+
     private void showEmptyState() {
         isCurrentNew = false;
-        setAnswerButtonsEnabled(false);
-        tvFrontWord.setText(getString(R.string.study_empty_no_due));
-        tvFrontPronunciation.setText("");
-        tvFrontType.setText("");
-        tvBackMeaning.setText("");
-        tvBackExample.setText("");
+        resetToFront();
+        if (cardContainer != null) {
+            cardContainer.setVisibility(View.GONE);
+        }
+        if (studyStats != null) {
+            studyStats.setVisibility(View.GONE);
+        }
+        if (studyActions != null) {
+            studyActions.setVisibility(View.GONE);
+        }
+        if (emptyStateLayout != null) {
+            emptyStateLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void handleError(String code) {
@@ -258,7 +297,6 @@ public class StudyFlashcardActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 showingBack = toBack;
-                setAnswerButtonsEnabled(true);
                 if (endAction != null) {
                     endAction.run();
                 }
@@ -270,7 +308,6 @@ public class StudyFlashcardActivity extends AppCompatActivity {
 
     private void resetToFront() {
         showingBack = false;
-        setAnswerButtonsEnabled(false);
         cardBack.setVisibility(View.INVISIBLE);
         cardFront.setVisibility(View.VISIBLE);
         cardFront.setRotationY(0f);
@@ -307,11 +344,10 @@ public class StudyFlashcardActivity extends AppCompatActivity {
         if (isAnimating) {
             return;
         }
-        if (remembered && !showingBack && !isCurrentNew) {
-            return;
-        }
+//        if (remembered && !showingBack && !isCurrentNew) {
+//            return;
+//        }
         isAnimating = true;
-        setAnswerButtonsEnabled(false);
         animateCardExit(remembered ? 1 : -1, () -> {
             if (remembered) {
                 viewModel.onRemembered();
@@ -322,18 +358,6 @@ public class StudyFlashcardActivity extends AppCompatActivity {
             resetCardPosition();
             isAnimating = false;
         });
-    }
-
-    private void setAnswerButtonsEnabled(boolean enabled) {
-        if (btnRemember != null) {
-            boolean rememberEnabled = enabled && (showingBack || isCurrentNew);
-            btnRemember.setEnabled(rememberEnabled);
-            btnRemember.setAlpha(rememberEnabled ? 1f : 0.5f);
-        }
-        if (btnForget != null) {
-            btnForget.setEnabled(enabled);
-            btnForget.setAlpha(enabled ? 1f : 0.5f);
-        }
     }
 
     private void animateCardExit(int direction, @Nullable Runnable endAction) {
