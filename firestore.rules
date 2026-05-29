@@ -20,7 +20,8 @@ service cloud.firestore {
           'lockScreenEnabled',
           'reminderHour',
           'reminderMinute',
-          'lockScreenTopicIds'
+          'lockScreenTopicIds',
+          'dailyGoal'
         ])
         && settings.keys().hasAll([
           'lockScreenEnabled',
@@ -35,7 +36,9 @@ service cloud.firestore {
         && settings.reminderMinute >= 0
         && settings.reminderMinute <= 59
         && (!('lockScreenTopicIds' in settings)
-            || (settings.lockScreenTopicIds is list && settings.lockScreenTopicIds.size() <= 20));
+            || (settings.lockScreenTopicIds is list && settings.lockScreenTopicIds.size() <= 20))
+        && (!('dailyGoal' in settings)
+            || (settings.dailyGoal is int && settings.dailyGoal >= 1));
     }
 
     function hasValidSettings(data) {
@@ -67,7 +70,9 @@ service cloud.firestore {
           'avatarUrl',
           'avatarPath',
           'settings',
-          'updatedAt'
+          'updatedAt',
+          'currentStreak',        
+          'lastGoalCompletedDate'  
         ])
         && hasValidSettings(request.resource.data);
     }
