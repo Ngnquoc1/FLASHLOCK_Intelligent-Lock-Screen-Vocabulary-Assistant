@@ -5,6 +5,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.nhom18.flashlock.data.model.TopicProgress;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,5 +61,23 @@ public class FirebaseTopicProgressDataSource {
                 .collection("topic_progress")
                 .document(progress.getTopicId())
                 .set(progress);
+    }
+
+    public Task<TopicProgress> getLatestTopicProgress(String uid) {
+        if (uid == null) {
+            return Tasks.forException(new Exception("User not logged in"));
+        }
+        return db.collection("users")
+                .document(uid)
+                .collection("topic_progress")
+                .orderBy("lastStudiedAt", Query.Direction.DESCENDING) // Sắp xếp mới nhất lên đầu
+                .limit(1) // Chỉ lấy 1 cái
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        return task.getResult().getDocuments().get(0).toObject(TopicProgress.class);
+                    }
+                    return null;
+                });
     }
 }

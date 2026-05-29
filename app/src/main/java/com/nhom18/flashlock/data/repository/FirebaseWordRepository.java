@@ -51,6 +51,12 @@ public class FirebaseWordRepository implements WordRepository {
     }
 
     @Override
+    public Task<Word> getRandomWordOfDay() {
+        String uid = dataSource.getCurrentUid();
+        return dataSource.getRandomWordOfDay(uid);
+    }
+
+    @Override
     public ListenerRegistration observeAllWords(WordListListener listener) {
         String uid = dataSource.getCurrentUid();
         return dataSource.observeAllWords(uid, toDataSourceListener(listener));

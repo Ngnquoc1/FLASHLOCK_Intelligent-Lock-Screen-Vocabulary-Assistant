@@ -35,13 +35,15 @@
                     app:srcCompat="@drawable/ic_search"
                     app:tint="@color/primary"
                     tools:ignore="UseAppTint" />
+
                 <EditText
+                    android:id="@+id/et_search"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="12dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:hint="Tìm kiếm từ vựng bất kỳ..."
+                    android:hint="Search any vocabulary..."
                     android:textColor="@color/on_surface"
                     android:textColorHint="#80d7e3ff"
                     android:textSize="14sp" />
@@ -85,14 +87,17 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         app:srcCompat="@drawable/ic_fire"
-                        app:tint="#FF9800" /> <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="12 Streak"
-                    android:textColor="@color/on_surface"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                        app:tint="#FF9800" />
+
+                    <TextView
+                        android:id="@+id/tv_streak_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        tools:text="12 Streak"
+                        android:textColor="@color/on_surface"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -105,10 +110,12 @@
                     app:layout_constraintTop_toBottomOf="@id/ll_streak_badge">
 
                     <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/progress_circular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:progress="75"
+                        android:progress="0"
+                        tools:progress="75"
                         app:indicatorColor="@color/primary"
                         app:indicatorSize="140dp"
                         app:trackColor="@color/surface_container"
@@ -123,18 +130,20 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tv_progress_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="45"
+                            tools:text="45"
                             android:textColor="@color/on_surface"
                             android:textSize="40sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tv_progress_goal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:alpha="0.7"
-                            android:text="MỤC TIÊU 60"
+                            tools:text="GOAL 60"
                             android:textColor="@color/on_surface"
                             android:textSize="10sp"
                             android:textStyle="bold" />
@@ -146,7 +155,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Tiến độ hôm nay"
+                    android:text="Today's Progress"
                     android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -155,11 +164,12 @@
                     app:layout_constraintTop_toBottomOf="@id/fl_progress" />
 
                 <TextView
+                    android:id="@+id/tv_progress_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:alpha="0.6"
-                    android:text="Bạn chỉ còn 15 từ nữa là hoàn thành!"
+                    tools:text="You are only 15 words away from completion!"
                     android:textColor="@color/on_surface"
                     android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -170,9 +180,13 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_flashcard_learn"
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardBackgroundColor="@color/primary_container"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
@@ -218,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="48dp"
-                    android:text="Học Flashcard\nNgay bây giờ"
+                    android:text="Learn Flashcards\nNow"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -232,7 +246,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:alpha="0.8"
-                    android:text="Tiếp tục bài học: Essential English"
+                    tools:text="Continue learning: Essential English"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="@id/tv_flashcard_title"
@@ -292,7 +306,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Khóa màn hình học tập"
+                        android:text="Study Lock Screen"
                         android:textColor="@color/on_surface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -302,7 +316,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:alpha="0.6"
-                        android:text="Học từ mới ngay khi mở điện thoại"
+                        android:text="Learn new words when unlocking your phone"
                         android:textColor="@color/on_surface"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -316,6 +330,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_word_of_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -334,36 +349,39 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.1"
-                    android:text="TỪ VỰNG CỦA NGÀY"
+                    android:text="WORD OF THE DAY"
                     android:textColor="@color/on_surface"
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_word_of_day_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Luminescent"
+                    tools:text="Luminescent"
                     android:textColor="@color/white"
                     android:textSize="26sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_word_of_day_pronunciation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:alpha="0.6"
-                    android:text="/luː.mɪˈnes.ənt/"
+                    tools:text="/luː.mɪˈnes.ənt/"
                     android:textColor="@color/on_surface"
                     android:textSize="14sp"
                     android:textStyle="italic" />
 
                 <TextView
+                    android:id="@+id/tv_word_of_day_meaning"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:lineSpacingExtra="4dp"
-                    android:text="Phát sáng mà không tỏa nhiệt mạnh, mang vẻ đẹp huyền ảo."
+                    tools:text="Emitting light not caused by heat, giving off a beautiful glow."
                     android:textColor="@color/on_surface"
                     android:textSize="15sp" />
 
@@ -374,6 +392,7 @@
                     android:orientation="horizontal">
 
                     <ImageButton
+                        android:id="@+id/btn_word_volume"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:background="@drawable/bg_icon_rounded"
@@ -382,6 +401,7 @@
                         app:tint="@color/primary" />
 
                     <ImageButton
+                        android:id="@+id/btn_word_bookmark"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:layout_marginStart="12dp"
@@ -390,86 +410,6 @@
                         app:srcCompat="@drawable/ic_bookmark"
                         app:tint="@color/on_surface" />
                 </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/surface_container_high"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hoạt động gần đây"
-                    android:textColor="@color/on_surface"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="6dp"
-                        android:layout_height="6dp"
-                        android:background="@drawable/bg_circle_dot"
-                        android:backgroundTint="@color/primary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Đã ôn 12 từ &quot;Công việc&quot;"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="6dp"
-                        android:layout_height="6dp"
-                        android:background="@drawable/bg_circle_dot"
-                        android:backgroundTint="@color/primary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Vừa hoàn thành quiz Ngữ pháp"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="20dp"
-                    android:text="XEM CHI TIẾT"
-                    android:textColor="@color/on_surface"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    app:backgroundTint="@color/surface_container_highest"
-                    app:cornerRadius="12dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

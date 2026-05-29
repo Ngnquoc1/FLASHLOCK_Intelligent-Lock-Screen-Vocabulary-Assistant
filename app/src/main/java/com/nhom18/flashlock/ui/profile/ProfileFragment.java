@@ -96,6 +96,7 @@ public class ProfileFragment extends Fragment {
         }
         if (binding != null) {
             binding.etDisplayName.clearFocus();
+            binding.etDailyGoalValue.clearFocus();
         }
     }
 
@@ -153,6 +154,11 @@ public class ProfileFragment extends Fragment {
                             currentMinute = state.getUserProfile().getSettings().getReminderMinute();
                             binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
                             updateTimeUI();
+
+                            // Load Daily Goal lên UI
+                            if (!binding.etDailyGoalValue.hasFocus()) {
+                                binding.etDailyGoalValue.setText(String.valueOf(state.getUserProfile().getSettings().getDailyGoal()));
+                            }
                         }
                     }
 
@@ -188,6 +194,34 @@ public class ProfileFragment extends Fragment {
             return false;
         });
 
+        binding.etDailyGoalValue.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                hideKeyboard();
+                return true;
+            }
+            return false;
+        });
+
+        binding.btnGoalDown.setOnClickListener(v -> {
+            try {
+                int currentGoal = Integer.parseInt(binding.etDailyGoalValue.getText().toString().trim());
+                if (currentGoal > 1) {
+                    binding.etDailyGoalValue.setText(String.valueOf(currentGoal - 1));
+                }
+            } catch (NumberFormatException e) {
+                binding.etDailyGoalValue.setText("1");
+            }
+        });
+
+        binding.btnGoalUp.setOnClickListener(v -> {
+            try {
+                int currentGoal = Integer.parseInt(binding.etDailyGoalValue.getText().toString().trim());
+                binding.etDailyGoalValue.setText(String.valueOf(currentGoal + 1));
+            } catch (NumberFormatException e) {
+                binding.etDailyGoalValue.setText("5");
+            }
+        });
+
         binding.btnSave.setOnClickListener(v -> {
             hideKeyboard();
             String newName = binding.etDisplayName.getText().toString().trim();
@@ -196,11 +230,24 @@ public class ProfileFragment extends Fragment {
                 binding.etDisplayName.requestFocus();
                 return;
             }
+
+            int newGoal = 5;
+            try {
+                newGoal = Integer.parseInt(binding.etDailyGoalValue.getText().toString().trim());
+                if (newGoal <= 0) newGoal = 1;
+            } catch (NumberFormatException e) {
+                newGoal = 5;
+                binding.etDailyGoalValue.setText(String.valueOf(newGoal));
+            }
+
             UserProfile.Settings currentSettings = currentProfile != null && currentProfile.getSettings() != null
                     ? currentProfile.getSettings() : new UserProfile.Settings();
+
             currentSettings.setReminderHour(currentHour);
             currentSettings.setReminderMinute(currentMinute);
             currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
+            currentSettings.setDailyGoal(newGoal);
+
             viewModel.onSaveProfile(newName, currentSettings);
         });
 

@@ -17,6 +17,10 @@ public class UserProfile {
     private String status;
     private Date createdAt;
     private Date updatedAt;
+
+    private int currentStreak = 0;
+    private Date lastGoalCompletedDate;
+
     private Settings settings;
 
     public UserProfile() {}
@@ -48,6 +52,12 @@ public class UserProfile {
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
 
+    public int getCurrentStreak() { return currentStreak; }
+    public void setCurrentStreak(int currentStreak) { this.currentStreak = currentStreak; }
+
+    public Date getLastGoalCompletedDate() { return lastGoalCompletedDate; }
+    public void setLastGoalCompletedDate(Date lastGoalCompletedDate) { this.lastGoalCompletedDate = lastGoalCompletedDate; }
+
     public Settings getSettings() { return settings; }
     public void setSettings(Settings settings) { this.settings = settings; }
 
@@ -56,6 +66,7 @@ public class UserProfile {
         private int reminderHour = 20;
         private int reminderMinute = 30;
         private int lockScreenShowEvery = 3;
+        private int dailyGoal = 5;
         private List<String> lockScreenTopicIds = new ArrayList<>();
 
         public Settings() {}
@@ -73,6 +84,9 @@ public class UserProfile {
 
         public int getLockScreenShowEvery() { return lockScreenShowEvery; }
         public void setLockScreenShowEvery(int lockScreenShowEvery) { this.lockScreenShowEvery = lockScreenShowEvery; }
+
+        public int getDailyGoal() { return dailyGoal; }
+        public void setDailyGoal(int dailyGoal) { this.dailyGoal = dailyGoal; }
 
         public List<String> getLockScreenTopicIds() { return lockScreenTopicIds; }
         public void setLockScreenTopicIds(List<String> lockScreenTopicIds) {
