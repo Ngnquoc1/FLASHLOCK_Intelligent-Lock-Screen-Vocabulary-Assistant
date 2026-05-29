@@ -23,5 +23,10 @@ public class FirebaseUserWordProgressRepository implements UserWordProgressRepos
         String uid = dataSource.getCurrentUid();
         return dataSource.upsertProgress(uid, progress);
     }
-}
 
+    @Override
+    public Task<Integer> getStudiedWordsCountToday() {
+        String uid = dataSource.getCurrentUid();
+        return dataSource.getStudiedWordsCountToday(uid);
+    }
+}

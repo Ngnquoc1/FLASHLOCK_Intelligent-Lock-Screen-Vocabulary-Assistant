@@ -7,4 +7,6 @@ import java.util.List;
 public interface TopicProgressRepository {
     Task<List<TopicProgress>> getProgress();
     Task<Void> saveProgress(TopicProgress progress);
+
+    Task<TopicProgress> getLatestTopicProgress();
 }

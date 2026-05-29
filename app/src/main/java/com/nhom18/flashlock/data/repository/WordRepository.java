@@ -15,6 +15,8 @@ public interface WordRepository {
     Task<List<Word>> getDueWords(Timestamp currentTime);
     Task<List<Word>> searchWordsByTerm(String query);
 
+    Task<Word> getRandomWordOfDay();
+
     ListenerRegistration observeAllWords(WordListListener listener);
     ListenerRegistration observeDueWords(Timestamp currentTime, WordListListener listener);
 
