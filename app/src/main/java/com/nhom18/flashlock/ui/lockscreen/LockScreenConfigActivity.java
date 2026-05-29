@@ -29,7 +29,6 @@ public class LockScreenConfigActivity extends AppCompatActivity {
     private LockScreenTopicAdapter adapter;
     private UserProfile currentProfile;
 
-    private int showEvery = 3;
     private List<String> selectedTopicIds = new ArrayList<>();
 
     @Override
@@ -59,11 +58,6 @@ public class LockScreenConfigActivity extends AppCompatActivity {
 
     private void setupListeners() {
         binding.btnBack.setOnClickListener(v -> finish());
-        binding.sliderFrequency.addOnChangeListener((slider, value, fromUser) -> {
-            showEvery = (int) value;
-            updateFrequencyHint();
-        });
-
         binding.btnApply.setOnClickListener(v -> saveConfig());
         binding.btnReset.setOnClickListener(v -> resetDefaults());
     }
@@ -76,12 +70,8 @@ public class LockScreenConfigActivity extends AppCompatActivity {
             }
             UserProfile.Settings settings = profile.getSettings();
             binding.swEnableLockScreen.setChecked(settings.isLockScreenEnabled());
-            int storedEvery = settings.getLockScreenShowEvery();
-            showEvery = storedEvery > 0 ? storedEvery : 3;
-            binding.sliderFrequency.setValue(showEvery);
             selectedTopicIds = settings.getLockScreenTopicIds() != null
                     ? settings.getLockScreenTopicIds() : new ArrayList<>();
-            updateFrequencyHint();
             updateSelectedCount();
         });
 
@@ -105,10 +95,6 @@ public class LockScreenConfigActivity extends AppCompatActivity {
         });
     }
 
-    private void updateFrequencyHint() {
-        binding.tvFrequencyHint.setText(getString(R.string.lock_screen_frequency_hint, showEvery));
-    }
-
     private void updateSelectedCount() {
         int count = adapter != null ? adapter.getSelectedIds().size() : 0;
         if (count == 0) {
@@ -126,7 +112,6 @@ public class LockScreenConfigActivity extends AppCompatActivity {
                 ? currentProfile.getSettings() : new UserProfile.Settings();
 
         currentSettings.setLockScreenEnabled(binding.swEnableLockScreen.isChecked());
-        currentSettings.setLockScreenShowEvery(showEvery);
         currentSettings.setLockScreenTopicIds(new ArrayList<>(adapter.getSelectedIds()));
 
         String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
@@ -136,15 +121,12 @@ public class LockScreenConfigActivity extends AppCompatActivity {
 
     private void resetDefaults() {
         binding.swEnableLockScreen.setChecked(true);
-        showEvery = 3;
-        binding.sliderFrequency.setValue(showEvery);
         adapter = new LockScreenTopicAdapter(
                 viewModel.getTopics().getValue() != null ? viewModel.getTopics().getValue() : new ArrayList<>(),
                 new ArrayList<>()
         );
         adapter.setOnSelectionChangedListener(count -> updateSelectedCount());
         binding.recyclerTopics.setAdapter(adapter);
-        updateFrequencyHint();
         updateSelectedCount();
     }
 

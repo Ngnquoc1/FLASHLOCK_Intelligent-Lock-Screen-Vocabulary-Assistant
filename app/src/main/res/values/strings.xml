@@ -260,10 +260,6 @@
     <string name="lock_screen_config_title">Lock Screen Configuration</string>
     <string name="lock_screen_config_subtitle">Turn your passive screen time into active learning moments.</string>
     <string name="lock_screen_config_enable">Enable lock screen study</string>
-    <string name="lock_screen_frequency_title">Display Frequency</string>
-    <string name="lock_screen_frequency_subtitle">How often new words appear on unlock</string>
-    <string name="lock_screen_frequency_hint_default">Every 3rd unlock will show a word.</string>
-    <string name="lock_screen_frequency_hint">Every %1$d unlock will show a word.</string>
     <string name="lock_screen_config_apply">Apply Configuration</string>
     <string name="lock_screen_config_reset">Reset to Default</string>
     <string name="lock_screen_config_saved">Configuration saved</string>

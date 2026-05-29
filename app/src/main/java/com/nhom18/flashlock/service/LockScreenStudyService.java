@@ -20,16 +20,22 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.nhom18.flashlock.R;
+import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.data.model.UserProfile;
 import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.data.remote.FirebaseProfileDataSource;
-import com.nhom18.flashlock.data.remote.FirebaseWordDataSource;
+import com.nhom18.flashlock.data.remote.FirebaseSavedTopicDataSource;
+import com.nhom18.flashlock.data.remote.FirebaseTopicWordDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
-import com.nhom18.flashlock.data.repository.FirebaseWordRepository;
+import com.nhom18.flashlock.data.repository.FirebaseSavedTopicRepository;
+import com.nhom18.flashlock.data.repository.FirebaseTopicWordRepository;
 import com.nhom18.flashlock.data.repository.ProfileRepository;
-import com.nhom18.flashlock.data.repository.WordRepository;
+import com.nhom18.flashlock.data.repository.SavedTopicRepository;
+import com.nhom18.flashlock.data.repository.TopicWordRepository;
 import com.nhom18.flashlock.receiver.LockScreenNotificationReceiver;
 import com.nhom18.flashlock.ui.main.MainActivity;
 
@@ -134,32 +140,63 @@ public class LockScreenStudyService extends Service {
     }
 
     private void refreshWordCache() {
-        WordRepository wordRepo = new FirebaseWordRepository(new FirebaseWordDataSource());
-        wordRepo.getAllWords().addOnCompleteListener(task -> {
-            if (!task.isSuccessful() || task.getResult() == null) {
-                Log.w(TAG, "Failed to load words: "
-                        + (task.getException() != null ? task.getException().getMessage() : "unknown"));
-                return;
-            }
-            List<Word> filtered = new ArrayList<>();
-            for (Word w : task.getResult()) {
-                if (currentTopicIds.isEmpty()
-                        || (w.getTopicId() != null && currentTopicIds.contains(w.getTopicId()))) {
-                    filtered.add(w);
+        if (currentTopicIds != null && !currentTopicIds.isEmpty()) {
+            fetchWordsForTopics(new ArrayList<>(currentTopicIds));
+            return;
+        }
+
+        // Không chọn topic nào = "Tất cả": gộp My_words + mọi saved topic
+        SavedTopicRepository savedTopicRepo =
+                new FirebaseSavedTopicRepository(new FirebaseSavedTopicDataSource());
+        savedTopicRepo.getSavedTopics().addOnCompleteListener(task -> {
+            List<String> ids = new ArrayList<>();
+            ids.add(Topic.MY_WORDS_TOPIC_ID);
+            if (task.isSuccessful() && task.getResult() != null) {
+                for (Topic t : task.getResult()) {
+                    if (t.getTopicId() != null && !ids.contains(t.getTopicId())) {
+                        ids.add(t.getTopicId());
+                    }
                 }
             }
-            if (filtered.isEmpty()) {
+            fetchWordsForTopics(ids);
+        });
+    }
+
+    private void fetchWordsForTopics(List<String> topicIds) {
+        TopicWordRepository topicWordRepo =
+                new FirebaseTopicWordRepository(new FirebaseTopicWordDataSource());
+
+        List<Task<List<Word>>> tasks = new ArrayList<>();
+        for (String id : topicIds) {
+            if (id != null && !id.trim().isEmpty()) {
+                tasks.add(topicWordRepo.getTopicWords(id));
+            }
+        }
+        if (tasks.isEmpty()) {
+            postNotification(buildStatusNotification(
+                    getString(R.string.lock_screen_notification_empty)));
+            return;
+        }
+
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(done -> {
+            List<Word> combined = new ArrayList<>();
+            for (Task<List<Word>> t : tasks) {
+                if (t.isSuccessful() && t.getResult() != null) {
+                    combined.addAll(t.getResult());
+                }
+            }
+            if (combined.isEmpty()) {
                 postNotification(buildStatusNotification(
                         getString(R.string.lock_screen_notification_empty)));
                 return;
             }
-            Collections.shuffle(filtered);
+            Collections.shuffle(combined);
             synchronized (wordCache) {
                 wordCache.clear();
-                wordCache.addAll(filtered);
+                wordCache.addAll(combined);
                 currentIndex = 0;
             }
-            postNotification(buildWordNotification(filtered.get(0)));
+            postNotification(buildWordNotification(combined.get(0)));
         });
     }
 

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python3)",
-      "PowerShell(.\\\\gradlew.bat :app:assembleDebug --console=plain 2>&1)"
+      "PowerShell(.\\\\gradlew.bat :app:assembleDebug --console=plain 2>&1)",
+      "PowerShell(.\\\\gradlew.bat :app:compileDebugJavaWithJavac --console=plain 2>&1)"
     ]
   }
 }
