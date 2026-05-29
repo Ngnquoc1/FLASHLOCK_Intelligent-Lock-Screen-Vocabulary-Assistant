@@ -3,26 +3,35 @@ package com.nhom18.flashlock.ui.vocabulary;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.data.model.TopicProgress;
+import com.nhom18.flashlock.data.model.UserWordProgress;
 import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.data.remote.FirebaseSavedTopicDataSource;
+import com.nhom18.flashlock.data.remote.FirebaseUserWordProgressDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseWordDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseSavedTopicRepository;
+import com.nhom18.flashlock.data.repository.FirebaseUserWordProgressRepository;
 import com.nhom18.flashlock.data.repository.FirebaseWordRepository;
 import com.nhom18.flashlock.data.repository.SavedTopicRepository;
 import com.nhom18.flashlock.data.repository.TopicProgressRepository;
 import com.nhom18.flashlock.data.remote.FirebaseTopicProgressDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseTopicProgressRepository;
+import com.nhom18.flashlock.data.repository.UserWordProgressRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VocabularyViewModel extends ViewModel {
     private final WordRepository wordRepository;
     private final SavedTopicRepository topicRepository;
     private final TopicProgressRepository topicProgressRepository;
+    private final UserWordProgressRepository progressRepository;
 
     private final MutableLiveData<List<Word>> words = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Topic>> topics = new MutableLiveData<>(new ArrayList<>());
@@ -33,19 +42,18 @@ public class VocabularyViewModel extends ViewModel {
     public VocabularyViewModel() {
         this(new FirebaseWordRepository(new FirebaseWordDataSource()),
                 new FirebaseSavedTopicRepository(new FirebaseSavedTopicDataSource()),
-                new FirebaseTopicProgressRepository(new FirebaseTopicProgressDataSource()));
-    }
-
-    VocabularyViewModel(WordRepository wordRepository, SavedTopicRepository topicRepository) {
-        this(wordRepository, topicRepository, new FirebaseTopicProgressRepository(new FirebaseTopicProgressDataSource()));
+                new FirebaseTopicProgressRepository(new FirebaseTopicProgressDataSource()),
+                new FirebaseUserWordProgressRepository(new FirebaseUserWordProgressDataSource()));
     }
 
     VocabularyViewModel(WordRepository wordRepository,
                         SavedTopicRepository topicRepository,
-                        TopicProgressRepository topicProgressRepository) {
+                        TopicProgressRepository topicProgressRepository,
+                        UserWordProgressRepository progressRepository) {
         this.wordRepository = wordRepository;
         this.topicRepository = topicRepository;
         this.topicProgressRepository = topicProgressRepository;
+        this.progressRepository = progressRepository;
     }
 
     public LiveData<List<Word>> getWords() {
@@ -70,14 +78,7 @@ public class VocabularyViewModel extends ViewModel {
 
     public void loadVocabulary() {
         loading.setValue(true);
-        wordRepository.getAllWords().addOnCompleteListener(task -> {
-            loading.postValue(false);
-            if (task.isSuccessful()) {
-                words.postValue(task.getResult());
-            } else {
-                error.postValue(task.getException() != null ? task.getException().getMessage() : "LOAD_WORDS_FAILED");
-            }
-        });
+        loadWordsWithProgress(wordRepository.getAllWords(), "LOAD_WORDS_FAILED");
     }
 
     public void searchVocabulary(String query) {
@@ -87,14 +88,44 @@ public class VocabularyViewModel extends ViewModel {
             return;
         }
         loading.setValue(true);
-        wordRepository.searchWordsByTerm(term).addOnCompleteListener(task -> {
+        loadWordsWithProgress(wordRepository.searchWordsByTerm(term), "SEARCH_WORDS_FAILED");
+    }
+
+    // Ghép word_progress (nguồn sự thật SRS) vào status hiển thị của my_words.
+    private void loadWordsWithProgress(Task<List<Word>> wordsTask, String failCode) {
+        Task<List<UserWordProgress>> progressTask =
+                progressRepository.getProgressByTopic(Topic.MY_WORDS_TOPIC_ID);
+        Tasks.whenAllComplete(wordsTask, progressTask).addOnCompleteListener(t -> {
             loading.postValue(false);
-            if (task.isSuccessful()) {
-                words.postValue(task.getResult());
-            } else {
-                error.postValue(task.getException() != null ? task.getException().getMessage() : "SEARCH_WORDS_FAILED");
+            if (!wordsTask.isSuccessful()) {
+                error.postValue(wordsTask.getException() != null
+                        ? wordsTask.getException().getMessage() : failCode);
+                return;
             }
+            List<Word> result = wordsTask.getResult() != null
+                    ? wordsTask.getResult() : new ArrayList<>();
+            // Progress lỗi tạm thời chỉ làm status hơi cũ, không chặn danh sách.
+            if (progressTask.isSuccessful() && progressTask.getResult() != null) {
+                applyProgressStatus(result, progressTask.getResult());
+            }
+            words.postValue(result);
         });
+    }
+
+    private void applyProgressStatus(List<Word> wordList, List<UserWordProgress> progressList) {
+        Map<String, UserWordProgress> byId = new HashMap<>();
+        for (UserWordProgress p : progressList) {
+            if (p != null && p.getWordId() != null) {
+                byId.put(p.getWordId(), p);
+            }
+        }
+        for (Word w : wordList) {
+            if (w == null) continue;
+            UserWordProgress p = byId.get(w.getWordId());
+            if (p != null && p.getStatus() != null) {
+                w.setStatus(p.getStatus());
+            }
+        }
     }
 
     public void loadTopics() {

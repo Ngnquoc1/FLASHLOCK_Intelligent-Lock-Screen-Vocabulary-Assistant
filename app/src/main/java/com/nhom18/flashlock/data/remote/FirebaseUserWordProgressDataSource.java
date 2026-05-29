@@ -6,7 +6,6 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.nhom18.flashlock.data.model.UserWordProgress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,45 +56,6 @@ public class FirebaseUserWordProgressDataSource {
                 });
     }
 
-    public Task<List<UserWordProgress>> getDueWords(String uid, Timestamp now) {
-        if (uid == null) {
-            return Tasks.forException(new Exception("User not logged in"));
-        }
-        if (now == null) {
-            return Tasks.forException(new Exception("currentTime is required"));
-        }
-
-        Task<List<UserWordProgress>> newTask = db.collection("users")
-                .document(uid)
-                .collection("word_progress")
-                .whereEqualTo("status", "NEW")
-                .get()
-                .continueWith(task -> mapSnapshots(task));
-
-        Task<List<UserWordProgress>> dueTask = db.collection("users")
-                .document(uid)
-                .collection("word_progress")
-                .whereLessThanOrEqualTo("nextReviewAt", now)
-                .orderBy("nextReviewAt", Query.Direction.ASCENDING)
-                .get()
-                .continueWith(task -> mapSnapshots(task));
-
-        return Tasks.whenAllSuccess(newTask, dueTask)
-                .continueWith(task -> {
-                    List<UserWordProgress> merged = new ArrayList<>();
-                    for (Object item : task.getResult()) {
-                        if (item instanceof List) {
-                            for (Object progress : (List<?>) item) {
-                                if (progress instanceof UserWordProgress) {
-                                    merged.add((UserWordProgress) progress);
-                                }
-                            }
-                        }
-                    }
-                    return merged;
-                });
-    }
-
     public Task<Void> upsertProgress(String uid, UserWordProgress progress) {
         if (uid == null) {
             return Tasks.forException(new Exception("User not logged in"));
@@ -132,23 +92,6 @@ public class FirebaseUserWordProgressDataSource {
             payload.put("updatedAt", Timestamp.now());
         }
         return payload;
-    }
-
-    private List<UserWordProgress> mapSnapshots(com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> task) throws Exception {
-        if (!task.isSuccessful()) {
-            throw task.getException();
-        }
-        List<UserWordProgress> items = new ArrayList<>();
-        for (DocumentSnapshot doc : task.getResult().getDocuments()) {
-            UserWordProgress progress = doc.toObject(UserWordProgress.class);
-            if (progress != null && (progress.getWordId() == null || progress.getWordId().isEmpty())) {
-                progress.setWordId(doc.getId());
-            }
-            if (progress != null) {
-                items.add(progress);
-            }
-        }
-        return items;
     }
 }
 

@@ -9,7 +9,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.nhom18.flashlock.data.model.Topic;
 import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.data.model.TopicProgress;
+import com.nhom18.flashlock.data.model.UserWordProgress;
 import com.nhom18.flashlock.data.repository.SavedTopicRepository;
+import com.nhom18.flashlock.data.repository.UserWordProgressRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
 import com.nhom18.flashlock.data.repository.TopicProgressRepository;
 import com.nhom18.flashlock.util.LiveDataTestUtil;
@@ -29,7 +31,7 @@ public class VocabularyViewModelTest {
     @Test
     public void addWord_missingTerm_setsError() throws InterruptedException {
         FakeWordRepository wordRepository = new FakeWordRepository();
-        VocabularyViewModel viewModel = new VocabularyViewModel(wordRepository, new FakeSavedTopicRepository(), new FakeTopicProgressRepository());
+        VocabularyViewModel viewModel = new VocabularyViewModel(wordRepository, new FakeSavedTopicRepository(), new FakeTopicProgressRepository(), new FakeUserWordProgressRepository());
 
         Word word = new Word();
         word.setTerm(" ");
@@ -44,7 +46,7 @@ public class VocabularyViewModelTest {
 
     @Test
     public void deleteWord_missingId_setsError() throws InterruptedException {
-        VocabularyViewModel viewModel = new VocabularyViewModel(new FakeWordRepository(), new FakeSavedTopicRepository(), new FakeTopicProgressRepository());
+        VocabularyViewModel viewModel = new VocabularyViewModel(new FakeWordRepository(), new FakeSavedTopicRepository(), new FakeTopicProgressRepository(), new FakeUserWordProgressRepository());
 
         viewModel.deleteWord(" ");
 
@@ -121,6 +123,18 @@ public class VocabularyViewModelTest {
 
         @Override
         public Task<Void> saveProgress(TopicProgress progress) {
+            return Tasks.forResult(null);
+        }
+    }
+
+    private static class FakeUserWordProgressRepository implements UserWordProgressRepository {
+        @Override
+        public Task<List<UserWordProgress>> getProgressByTopic(String topicId) {
+            return Tasks.forResult(new ArrayList<>());
+        }
+
+        @Override
+        public Task<Void> upsertProgress(UserWordProgress progress) {
             return Tasks.forResult(null);
         }
     }
