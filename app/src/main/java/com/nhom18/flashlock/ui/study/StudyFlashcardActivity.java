@@ -417,6 +417,15 @@ public class StudyFlashcardActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        // Ghi nhận hoàn thành mục tiêu ngày khi rời màn học (không chờ mở lại Home).
+        if (viewModel != null) {
+            viewModel.recordDailyGoalIfMet();
+        }
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         if (tts != null) {
             tts.shutdown();

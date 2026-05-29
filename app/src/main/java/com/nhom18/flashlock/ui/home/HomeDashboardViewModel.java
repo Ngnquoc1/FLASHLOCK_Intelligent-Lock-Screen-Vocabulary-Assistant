@@ -21,12 +21,16 @@ import com.nhom18.flashlock.data.repository.ProfileRepository;
 import com.nhom18.flashlock.data.repository.TopicProgressRepository;
 import com.nhom18.flashlock.data.repository.UserWordProgressRepository;
 import com.nhom18.flashlock.data.repository.WordRepository;
+import com.nhom18.flashlock.domain.goal.StreakCalculator;
+
+import java.util.Date;
 
 public class HomeDashboardViewModel extends ViewModel {
     private final ProfileRepository profileRepository;
     private final UserWordProgressRepository userWordProgressRepository;
     private final TopicProgressRepository topicProgressRepository;
     private final WordRepository wordRepository;
+    private final StreakCalculator streakCalculator = new StreakCalculator();
 
     private final MutableLiveData<Integer> dailyCount = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> dailyGoal = new MutableLiveData<>(5);
@@ -109,56 +113,16 @@ public class HomeDashboardViewModel extends ViewModel {
             return;
         }
 
-        int streak = profile.getCurrentStreak();
-        java.util.Date lastCompleted = profile.getLastGoalCompletedDate();
-        java.util.Calendar today = java.util.Calendar.getInstance();
-        clearTime(today);
+        boolean isGoalMetToday = currentGoal > 0 && currentCount >= currentGoal;
+        StreakCalculator.Result result = streakCalculator.evaluate(
+                profile.getCurrentStreak(),
+                profile.getLastGoalCompletedDate(),
+                isGoalMetToday,
+                new Date());
 
-        long daysDiff = -1;
-        if (lastCompleted != null) {
-            java.util.Calendar last = java.util.Calendar.getInstance();
-            last.setTime(lastCompleted);
-            clearTime(last);
-            daysDiff = (today.getTimeInMillis() - last.getTimeInMillis()) / (24 * 60 * 60 * 1000);
+        streakCount.postValue(result.streak);
+        if (result.needsUpdate) {
+            profileRepository.updateUserStreak(result.streak, result.lastCompletedDate);
         }
-
-        boolean isGoalMetToday = currentCount >= currentGoal && currentGoal > 0;
-        boolean needsDbUpdate = false;
-
-        if (daysDiff == 0) {
-            streakCount.postValue(streak);
-        }
-        else if (daysDiff == 1) {
-            if (isGoalMetToday) {
-                streak += 1;
-                lastCompleted = new java.util.Date();
-                needsDbUpdate = true;
-            }
-            streakCount.postValue(streak);
-        }
-        else {
-            if (isGoalMetToday) {
-                streak = 1;
-                lastCompleted = new java.util.Date();
-                needsDbUpdate = true;
-            } else {
-                if (streak > 0) {
-                    streak = 0;
-                    needsDbUpdate = true;
-                }
-            }
-            streakCount.postValue(streak);
-        }
-
-        if (needsDbUpdate) {
-            profileRepository.updateUserStreak(streak, lastCompleted);
-        }
-    }
-
-    private void clearTime(java.util.Calendar c) {
-        c.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        c.set(java.util.Calendar.MINUTE, 0);
-        c.set(java.util.Calendar.SECOND, 0);
-        c.set(java.util.Calendar.MILLISECOND, 0);
     }
 }

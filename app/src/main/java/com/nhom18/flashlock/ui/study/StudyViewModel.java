@@ -7,18 +7,24 @@ import androidx.lifecycle.ViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
+import com.nhom18.flashlock.data.model.UserProfile;
 import com.nhom18.flashlock.data.model.UserWordProgress;
 import com.nhom18.flashlock.data.model.Word;
+import com.nhom18.flashlock.data.remote.FirebaseProfileDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseTopicWordDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseUserWordProgressDataSource;
+import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
 import com.nhom18.flashlock.data.repository.FirebaseTopicWordRepository;
 import com.nhom18.flashlock.data.repository.FirebaseUserWordProgressRepository;
+import com.nhom18.flashlock.data.repository.ProfileRepository;
 import com.nhom18.flashlock.data.repository.TopicWordRepository;
 import com.nhom18.flashlock.data.repository.UserWordProgressRepository;
+import com.nhom18.flashlock.domain.goal.StreakCalculator;
 import com.nhom18.flashlock.domain.srs.SrsScheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +35,11 @@ public class StudyViewModel extends ViewModel {
 
     private final TopicWordRepository topicRepository;
     private final UserWordProgressRepository progressRepository;
+    private final ProfileRepository profileRepository;
     private final SrsScheduler scheduler;
+    private final StreakCalculator streakCalculator = new StreakCalculator();
+    // Chỉ đánh giá mục tiêu khi phiên có trả lời ít nhất 1 thẻ.
+    private boolean hasAnswered = false;
 
     private final MutableLiveData<StudyUiState> state =
             new MutableLiveData<>(new StudyUiState(false, null, null, 0, 0, 0, 0, 0));
@@ -47,14 +57,17 @@ public class StudyViewModel extends ViewModel {
     public StudyViewModel() {
         this(new FirebaseTopicWordRepository(new FirebaseTopicWordDataSource()),
                 new FirebaseUserWordProgressRepository(new FirebaseUserWordProgressDataSource()),
+                new FirebaseProfileRepository(new FirebaseProfileDataSource()),
                 new SrsScheduler());
     }
 
     StudyViewModel(TopicWordRepository topicRepository,
                    UserWordProgressRepository progressRepository,
+                   ProfileRepository profileRepository,
                    SrsScheduler scheduler) {
         this.topicRepository = topicRepository;
         this.progressRepository = progressRepository;
+        this.profileRepository = profileRepository;
         this.scheduler = scheduler;
     }
 
@@ -184,10 +197,38 @@ public class StudyViewModel extends ViewModel {
     }
 
     private void updateProgressAndAdvance(UserWordProgress progress) {
+        hasAnswered = true;
         UserWordProgress previous = progressByWord.get(progress.getWordId());
         progressByWord.put(progress.getWordId(), progress);
         moveNext();
         persistProgress(progress, previous, true);
+    }
+
+    // Ghi nhận hoàn thành mục tiêu ngay trong luồng học (gọi khi rời màn),
+    // để streak không phụ thuộc việc người dùng có mở lại màn Home hay không.
+    public void recordDailyGoalIfMet() {
+        if (!hasAnswered || profileRepository == null) {
+            return;
+        }
+        Task<UserProfile> profileTask = profileRepository.getCurrentUserProfile();
+        Task<Integer> countTask = progressRepository.getStudiedWordsCountToday();
+        Tasks.whenAllComplete(profileTask, countTask).addOnCompleteListener(DIRECT_EXECUTOR, t -> {
+            if (!profileTask.isSuccessful() || profileTask.getResult() == null) return;
+            if (!countTask.isSuccessful() || countTask.getResult() == null) return;
+
+            UserProfile profile = profileTask.getResult();
+            int goal = profile.getSettings() != null ? profile.getSettings().getDailyGoal() : 0;
+            boolean goalMet = goal > 0 && countTask.getResult() >= goal;
+
+            StreakCalculator.Result result = streakCalculator.evaluate(
+                    profile.getCurrentStreak(),
+                    profile.getLastGoalCompletedDate(),
+                    goalMet,
+                    new Date());
+            if (result.needsUpdate) {
+                profileRepository.updateUserStreak(result.streak, result.lastCompletedDate);
+            }
+        });
     }
 
     private void persistProgress(UserWordProgress progress, UserWordProgress previous, boolean allowRetry) {

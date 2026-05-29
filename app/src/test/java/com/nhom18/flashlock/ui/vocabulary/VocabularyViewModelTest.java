@@ -93,6 +93,11 @@ public class VocabularyViewModelTest {
         }
 
         @Override
+        public Task<Word> getRandomWordOfDay() {
+            return Tasks.forResult(null);
+        }
+
+        @Override
         public ListenerRegistration observeAllWords(WordListListener listener) {
             return null;
         }
@@ -125,6 +130,11 @@ public class VocabularyViewModelTest {
         public Task<Void> saveProgress(TopicProgress progress) {
             return Tasks.forResult(null);
         }
+
+        @Override
+        public Task<TopicProgress> getLatestTopicProgress() {
+            return Tasks.forResult(null);
+        }
     }
 
     private static class FakeUserWordProgressRepository implements UserWordProgressRepository {
@@ -136,6 +146,11 @@ public class VocabularyViewModelTest {
         @Override
         public Task<Void> upsertProgress(UserWordProgress progress) {
             return Tasks.forResult(null);
+        }
+
+        @Override
+        public Task<Integer> getStudiedWordsCountToday() {
+            return Tasks.forResult(0);
         }
     }
 }
