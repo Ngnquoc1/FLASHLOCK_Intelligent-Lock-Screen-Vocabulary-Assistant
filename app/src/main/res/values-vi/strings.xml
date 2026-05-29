@@ -288,4 +288,6 @@
     <string name="study_empty_action_home">Trở về</string>
     <string name="study_empty_action_cram">Ôn lại - Không lưu tiến độ</string>
     <string name="study_cram_toast">Đã bật Cram Mode</string>
+    <string name="study_empty_action_weak">Ôn từ chưa nhớ</string>
+    <string name="study_empty_no_weak">Không có từ chưa nhớ nào trong chủ đề này.</string>
 </resources>

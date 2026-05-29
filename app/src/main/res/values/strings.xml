@@ -298,4 +298,6 @@
     <string name="study_empty_action_home">Back</string>
     <string name="study_empty_action_cram">Review Again - No Progress Saved</string>
     <string name="study_cram_toast">Cram Mode activated</string>
+    <string name="study_empty_action_weak">Review forgotten words</string>
+    <string name="study_empty_no_weak">No forgotten words in this topic.</string>
 </resources>

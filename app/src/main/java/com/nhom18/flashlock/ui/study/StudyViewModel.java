@@ -41,6 +41,8 @@ public class StudyViewModel extends ViewModel {
     private String topicId;
 
     private boolean isCramMode = false;
+    // Tăng mỗi lần bắt đầu session (loadTopic/cram) để bỏ qua callback của session cũ.
+    private int sessionToken = 0;
 
     public StudyViewModel() {
         this(new FirebaseTopicWordRepository(new FirebaseTopicWordDataSource()),
@@ -68,20 +70,58 @@ public class StudyViewModel extends ViewModel {
         }
         this.topicId = topicId;
         state.setValue(new StudyUiState(true, null, null, 0, 0, 0, 0, 0));
+        final int token = ++sessionToken;
 
         Task<List<Word>> wordsTask = topicRepository.getTopicWords(topicId);
         Task<List<UserWordProgress>> progressTask = progressRepository.getProgressByTopic(topicId);
 
         Tasks.whenAllComplete(wordsTask, progressTask)
                 .addOnCompleteListener(DIRECT_EXECUTOR, task -> {
-                    if (!wordsTask.isSuccessful()) {
+                    if (token != sessionToken) {
+                        return;
+                    }
+                    // Fail cứng nếu progress lỗi: coi là rỗng sẽ khiến mọi từ thành NEW
+                    // và lần trả lời kế tiếp ghi đè/reset tiến độ SRS thật.
+                    if (!wordsTask.isSuccessful() || !progressTask.isSuccessful()) {
                         state.postValue(new StudyUiState(false, "LOAD_STUDY_FAILED", null, 0, 0, 0, 0, 0));
                         return;
                     }
                     List<Word> words = wordsTask.getResult() != null ? wordsTask.getResult() : new ArrayList<>();
-                    List<UserWordProgress> progress = progressTask.isSuccessful() && progressTask.getResult() != null
+                    List<UserWordProgress> progress = progressTask.getResult() != null
                             ? progressTask.getResult() : new ArrayList<>();
                     buildSession(words, progress);
+                });
+    }
+
+    // Chế độ "Học từ chưa nhớ": gom các từ đã học mà lần trả lời cuối là Chưa nhớ
+    // (status REVIEW & boxLevel == 1), bỏ qua điều kiện đến hạn nextReviewAt.
+    // Có lưu tiến độ (như học thường) nên Nhớ 1 lần sẽ đưa từ ra khỏi bộ này.
+    public void loadWeakWords(String topicId) {
+        isCramMode = false;
+        if (topicId == null || topicId.trim().isEmpty()) {
+            state.setValue(new StudyUiState(false, "TOPIC_ID_REQUIRED", null, 0, 0, 0, 0, 0));
+            return;
+        }
+        this.topicId = topicId;
+        state.setValue(new StudyUiState(true, null, null, 0, 0, 0, 0, 0));
+        final int token = ++sessionToken;
+
+        Task<List<Word>> wordsTask = topicRepository.getTopicWords(topicId);
+        Task<List<UserWordProgress>> progressTask = progressRepository.getProgressByTopic(topicId);
+
+        Tasks.whenAllComplete(wordsTask, progressTask)
+                .addOnCompleteListener(DIRECT_EXECUTOR, task -> {
+                    if (token != sessionToken) {
+                        return;
+                    }
+                    if (!wordsTask.isSuccessful() || !progressTask.isSuccessful()) {
+                        state.postValue(new StudyUiState(false, "LOAD_STUDY_FAILED", null, 0, 0, 0, 0, 0));
+                        return;
+                    }
+                    List<Word> words = wordsTask.getResult() != null ? wordsTask.getResult() : new ArrayList<>();
+                    List<UserWordProgress> progress = progressTask.getResult() != null
+                            ? progressTask.getResult() : new ArrayList<>();
+                    buildWeakSession(words, progress);
                 });
     }
 
@@ -93,8 +133,12 @@ public class StudyViewModel extends ViewModel {
         }
         this.topicId = topicId;
         state.setValue(new StudyUiState(true, null, null, 0, 0, 0, 0, 0));
+        final int token = ++sessionToken;
         topicRepository.getTopicWords(topicId)
                 .addOnCompleteListener(DIRECT_EXECUTOR, task -> {
+                    if (token != sessionToken) {
+                        return;
+                    }
                     if (!task.isSuccessful()) {
                         state.postValue(new StudyUiState(false, "LOAD_STUDY_FAILED", null, 0, 0, 0, 0, 0));
                         return;
@@ -140,14 +184,31 @@ public class StudyViewModel extends ViewModel {
     }
 
     private void updateProgressAndAdvance(UserWordProgress progress) {
+        UserWordProgress previous = progressByWord.get(progress.getWordId());
         progressByWord.put(progress.getWordId(), progress);
         moveNext();
+        persistProgress(progress, previous, true);
+    }
+
+    private void persistProgress(UserWordProgress progress, UserWordProgress previous, boolean allowRetry) {
         progressRepository.upsertProgress(progress).addOnCompleteListener(DIRECT_EXECUTOR, task -> {
-            if (!task.isSuccessful()) {
-                state.postValue(new StudyUiState(false, "SAVE_PROGRESS_FAILED",
-                        getCurrentCard(), currentIndex + 1, queue.size(),
-                        getNewCount(), getLearningCount(), getMasteredCount()));
+            if (task.isSuccessful()) {
+                return;
             }
+            if (allowRetry) {
+                persistProgress(progress, previous, false);
+                return;
+            }
+            // Thất bại dứt điểm: hoàn tác entry cục bộ để bộ đếm không lệch với server,
+            // rồi báo lỗi cho người dùng.
+            if (previous != null) {
+                progressByWord.put(progress.getWordId(), previous);
+            } else {
+                progressByWord.remove(progress.getWordId());
+            }
+            state.postValue(new StudyUiState(false, "SAVE_PROGRESS_FAILED",
+                    getCurrentCard(), Math.min(currentIndex + 1, queue.size()), queue.size(),
+                    getNewCount(), getLearningCount(), getMasteredCount()));
         });
     }
 
@@ -181,6 +242,42 @@ public class StudyViewModel extends ViewModel {
         currentIndex = 0;
         if (queue.isEmpty()) {
             state.postValue(new StudyUiState(false, "NO_DUE_WORDS", null, 0, 0,
+                    getNewCount(), getLearningCount(), getMasteredCount()));
+        } else {
+            state.postValue(new StudyUiState(false, null, queue.get(0), 1, queue.size(),
+                    getNewCount(), getLearningCount(), getMasteredCount()));
+        }
+    }
+
+    private void buildWeakSession(List<Word> words, List<UserWordProgress> progress) {
+        isCramMode = false;
+        progressByWord = new HashMap<>();
+        if (progress != null) {
+            for (UserWordProgress item : progress) {
+                if (item != null && item.getWordId() != null) {
+                    progressByWord.put(item.getWordId(), item);
+                }
+            }
+        }
+        queue = new ArrayList<>();
+        allWords = words != null ? new ArrayList<>(words) : new ArrayList<>();
+        if (words != null) {
+            for (Word word : words) {
+                if (word == null) continue;
+                UserWordProgress existing = progressByWord.get(word.getWordId());
+                // "Chưa nhớ" = đã học (REVIEW) và lần cuối bấm Chưa nhớ (boxLevel == 1).
+                // Từ mới (status NEW) bị loại; từ đã Nhớ có boxLevel >= 2 nên cũng bị loại.
+                if (existing != null
+                        && Word.STATUS_REVIEW.equals(existing.getStatus())
+                        && existing.getBoxLevel() == 1) {
+                    queue.add(new StudyCard(word, existing));
+                }
+            }
+        }
+        Collections.shuffle(queue);
+        currentIndex = 0;
+        if (queue.isEmpty()) {
+            state.postValue(new StudyUiState(false, "NO_WEAK_WORDS", null, 0, 0,
                     getNewCount(), getLearningCount(), getMasteredCount()));
         } else {
             state.postValue(new StudyUiState(false, null, queue.get(0), 1, queue.size(),
@@ -280,6 +377,9 @@ public class StudyViewModel extends ViewModel {
         UserWordProgress progress = progressByWord.get(word.getWordId());
         if (progress != null && progress.getStatus() != null) {
             return progress.getStatus();
+        }
+        if (word.getStatus() != null && !word.getStatus().trim().isEmpty()) {
+            return word.getStatus();
         }
         return Word.STATUS_NEW;
     }

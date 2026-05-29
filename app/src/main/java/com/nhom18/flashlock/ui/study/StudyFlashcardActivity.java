@@ -135,6 +135,10 @@ public class StudyFlashcardActivity extends AppCompatActivity {
         if (btnReturnHome != null) {
             btnReturnHome.setOnClickListener(v -> finish());
         }
+        View btnReviewWeak = findViewById(R.id.btn_review_weak);
+        if (btnReviewWeak != null) {
+            btnReviewWeak.setOnClickListener(v -> viewModel.loadWeakWords(currentTopicId));
+        }
         View btnCramMode = findViewById(R.id.btn_cram_mode);
         if (btnCramMode != null) {
             btnCramMode.setOnClickListener(v -> {
@@ -235,6 +239,8 @@ public class StudyFlashcardActivity extends AppCompatActivity {
     private void handleError(String code) {
         if ("NO_DUE_WORDS".equals(code)) {
             Toast.makeText(this, R.string.study_empty_no_due, Toast.LENGTH_SHORT).show();
+        } else if ("NO_WEAK_WORDS".equals(code)) {
+            Toast.makeText(this, R.string.study_empty_no_weak, Toast.LENGTH_SHORT).show();
         } else if ("TOPIC_ID_REQUIRED".equals(code)) {
             Toast.makeText(this, R.string.vocab_error_topic_id_required, Toast.LENGTH_SHORT).show();
             finish();
