@@ -301,5 +301,7 @@
 
     <string name="reminder_title">Đã đến giờ học rồi! </string>
     <string name="reminder_content">Mở FlashLock để ôn tập từ vựng ngay nào!</string>
+    <string name="reminder_channel_name">Nhắc nhở học tập</string>
+    <string name="reminder_channel_description">Nhắc bạn duy trì chuỗi học mỗi ngày.</string>
 
 </resources>

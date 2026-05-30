@@ -303,6 +303,8 @@
 
     <string name="reminder_title">It\'s study time! </string>
     <string name="reminder_content">Open FlashLock to review your vocabulary now!</string>
+    <string name="reminder_channel_name">Study reminder</string>
+    <string name="reminder_channel_description">Daily reminder to keep your study streak going.</string>
 
     <string name="home_continue_format">Continue learning: %1$s</string>
     <string name="home_my_words">My Words</string>

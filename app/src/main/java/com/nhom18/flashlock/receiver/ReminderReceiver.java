@@ -17,18 +17,18 @@ import com.nhom18.flashlock.utils.ReminderManager;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
-    // ID của kênh thông báo (Bắt buộc phải có từ Android 8.0 trở lên)
-    private static final String CHANNEL_ID = "FLASHLOCK_REMINDER_CHANNEL";
+    private static final String CHANNEL_ID = "flashlock_reminder_v1";
+    private static final int NOTIFICATION_ID = 2001;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        
-        // 1. Tạo Notification Channel
+
         createNotificationChannel(context);
 
-        // 2. Tạo Intent để mở app khi người dùng bấm vào thông báo
-        Intent mainIntent = new Intent(context, MainActivity.class); 
-        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // FLAG_ACTIVITY_NEW_TASK đủ để mở app từ Broadcast; bỏ CLEAR_TASK để không
+        // xóa stack hiện tại nếu user đang ở giữa app.
+        Intent mainIntent = new Intent(context, MainActivity.class);
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -56,8 +56,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         // 4. Bắn thông báo lên màn hình
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
-            // Số 2001 là ID của thông báo này, để hệ thống phân biệt với các thông báo khác
-            notificationManager.notify(2001, builder.build());
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
         }
 
         // 5. QUAN TRỌNG: Đặt lại báo thức cho ngày mai
@@ -72,20 +71,16 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
     }
 
-    // Hàm tạo Kênh thông báo (Chỉ chạy trên Android 8.0 trở lên)
     private void createNotificationChannel(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Nhắc nhở học tập";
-            String description = "Kênh gửi thông báo nhắc nhở học từ vựng hàng ngày";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
+        NotificationManager manager = context.getSystemService(NotificationManager.class);
+        if (manager == null || manager.getNotificationChannel(CHANNEL_ID) != null) return;
 
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                context.getString(com.nhom18.flashlock.R.string.reminder_channel_name),
+                NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription(context.getString(com.nhom18.flashlock.R.string.reminder_channel_description));
+        manager.createNotificationChannel(channel);
     }
 }
