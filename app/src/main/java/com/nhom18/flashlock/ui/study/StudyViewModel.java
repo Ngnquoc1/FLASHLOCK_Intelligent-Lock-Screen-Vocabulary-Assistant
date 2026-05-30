@@ -11,12 +11,15 @@ import com.nhom18.flashlock.data.model.UserProfile;
 import com.nhom18.flashlock.data.model.UserWordProgress;
 import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.data.remote.FirebaseProfileDataSource;
+import com.nhom18.flashlock.data.remote.FirebaseStudyEventDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseTopicWordDataSource;
 import com.nhom18.flashlock.data.remote.FirebaseUserWordProgressDataSource;
 import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
+import com.nhom18.flashlock.data.repository.FirebaseStudyRepository;
 import com.nhom18.flashlock.data.repository.FirebaseTopicWordRepository;
 import com.nhom18.flashlock.data.repository.FirebaseUserWordProgressRepository;
 import com.nhom18.flashlock.data.repository.ProfileRepository;
+import com.nhom18.flashlock.data.repository.StudyRepository;
 import com.nhom18.flashlock.data.repository.TopicWordRepository;
 import com.nhom18.flashlock.data.repository.UserWordProgressRepository;
 import com.nhom18.flashlock.domain.goal.StreakCalculator;
@@ -28,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 
 public class StudyViewModel extends ViewModel {
@@ -36,10 +40,16 @@ public class StudyViewModel extends ViewModel {
     private final TopicWordRepository topicRepository;
     private final UserWordProgressRepository progressRepository;
     private final ProfileRepository profileRepository;
+    private final StudyRepository studyRepository;
     private final SrsScheduler scheduler;
     private final StreakCalculator streakCalculator = new StreakCalculator();
     // Chỉ đánh giá mục tiêu khi phiên có trả lời ít nhất 1 thẻ.
     private boolean hasAnswered = false;
+    // Một sessionId cho mọi study_events trong cùng phiên.
+    private String sessionId;
+
+    public static final String EVENT_REMEMBERED = "REMEMBERED";
+    public static final String EVENT_FORGOT = "FORGOT";
 
     private final MutableLiveData<StudyUiState> state =
             new MutableLiveData<>(new StudyUiState(false, null, null, 0, 0, 0, 0, 0));
@@ -58,16 +68,19 @@ public class StudyViewModel extends ViewModel {
         this(new FirebaseTopicWordRepository(new FirebaseTopicWordDataSource()),
                 new FirebaseUserWordProgressRepository(new FirebaseUserWordProgressDataSource()),
                 new FirebaseProfileRepository(new FirebaseProfileDataSource()),
+                new FirebaseStudyRepository(new FirebaseStudyEventDataSource()),
                 new SrsScheduler());
     }
 
     StudyViewModel(TopicWordRepository topicRepository,
                    UserWordProgressRepository progressRepository,
                    ProfileRepository profileRepository,
+                   StudyRepository studyRepository,
                    SrsScheduler scheduler) {
         this.topicRepository = topicRepository;
         this.progressRepository = progressRepository;
         this.profileRepository = profileRepository;
+        this.studyRepository = studyRepository;
         this.scheduler = scheduler;
     }
 
@@ -82,6 +95,7 @@ public class StudyViewModel extends ViewModel {
             return;
         }
         this.topicId = topicId;
+        this.sessionId = UUID.randomUUID().toString();
         state.setValue(new StudyUiState(true, null, null, 0, 0, 0, 0, 0));
         final int token = ++sessionToken;
 
@@ -116,6 +130,7 @@ public class StudyViewModel extends ViewModel {
             return;
         }
         this.topicId = topicId;
+        this.sessionId = UUID.randomUUID().toString();
         state.setValue(new StudyUiState(true, null, null, 0, 0, 0, 0, 0));
         final int token = ++sessionToken;
 
@@ -176,6 +191,7 @@ public class StudyViewModel extends ViewModel {
         progress.setStatus(nextLevel >= 5 ? Word.STATUS_MASTERED : Word.STATUS_REVIEW);
         progress.setNextReviewAt(scheduler.nextReviewForLevel(nextLevel, Timestamp.now()));
         progress.setUpdatedAt(Timestamp.now());
+        logStudyEvent(card.getWord().getWordId(), EVENT_REMEMBERED);
         updateProgressAndAdvance(progress);
     }
 
@@ -193,7 +209,14 @@ public class StudyViewModel extends ViewModel {
         progress.setStatus(Word.STATUS_REVIEW);
         progress.setNextReviewAt(scheduler.nextReviewForLevel(1, Timestamp.now()));
         progress.setUpdatedAt(Timestamp.now());
+        logStudyEvent(card.getWord().getWordId(), EVENT_FORGOT);
         updateProgressAndAdvance(progress);
+    }
+
+    private void logStudyEvent(String wordId, String eventType) {
+        if (wordId == null || wordId.isEmpty() || studyRepository == null) return;
+        // Fire-and-forget; lỗi mạng chỉ log, không chặn UX.
+        studyRepository.logStudyEvent(wordId, eventType, sessionId);
     }
 
     private void updateProgressAndAdvance(UserWordProgress progress) {
