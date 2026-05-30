@@ -301,6 +301,9 @@
     <string name="study_empty_action_weak">Review forgotten words</string>
     <string name="study_empty_no_weak">No forgotten words in this topic.</string>
 
+    <string name="reminder_title">It\'s study time! </string>
+    <string name="reminder_content">Open FlashLock to review your vocabulary now!</string>
+
     <string name="home_continue_format">Continue learning: %1$s</string>
     <string name="home_my_words">My Words</string>
     <string name="home_latest_topic">your latest topic</string>

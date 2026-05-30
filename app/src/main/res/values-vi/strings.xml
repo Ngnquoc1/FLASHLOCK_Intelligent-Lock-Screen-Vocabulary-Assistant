@@ -298,4 +298,8 @@
     <string name="home_wod_added_toast">Đã thêm vào Từ của tôi</string>
     <string name="home_wod_add_failed">Không thêm được từ</string>
     <string name="home_wod_tts_unavailable">Không phát âm được</string>
+
+    <string name="reminder_title">Đã đến giờ học rồi! </string>
+    <string name="reminder_content">Mở FlashLock để ôn tập từ vựng ngay nào!</string>
+
 </resources>

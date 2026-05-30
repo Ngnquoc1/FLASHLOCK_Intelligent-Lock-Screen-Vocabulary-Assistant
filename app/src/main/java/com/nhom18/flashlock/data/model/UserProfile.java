@@ -63,8 +63,16 @@ public class UserProfile {
 
     public static class Settings {
         private boolean lockScreenEnabled = true;
+        
+        @PropertyName("dailyReminderEnabled")
+        private boolean dailyReminderEnabled = true;
+        
+        @PropertyName("reminderHour")
         private int reminderHour = 20;
+        
+        @PropertyName("reminderMinute")
         private int reminderMinute = 30;
+
         private int dailyGoal = 5;
         private List<String> lockScreenTopicIds = new ArrayList<>();
 
@@ -75,10 +83,19 @@ public class UserProfile {
         @PropertyName("lockScreenEnabled")
         public void setLockScreenEnabled(boolean lockScreenEnabled) { this.lockScreenEnabled = lockScreenEnabled; }
 
+        @PropertyName("dailyReminderEnabled")
+        public boolean isDailyReminderEnabled() { return dailyReminderEnabled; }
+        @PropertyName("dailyReminderEnabled")
+        public void setDailyReminderEnabled(boolean dailyReminderEnabled) { this.dailyReminderEnabled = dailyReminderEnabled; }
+
+        @PropertyName("reminderHour")
         public int getReminderHour() { return reminderHour; }
+        @PropertyName("reminderHour")
         public void setReminderHour(int reminderHour) { this.reminderHour = reminderHour; }
 
+        @PropertyName("reminderMinute")
         public int getReminderMinute() { return reminderMinute; }
+        @PropertyName("reminderMinute")
         public void setReminderMinute(int reminderMinute) { this.reminderMinute = reminderMinute; }
 
         public int getDailyGoal() { return dailyGoal; }
