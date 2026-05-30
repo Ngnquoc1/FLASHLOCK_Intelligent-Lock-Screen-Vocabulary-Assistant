@@ -25,7 +25,13 @@ public class FirebaseProfileRepository implements ProfileRepository {
             if (!task.isSuccessful()) {
                 throw task.getException();
             }
-            return task.getResult().toObject(UserProfile.class);
+            UserProfile profile = task.getResult().toObject(UserProfile.class);
+            // Firestore doc id = uid, nhưng field 'uid' không luôn có trong doc.
+            // Đảm bảo profile.getUid() khả dụng cho mọi caller (vd WordOfTheDayPicker).
+            if (profile != null && (profile.getUid() == null || profile.getUid().isEmpty())) {
+                profile.setUid(task.getResult().getId());
+            }
+            return profile;
         });
     }
 

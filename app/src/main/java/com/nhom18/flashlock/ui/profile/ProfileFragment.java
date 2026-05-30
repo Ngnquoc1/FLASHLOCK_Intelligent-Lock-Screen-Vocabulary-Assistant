@@ -152,7 +152,9 @@ public class ProfileFragment extends Fragment {
                         if (state.getUserProfile().getSettings() != null) {
                             currentHour = state.getUserProfile().getSettings().getReminderHour();
                             currentMinute = state.getUserProfile().getSettings().getReminderMinute();
-                            binding.swReminder.setChecked(state.getUserProfile().getSettings().isLockScreenEnabled());
+                            // swReminder không còn map vào lockScreenEnabled (cờ này được điều khiển
+                            // ở LockScreenConfigActivity). Khi triển khai FCM reminder ở Week 4, nối lại
+                            // vào field 'dailyReminderEnabled' riêng.
                             updateTimeUI();
 
                             // Load Daily Goal lên UI
@@ -245,7 +247,7 @@ public class ProfileFragment extends Fragment {
 
             currentSettings.setReminderHour(currentHour);
             currentSettings.setReminderMinute(currentMinute);
-            currentSettings.setLockScreenEnabled(binding.swReminder.isChecked());
+            // KHÔNG ghi đè lockScreenEnabled từ Profile để tránh xung đột với LockScreenConfigActivity.
             currentSettings.setDailyGoal(newGoal);
 
             viewModel.onSaveProfile(newName, currentSettings);
