@@ -22,6 +22,7 @@ import com.nhom18.flashlock.service.LockScreenStudyService;
 import com.nhom18.flashlock.ui.library.LibraryFragment;
 import com.nhom18.flashlock.ui.profile.ProfileFragment;
 import com.nhom18.flashlock.ui.vocabulary.VocabularyFragment;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.nhom18.flashlock.ui.home.HomeDashboardFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private View navHome, navLibrary, navVocabulary, navProfile;
     private ImageView ivTopProfile;
+    private ListenerRegistration topBarProfileListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,23 +100,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadTopBarProfile() {
         String uid = FirebaseAuth.getInstance().getUid();
-        if (uid != null && ivTopProfile != null) {
-            FirebaseFirestore.getInstance().collection("users").document(uid)
-                    .addSnapshotListener((snapshot, e) -> {
-                        if (snapshot != null && snapshot.exists()) {
-                            String avatarUrl = snapshot.getString("avatarUrl");
-                            if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                                Glide.with(this)
-                                        .load(avatarUrl)
-                                        .circleCrop()
-                                        .placeholder(R.drawable.ic_nav_profile)
-                                        .into(ivTopProfile);
-                            } else {
-                                ivTopProfile.setImageResource(R.drawable.ic_nav_profile);
-                            }
+        if (uid == null || ivTopProfile == null) return;
+        topBarProfileListener = FirebaseFirestore.getInstance()
+                .collection("users").document(uid)
+                .addSnapshotListener((snapshot, e) -> {
+                    if (snapshot != null && snapshot.exists()) {
+                        String avatarUrl = snapshot.getString("avatarUrl");
+                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                            Glide.with(this)
+                                    .load(avatarUrl)
+                                    .circleCrop()
+                                    .placeholder(R.drawable.ic_nav_profile)
+                                    .into(ivTopProfile);
+                        } else {
+                            ivTopProfile.setImageResource(R.drawable.ic_nav_profile);
                         }
-                    });
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (topBarProfileListener != null) {
+            topBarProfileListener.remove();
+            topBarProfileListener = null;
         }
+        super.onDestroy();
     }
 
     public void openVocabularyTopics() {

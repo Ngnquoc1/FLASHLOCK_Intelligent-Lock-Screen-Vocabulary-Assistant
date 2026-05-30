@@ -42,7 +42,9 @@ public class HomeDashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(HomeDashboardViewModel.class);
+        // Scope theo Activity để chia sẻ giữa các lần re-create Fragment khi đổi tab,
+        // tránh reload toàn bộ dashboard mỗi lần quay lại tab Home.
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeDashboardViewModel.class);
 
         setupTts();
         setupObservers();

@@ -41,6 +41,7 @@ import com.nhom18.flashlock.receiver.LockScreenNotificationReceiver;
 import com.nhom18.flashlock.ui.main.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +65,9 @@ public class LockScreenStudyService extends Service {
     private List<String> currentTopicIds = new ArrayList<>();
     private boolean lockScreenEnabled = true;
     private final WordOfTheDayPicker wordOfTheDayPicker = new WordOfTheDayPicker();
+    // Skip full reload nếu settings và ngày không đổi (giảm data/pin trên USER_PRESENT).
+    private int lastSettingsHash = 0;
+    private int lastRefreshDay = 0;
 
     @Override
     public void onCreate() {
@@ -138,8 +142,35 @@ public class LockScreenStudyService extends Service {
                         getString(R.string.lock_screen_notification_disabled)));
                 return;
             }
+            int newHash = settingsFingerprint(lockScreenEnabled, currentTopicIds);
+            int today = todayKey();
+            synchronized (wordCache) {
+                if (!wordCache.isEmpty() && newHash == lastSettingsHash && today == lastRefreshDay) {
+                    Log.d(TAG, "Cache fresh, skip refreshWordCache");
+                    return;
+                }
+            }
+            lastSettingsHash = newHash;
+            lastRefreshDay = today;
             refreshWordCache();
         });
+    }
+
+    private int todayKey() {
+        Calendar c = Calendar.getInstance();
+        return c.get(Calendar.YEAR) * 10000
+                + (c.get(Calendar.MONTH) + 1) * 100
+                + c.get(Calendar.DAY_OF_MONTH);
+    }
+
+    private int settingsFingerprint(boolean enabled, List<String> ids) {
+        int h = Boolean.hashCode(enabled);
+        if (ids != null && !ids.isEmpty()) {
+            List<String> sorted = new ArrayList<>(ids);
+            Collections.sort(sorted);
+            h = 31 * h + sorted.hashCode();
+        }
+        return h;
     }
 
     private void refreshWordCache() {

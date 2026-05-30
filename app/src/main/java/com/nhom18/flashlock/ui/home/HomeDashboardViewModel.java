@@ -47,6 +47,8 @@ public class HomeDashboardViewModel extends ViewModel {
     private final WordOfTheDayPicker wordOfTheDayPicker = new WordOfTheDayPicker();
 
     private List<Word> cachedMyWords = new ArrayList<>();
+    private long lastLoadAt = 0L;
+    private static final long LOAD_TTL_MS = 60_000L;
 
     private final MutableLiveData<Integer> dailyCount = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> dailyGoal = new MutableLiveData<>(5);
@@ -80,7 +82,18 @@ public class HomeDashboardViewModel extends ViewModel {
     public LiveData<Boolean> getLoading() { return loading; }
     public LiveData<String> getError() { return error; }
 
+    public void forceReload() {
+        lastLoadAt = 0L;
+        loadDashboardData();
+    }
+
     public void loadDashboardData() {
+        // TTL: VM scope theo Activity (chia sẻ giữa các lần re-create Fragment),
+        // bỏ qua reload nếu vừa load < 60s. User vẫn có thể gọi forceReload() khi cần.
+        if (System.currentTimeMillis() - lastLoadAt < LOAD_TTL_MS && wordOfTheDay.getValue() != null) {
+            return;
+        }
+        lastLoadAt = System.currentTimeMillis();
         loading.setValue(true);
 
         Task<UserProfile> profileTask = profileRepository.getCurrentUserProfile();
