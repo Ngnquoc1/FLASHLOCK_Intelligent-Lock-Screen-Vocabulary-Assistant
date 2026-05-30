@@ -304,4 +304,8 @@
     <string name="home_continue_format">Continue learning: %1$s</string>
     <string name="home_my_words">My Words</string>
     <string name="home_latest_topic">your latest topic</string>
+    <string name="home_wod_add_to_my_words">Add to My Words</string>
+    <string name="home_wod_added_toast">Added to My Words</string>
+    <string name="home_wod_add_failed">Failed to add word</string>
+    <string name="home_wod_tts_unavailable">Text to speech is unavailable</string>
 </resources>

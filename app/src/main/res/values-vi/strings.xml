@@ -294,4 +294,8 @@
     <string name="home_continue_format">Tiếp tục học: %1$s</string>
     <string name="home_my_words">Từ của tôi</string>
     <string name="home_latest_topic">chủ đề gần nhất</string>
+    <string name="home_wod_add_to_my_words">Thêm vào Từ của tôi</string>
+    <string name="home_wod_added_toast">Đã thêm vào Từ của tôi</string>
+    <string name="home_wod_add_failed">Không thêm được từ</string>
+    <string name="home_wod_tts_unavailable">Không phát âm được</string>
 </resources>

@@ -376,6 +376,20 @@
                     android:textStyle="italic" />
 
                 <TextView
+                    android:id="@+id/tv_word_of_day_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_flashcard_chip"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/on_surface"
+                    android:textSize="11sp"
+                    android:visibility="gone"
+                    tools:text="Adjective"
+                    tools:visibility="visible" />
+
+                <TextView
                     android:id="@+id/tv_word_of_day_meaning"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -384,6 +398,22 @@
                     tools:text="Emitting light not caused by heat, giving off a beautiful glow."
                     android:textColor="@color/on_surface"
                     android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_word_of_day_example"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:alpha="0.7"
+                    android:lineSpacingExtra="2dp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:textColor="@color/on_surface"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    android:visibility="gone"
+                    tools:text="The luminescent jellyfish lit up the dark ocean."
+                    tools:visibility="visible" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -400,15 +430,23 @@
                         app:srcCompat="@drawable/ic_volume"
                         app:tint="@color/primary" />
 
-                    <ImageButton
-                        android:id="@+id/btn_word_bookmark"
-                        android:layout_width="44dp"
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_word_add_my_words"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
                         android:layout_height="44dp"
                         android:layout_marginStart="12dp"
-                        android:background="@drawable/bg_icon_rounded"
-                        android:backgroundTint="@color/icon_button_bg"
-                        app:srcCompat="@drawable/ic_bookmark"
-                        app:tint="@color/on_surface" />
+                        android:text="@string/home_wod_add_to_my_words"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        app:cornerRadius="22dp"
+                        tools:visibility="visible" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

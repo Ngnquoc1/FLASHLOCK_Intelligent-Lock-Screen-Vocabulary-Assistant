@@ -2,6 +2,8 @@ package com.nhom18.flashlock.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +18,18 @@ import androidx.lifecycle.ViewModelProvider;
 import com.nhom18.flashlock.R;
 import com.nhom18.flashlock.databinding.FragmentHomeDashboardBinding;
 import com.nhom18.flashlock.data.model.Topic;
+import com.nhom18.flashlock.data.model.Word;
 import com.nhom18.flashlock.ui.study.StudyFlashcardActivity;
 import com.nhom18.flashlock.ui.lockscreen.LockScreenConfigActivity;
+
+import java.util.Locale;
 
 public class HomeDashboardFragment extends Fragment {
 
     private FragmentHomeDashboardBinding binding;
     private HomeDashboardViewModel viewModel;
+    private TextToSpeech tts;
+    private boolean ttsReady = false;
 
     @Nullable
     @Override
@@ -37,10 +44,32 @@ public class HomeDashboardFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(HomeDashboardViewModel.class);
 
+        setupTts();
         setupObservers();
         setupClickListeners();
 
         viewModel.loadDashboardData();
+    }
+
+    private void setupTts() {
+        tts = new TextToSpeech(requireContext(), status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                int result = tts.setLanguage(Locale.US);
+                ttsReady = result != TextToSpeech.LANG_MISSING_DATA
+                        && result != TextToSpeech.LANG_NOT_SUPPORTED;
+            }
+        });
+    }
+
+    private void speakWordOfTheDay() {
+        if (binding == null) return;
+        if (!ttsReady) {
+            Toast.makeText(getContext(), R.string.home_wod_tts_unavailable, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Word w = viewModel.getWordOfTheDay().getValue();
+        if (w == null || w.getTerm() == null || w.getTerm().trim().isEmpty()) return;
+        tts.speak(w.getTerm(), TextToSpeech.QUEUE_FLUSH, null, "home_wod");
     }
 
     private void setupObservers() {
@@ -67,11 +96,45 @@ public class HomeDashboardFragment extends Fragment {
         });
 
         viewModel.getWordOfTheDay().observe(getViewLifecycleOwner(), word -> {
-            if (word != null) {
-                binding.tvWordOfDayTitle.setText(word.getTerm());
-                binding.tvWordOfDayPronunciation.setText(word.getPronunciation());
-                binding.tvWordOfDayMeaning.setText(word.getDefinition());
+            if (word == null) return;
+            binding.tvWordOfDayTitle.setText(word.getTerm());
+            binding.tvWordOfDayPronunciation.setText(word.getPronunciation());
+            binding.tvWordOfDayMeaning.setText(word.getDefinition());
+
+            String type = word.getWordType();
+            if (!TextUtils.isEmpty(type)) {
+                binding.tvWordOfDayType.setText(type);
+                binding.tvWordOfDayType.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvWordOfDayType.setVisibility(View.GONE);
             }
+
+            String example = word.getExample();
+            if (!TextUtils.isEmpty(example)) {
+                binding.tvWordOfDayExample.setText(getString(R.string.study_example_format, example, word.getTerm()));
+                binding.tvWordOfDayExample.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvWordOfDayExample.setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.getWordInMyWords().observe(getViewLifecycleOwner(), inMyWords -> {
+            binding.btnWordAddMyWords.setVisibility(
+                    Boolean.TRUE.equals(inMyWords) ? View.GONE : View.VISIBLE);
+        });
+
+        viewModel.getInfoMessage().observe(getViewLifecycleOwner(), code -> {
+            if (code == null) return;
+            int msgRes;
+            if ("ADDED_TO_MY_WORDS".equals(code)) {
+                msgRes = R.string.home_wod_added_toast;
+            } else if ("ADD_TO_MY_WORDS_FAILED".equals(code)) {
+                msgRes = R.string.home_wod_add_failed;
+            } else {
+                return;
+            }
+            Toast.makeText(getContext(), msgRes, Toast.LENGTH_SHORT).show();
+            viewModel.clearInfoMessage();
         });
 
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
@@ -126,14 +189,22 @@ public class HomeDashboardFragment extends Fragment {
             startActivity(intent);
         });
 
-        binding.btnWordVolume.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Speaking...", Toast.LENGTH_SHORT).show();
-        });
+        binding.btnWordVolume.setOnClickListener(v -> speakWordOfTheDay());
+        binding.btnWordAddMyWords.setOnClickListener(v -> viewModel.addWordOfTheDayToMyWords());
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (tts != null) {
+            tts.shutdown();
+            tts = null;
+        }
+        super.onDestroy();
     }
 }
