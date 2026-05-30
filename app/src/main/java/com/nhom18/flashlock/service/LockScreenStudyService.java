@@ -36,11 +36,13 @@ import com.nhom18.flashlock.data.repository.FirebaseTopicWordRepository;
 import com.nhom18.flashlock.data.repository.ProfileRepository;
 import com.nhom18.flashlock.data.repository.SavedTopicRepository;
 import com.nhom18.flashlock.data.repository.TopicWordRepository;
+import com.nhom18.flashlock.domain.word.WordOfTheDayPicker;
 import com.nhom18.flashlock.receiver.LockScreenNotificationReceiver;
 import com.nhom18.flashlock.ui.main.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class LockScreenStudyService extends Service {
@@ -61,6 +63,7 @@ public class LockScreenStudyService extends Service {
     private int currentIndex = 0;
     private List<String> currentTopicIds = new ArrayList<>();
     private boolean lockScreenEnabled = true;
+    private final WordOfTheDayPicker wordOfTheDayPicker = new WordOfTheDayPicker();
 
     @Override
     public void onCreate() {
@@ -190,7 +193,18 @@ public class LockScreenStudyService extends Service {
                         getString(R.string.lock_screen_notification_empty)));
                 return;
             }
+            // Neo "Word of the Day" làm thẻ đầu để Home và lock screen đồng bộ trong ngày,
+            // các thẻ còn lại vẫn shuffle để xoay đa dạng.
+            String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                    ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+            Word wod = wordOfTheDayPicker.pick(uid, new Date(), combined);
+            if (wod != null) {
+                combined.remove(wod);
+            }
             Collections.shuffle(combined);
+            if (wod != null) {
+                combined.add(0, wod);
+            }
             synchronized (wordCache) {
                 wordCache.clear();
                 wordCache.addAll(combined);
