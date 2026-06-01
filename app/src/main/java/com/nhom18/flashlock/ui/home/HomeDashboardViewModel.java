@@ -137,6 +137,43 @@ public class HomeDashboardViewModel extends ViewModel {
                 });
     }
 
+    // Hàm này ép buộc gọi lại API, bỏ qua check TTL 60 giây
+    public void refreshDashboardData() {
+        lastLoadAt = System.currentTimeMillis();
+        loading.setValue(true);
+
+        Task<UserProfile> profileTask = profileRepository.getCurrentUserProfile();
+        Task<Integer> countTodayTask = userWordProgressRepository.getStudiedWordsCountToday();
+        Task<TopicProgress> latestTopicTask = topicProgressRepository.getLatestTopicProgress();
+        Task<List<Word>> myWordsTask = wordRepository.getAllWords();
+        Task<List<Topic>> savedTopicsTask = savedTopicRepository.getSavedTopics();
+
+        Tasks.whenAllComplete(profileTask, countTodayTask, latestTopicTask, myWordsTask, savedTopicsTask)
+                .addOnCompleteListener(task -> {
+                    cachedMyWords = myWordsTask.isSuccessful() && myWordsTask.getResult() != null ? myWordsTask.getResult() : new ArrayList<>();
+                    cachedSavedTopics = savedTopicsTask.isSuccessful() && savedTopicsTask.getResult() != null ? savedTopicsTask.getResult() : new ArrayList<>();
+                    loading.postValue(false);
+
+                    int currentGoal = 5;
+                    int currentCount = 0;
+                    UserProfile profile = null;
+
+                    if (profileTask.isSuccessful() && profileTask.getResult() != null) {
+                        profile = profileTask.getResult();
+                        streakCount.postValue(profile.getCurrentStreak());
+                        if (profile.getSettings() != null) currentGoal = profile.getSettings().getDailyGoal();
+                    }
+                    dailyGoal.postValue(currentGoal);
+                    if (countTodayTask.isSuccessful() && countTodayTask.getResult() != null) currentCount = countTodayTask.getResult();
+                    dailyCount.postValue(currentCount);
+
+                    if (currentGoal > 0) progressPercentage.postValue(Math.min((currentCount * 100) / currentGoal, 100));
+                    if (latestTopicTask.isSuccessful()) latestTopicProgress.postValue(latestTopicTask.getResult());
+                    if (profile != null) loadWordOfTheDay(profile);
+                    checkAndUpdateStreak(profile, currentCount, currentGoal);
+                });
+    }
+
     public void performSearch(String query) {
         if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
 

@@ -261,6 +261,14 @@ public class HomeDashboardFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (viewModel != null) {
+            viewModel.refreshDashboardData();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
