@@ -33,14 +33,16 @@ public class StreakCalculator {
         // Hôm qua vừa hoàn thành: nếu hôm nay đạt thì nối chuỗi, chưa đạt thì giữ nguyên (ngày chưa kết thúc).
         if (daysDiff == 1) {
             if (goalMetToday) {
+                // Hôm qua đã học (đang có streak 0 hoặc hơn), hôm nay học tiếp -> Cộng 1
                 return new Result(currentStreak + 1, now, true);
             }
             return new Result(currentStreak, lastCompletedDate, false);
         }
 
-        // Bỏ lỡ trọn >= 1 ngày, hoặc chưa từng hoàn thành.
+        // Bỏ lỡ trọn >= 1 ngày, hoặc chưa từng hoàn thành (Acc mới hoặc bắt đầu lại chuỗi).
         if (goalMetToday) {
-            return new Result(1, now, true);
+            // Trả về 0 thay vì 1 để ngày đầu tiên đạt goal chỉ là mốc "điểm danh", chưa có chuỗi
+            return new Result(0, now, true);
         }
         if (currentStreak > 0) {
             return new Result(0, lastCompletedDate, true);

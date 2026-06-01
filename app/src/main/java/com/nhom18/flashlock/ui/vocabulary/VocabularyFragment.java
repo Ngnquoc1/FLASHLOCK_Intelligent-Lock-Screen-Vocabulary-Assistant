@@ -60,6 +60,7 @@ public class VocabularyFragment extends Fragment {
         return new VocabularyFragment();
     }
 
+
     public static VocabularyFragment newInstance(boolean openTopicsTab) {
         VocabularyFragment fragment = new VocabularyFragment();
         Bundle args = new Bundle();
@@ -112,7 +113,6 @@ public class VocabularyFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.rv_content);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // TRUYỀN THÊM cardLearnMyWords VÀO HÀM CHUYỂN TAB ĐỂ ẨN/HIỆN
         tvTabVocab.setOnClickListener(v ->
                 switchToVocabularyTab(tvTabVocab, tvTabTopics, tvTitle, tvSubtitle, filterScroll, exploreFooter, fabAdd, btnLearnMyWords, recyclerView));
         tvTabTopics.setOnClickListener(v ->
@@ -256,7 +256,6 @@ public class VocabularyFragment extends Fragment {
         tvTitle.setText(getString(R.string.vocab_title_my));
         tvSubtitle.setText(getString(R.string.vocab_subtitle_my));
 
-        // HIỆN các thành phần của tab Vocabulary
         filterScroll.setVisibility(View.VISIBLE);
         cardLearnMyWords.setVisibility(View.VISIBLE);
         fabAdd.setVisibility(View.VISIBLE);
@@ -275,7 +274,6 @@ public class VocabularyFragment extends Fragment {
         tvTitle.setText(getString(R.string.vocab_title_topics));
         tvSubtitle.setText(getString(R.string.vocab_subtitle_topics));
 
-        // ẨN các thành phần của tab Vocabulary
         filterScroll.setVisibility(View.GONE);
         cardLearnMyWords.setVisibility(View.GONE);
         fabAdd.setVisibility(View.GONE);
