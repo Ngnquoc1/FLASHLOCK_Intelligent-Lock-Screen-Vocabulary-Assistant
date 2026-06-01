@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
+
+    <ImageView
+        android:id="@+id/iv_suggestion_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:alpha="0.7"
+        app:tint="@color/on_surface"
+        tools:src="@drawable/ic_translate" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_suggestion_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/on_surface"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Apple" />
+
+        <TextView
+            android:id="@+id/tv_suggestion_def"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0.7"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/on_surface"
+            android:textSize="13sp"
+            tools:text="A common, round fruit produced by the tree Malus domestica" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_suggestion_add"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="2dp"
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@color/primary"
+        tools:visibility="visible" />
+
+</LinearLayout>
