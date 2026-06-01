@@ -46,6 +46,7 @@ public class HomeDashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(requireActivity()).get(HomeDashboardViewModel.class);
+        viewModel.performSearch("");
 
         setupTts();
         setupSearchAdapter();
