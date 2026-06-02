@@ -5,10 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -54,10 +52,11 @@ public class LockScreenStudyService extends Service {
     public static final String ACTION_NEXT_WORD = "com.nhom18.flashlock.ACTION_NEXT_WORD";
     public static final String ACTION_PREV_WORD = "com.nhom18.flashlock.ACTION_PREV_WORD";
 
-    private static final String CHANNEL_ID = "flashlock_lock_screen_v3";
+    // v4: nâng importance DEFAULT để Android 13+ không xếp vào "silent" và ẩn khỏi
+    // lock screen mặc định. Notification vẫn im lặng nhờ setSilent ở Builder.
+    public static final String CHANNEL_ID = "flashlock_lock_screen_v4";
     private static final int NOTIFICATION_ID = 4201;
 
-    private BroadcastReceiver screenReceiver;
     private Handler mainHandler;
 
     private final List<Word> wordCache = new ArrayList<>();
@@ -75,7 +74,6 @@ public class LockScreenStudyService extends Service {
         mainHandler = new Handler(Looper.getMainLooper());
         createChannel();
         startForeground(NOTIFICATION_ID, buildPlaceholderNotification());
-        registerScreenReceiver();
         preloadSettingsAndWords();
     }
 
@@ -99,26 +97,6 @@ public class LockScreenStudyService extends Service {
             }
         }
         return START_STICKY;
-    }
-
-    private void registerScreenReceiver() {
-        if (screenReceiver != null) return;
-        screenReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent == null || intent.getAction() == null) return;
-                if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
-                    advance(+1);
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_ON);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(screenReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            registerReceiver(screenReceiver, filter);
-        }
     }
 
     private void preloadSettingsAndWords() {
@@ -268,16 +246,24 @@ public class LockScreenStudyService extends Service {
     }
 
     private void createChannel() {
+        ensureChannel(this);
+    }
+
+    /** Static để Activity gọi được — đảm bảo channel tồn tại trước khi service chạy. */
+    public static void ensureChannel(Context ctx) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
-        NotificationManager manager = getSystemService(NotificationManager.class);
+        NotificationManager manager = ctx.getSystemService(NotificationManager.class);
         if (manager == null) return;
+        // Dọn channel cũ (importance LOW) để user upgrade khỏi cần gỡ cài đặt lại.
+        try { manager.deleteNotificationChannel("flashlock_lock_screen_v3"); } catch (Exception ignored) {}
+        try { manager.deleteNotificationChannel("lock_screen_v10"); } catch (Exception ignored) {}
         if (manager.getNotificationChannel(CHANNEL_ID) != null) return;
 
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
-                getString(R.string.lock_screen_channel_name),
-                NotificationManager.IMPORTANCE_LOW);
-        channel.setDescription(getString(R.string.lock_screen_channel_description));
+                ctx.getString(R.string.lock_screen_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(ctx.getString(R.string.lock_screen_channel_description));
         channel.setShowBadge(false);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         channel.enableVibration(false);
@@ -373,13 +359,6 @@ public class LockScreenStudyService extends Service {
 
     @Override
     public void onDestroy() {
-        if (screenReceiver != null) {
-            try {
-                unregisterReceiver(screenReceiver);
-            } catch (Exception ignored) {
-            }
-            screenReceiver = null;
-        }
         if (mainHandler != null) mainHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }

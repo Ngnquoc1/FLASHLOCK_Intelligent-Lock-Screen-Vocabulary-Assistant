@@ -1,12 +1,19 @@
 package com.nhom18.flashlock.ui.lockscreen;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.nhom18.flashlock.service.LockScreenStudyService;
 
 import com.google.android.material.slider.Slider;
 import com.nhom18.flashlock.R;
@@ -18,6 +25,7 @@ import com.nhom18.flashlock.data.repository.FirebaseProfileRepository;
 import com.nhom18.flashlock.data.repository.FirebaseSavedTopicRepository;
 import com.nhom18.flashlock.databinding.ActivityLockScreenConfigBinding;
 import com.nhom18.flashlock.ui.profile.LockScreenTopicAdapter;
+import com.nhom18.flashlock.utils.PermissionsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +38,12 @@ public class LockScreenConfigActivity extends AppCompatActivity {
     private UserProfile currentProfile;
 
     private List<String> selectedTopicIds = new ArrayList<>();
+
+    // Bất kể user "Allow" hay "Deny" trong dialog hệ thống, callback chắc chắn chạy
+    // → refresh status đáng tin hơn onResume (vốn có thể không fire trên một số dialog).
+    private final ActivityResultLauncher<Intent> settingsLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> refreshPermissionStatus());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,8 +59,70 @@ public class LockScreenConfigActivity extends AppCompatActivity {
         setupRecycler();
         setupListeners();
         setupObservers();
+        setupPermissionFixButtons();
+
+        // Tạo channel ngay để user có thể chỉnh setting channel cụ thể trong system Settings
+        // mà không phải chờ service chạy lần đầu.
+        LockScreenStudyService.ensureChannel(this);
 
         viewModel.load();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh trạng thái mỗi khi quay lại từ Settings.
+        refreshPermissionStatus();
+    }
+
+    private void setupPermissionFixButtons() {
+        binding.btnFixNotifications.setOnClickListener(v -> {
+            if (!PermissionsHelper.hasNotificationPermission(this)) {
+                PermissionsHelper.requestNotificationPermission(this);
+            } else {
+                settingsLauncher.launch(
+                        PermissionsHelper.appNotificationSettings(this, null));
+            }
+        });
+        binding.btnFixChannel.setOnClickListener(v ->
+                settingsLauncher.launch(
+                        PermissionsHelper.appNotificationSettings(
+                                this, LockScreenStudyService.CHANNEL_ID)));
+        binding.btnFixBattery.setOnClickListener(v -> {
+            Intent i = PermissionsHelper.requestIgnoreBatteryOptimizationsIntent(this);
+            if (i != null) settingsLauncher.launch(i);
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionsHelper.REQ_POST_NOTIFICATIONS) {
+            refreshPermissionStatus();
+        }
+    }
+
+    private void refreshPermissionStatus() {
+        // POST_NOTIFICATIONS + global enabled (gộp 1 ô)
+        boolean notifOk = PermissionsHelper.hasNotificationPermission(this)
+                && PermissionsHelper.areAppNotificationsEnabled(this);
+        bindPermissionRow(binding.tvStatusNotifications, binding.btnFixNotifications, notifOk);
+
+        // Channel lock-screen enabled (chưa tạo channel → coi như chưa OK).
+        boolean channelOk = PermissionsHelper.isChannelEnabled(this, LockScreenStudyService.CHANNEL_ID);
+        bindPermissionRow(binding.tvStatusChannel, binding.btnFixChannel, channelOk);
+
+        // Battery unrestricted (cảnh báo, không bắt buộc).
+        boolean batteryOk = PermissionsHelper.isIgnoringBatteryOptimizations(this);
+        bindPermissionRow(binding.tvStatusBattery, binding.btnFixBattery, batteryOk);
+    }
+
+    private void bindPermissionRow(android.widget.TextView status,
+                                   com.google.android.material.button.MaterialButton fixBtn,
+                                   boolean ok) {
+        status.setText(ok ? R.string.perm_status_ok : R.string.perm_status_missing);
+        fixBtn.setVisibility(ok ? View.GONE : View.VISIBLE);
     }
 
     private void setupRecycler() {

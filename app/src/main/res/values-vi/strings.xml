@@ -304,4 +304,12 @@
     <string name="reminder_channel_name">Nhắc nhở học tập</string>
     <string name="reminder_channel_description">Nhắc bạn duy trì chuỗi học mỗi ngày.</string>
 
+    <string name="perm_status_title">Trạng thái quyền</string>
+    <string name="perm_notifications">Thông báo</string>
+    <string name="perm_channel_lockscreen">Kênh thông báo màn hình khóa</string>
+    <string name="perm_battery_unrestricted">Pin: không giới hạn</string>
+    <string name="perm_fix">Mở cài đặt</string>
+    <string name="perm_status_ok">✓</string>
+    <string name="perm_status_missing">⚠ Cần cấp</string>
+
 </resources>

@@ -306,6 +306,14 @@
     <string name="reminder_channel_name">Study reminder</string>
     <string name="reminder_channel_description">Daily reminder to keep your study streak going.</string>
 
+    <string name="perm_status_title">Permission Status</string>
+    <string name="perm_notifications">Notifications</string>
+    <string name="perm_channel_lockscreen">Lock screen notification channel</string>
+    <string name="perm_battery_unrestricted">Battery: unrestricted</string>
+    <string name="perm_fix">Open Settings</string>
+    <string name="perm_status_ok">✓</string>
+    <string name="perm_status_missing">⚠ Required</string>
+
     <string name="home_continue_format">Continue learning: %1$s</string>
     <string name="home_my_words">My Words</string>
     <string name="home_latest_topic">your latest topic</string>
