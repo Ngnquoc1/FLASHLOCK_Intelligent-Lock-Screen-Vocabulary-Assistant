@@ -187,12 +187,22 @@ public class LockScreenConfigActivity extends AppCompatActivity {
         UserProfile.Settings currentSettings = currentProfile.getSettings() != null
                 ? currentProfile.getSettings() : new UserProfile.Settings();
 
-        currentSettings.setLockScreenEnabled(binding.swEnableLockScreen.isChecked());
+        boolean isEnabled = binding.swEnableLockScreen.isChecked();
+
+        currentSettings.setLockScreenEnabled(isEnabled);
         currentSettings.setLockScreenTopicIds(new ArrayList<>(adapter.getSelectedIds()));
 
         String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
         viewModel.saveSettings(displayName, currentSettings);
         Toast.makeText(this, R.string.lock_screen_config_saved, Toast.LENGTH_SHORT).show();
+
+        if (!isEnabled) {
+            android.content.Intent serviceIntent = new android.content.Intent(this, com.nhom18.flashlock.service.LockScreenStudyService.class);
+            stopService(serviceIntent);
+        } else {
+            android.content.Intent serviceIntent = new android.content.Intent(this, com.nhom18.flashlock.service.LockScreenStudyService.class);
+            androidx.core.content.ContextCompat.startForegroundService(this, serviceIntent);
+        }
     }
 
     private void resetDefaults() {

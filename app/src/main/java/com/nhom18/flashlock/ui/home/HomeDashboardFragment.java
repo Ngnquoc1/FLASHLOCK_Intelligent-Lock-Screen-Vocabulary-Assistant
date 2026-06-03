@@ -3,7 +3,9 @@ package com.nhom18.flashlock.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ public class HomeDashboardFragment extends Fragment {
     private HomeDashboardViewModel viewModel;
     private TextToSpeech tts;
     private boolean ttsReady = false;
+    private SearchSuggestionAdapter searchAdapter;
 
     @Nullable
     @Override
@@ -42,11 +45,11 @@ public class HomeDashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Scope theo Activity để chia sẻ giữa các lần re-create Fragment khi đổi tab,
-        // tránh reload toàn bộ dashboard mỗi lần quay lại tab Home.
         viewModel = new ViewModelProvider(requireActivity()).get(HomeDashboardViewModel.class);
+        viewModel.performSearch("");
 
         setupTts();
+        setupSearchAdapter();
         setupObservers();
         setupClickListeners();
 
@@ -74,6 +77,40 @@ public class HomeDashboardFragment extends Fragment {
         tts.speak(w.getTerm(), TextToSpeech.QUEUE_FLUSH, null, "home_wod");
     }
 
+    private void setupSearchAdapter() {
+        searchAdapter = new SearchSuggestionAdapter();
+        binding.rvSearchResults.setAdapter(searchAdapter);
+
+        searchAdapter.setOnItemClickListener(new SearchSuggestionAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(SearchSuggestionAdapter.SearchItem item) {
+                binding.etSearch.setText("");
+                binding.etSearch.clearFocus();
+                binding.cardSearchResults.setVisibility(View.GONE);
+
+                DictionaryDetailBottomSheet sheet = DictionaryDetailBottomSheet.newInstance(item.id);
+                sheet.show(getChildFragmentManager(), "DictionaryDetail");
+            }
+
+            @Override
+            public void onAddClick(SearchSuggestionAdapter.SearchItem item) {
+                if (item.type == SearchSuggestionAdapter.SearchItem.TYPE_API) {
+                    Word quickWord = new Word();
+                    quickWord.setTerm(item.id);
+                    quickWord.setDefinition(item.definition != null ? item.definition : "");
+                    quickWord.setStatus(Word.STATUS_NEW);
+                    quickWord.setNextReviewAt(com.google.firebase.Timestamp.now());
+
+                    viewModel.addCustomWordToMyWords(quickWord);
+
+                    binding.etSearch.setText("");
+                    binding.etSearch.clearFocus();
+                    binding.cardSearchResults.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
     private void setupObservers() {
         viewModel.getDailyCount().observe(getViewLifecycleOwner(), count -> {
             binding.tvProgressCount.setText(String.valueOf(count));
@@ -88,6 +125,12 @@ public class HomeDashboardFragment extends Fragment {
         viewModel.getProgressPercentage().observe(getViewLifecycleOwner(), percentage ->
                 binding.progressCircular.setProgress(percentage, true)
         );
+
+        viewModel.getStreakCount().observe(getViewLifecycleOwner(), streak -> {
+            if (binding != null) {
+                binding.tvStreakCount.setText(streak + " Streak");
+            }
+        });
 
         viewModel.getLatestTopicProgress().observe(getViewLifecycleOwner(), progress -> {
             String topicId = progress != null ? progress.getTopicId() : null;
@@ -142,6 +185,16 @@ public class HomeDashboardFragment extends Fragment {
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                viewModel.clearError();
+            }
+        });
+
+        viewModel.getSearchResults().observe(getViewLifecycleOwner(), results -> {
+            if (results == null || results.isEmpty()) {
+                binding.cardSearchResults.setVisibility(View.GONE);
+            } else {
+                binding.cardSearchResults.setVisibility(View.VISIBLE);
+                searchAdapter.submitList(results);
             }
         });
     }
@@ -160,11 +213,23 @@ public class HomeDashboardFragment extends Fragment {
     }
 
     private void setupClickListeners() {
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                viewModel.performSearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         binding.etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                 String query = binding.etSearch.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    Toast.makeText(getContext(), "Searching for: " + query, Toast.LENGTH_SHORT).show();
                     binding.etSearch.clearFocus();
                 }
                 return true;
@@ -193,6 +258,14 @@ public class HomeDashboardFragment extends Fragment {
 
         binding.btnWordVolume.setOnClickListener(v -> speakWordOfTheDay());
         binding.btnWordAddMyWords.setOnClickListener(v -> viewModel.addWordOfTheDayToMyWords());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (viewModel != null) {
+            viewModel.refreshDashboardData();
+        }
     }
 
     @Override
