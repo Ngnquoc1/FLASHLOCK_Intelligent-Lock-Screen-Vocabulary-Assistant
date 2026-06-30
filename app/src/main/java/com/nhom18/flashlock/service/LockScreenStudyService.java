@@ -16,6 +16,7 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
@@ -117,11 +118,7 @@ public class LockScreenStudyService extends Service {
 
             if (!lockScreenEnabled) {
                 // Tắt tính năng = service kết thúc hoàn toàn, không để lại notification "off".
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    stopForeground(STOP_FOREGROUND_REMOVE);
-                } else {
-                    stopForeground(true);
-                }
+                ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
                 stopSelf();
                 return;
             }

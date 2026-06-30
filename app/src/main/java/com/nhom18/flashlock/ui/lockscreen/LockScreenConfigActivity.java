@@ -147,13 +147,20 @@ public class LockScreenConfigActivity extends AppCompatActivity {
     }
 
     private void applyEnableToggle(boolean isChecked) {
-        if (currentProfile == null) return;
-        UserProfile.Settings currentSettings = currentProfile.getSettings() != null
-                ? currentProfile.getSettings() : new UserProfile.Settings();
-        currentSettings.setLockScreenEnabled(isChecked);
-        // Không động vào topicIds — Apply lo phần đó.
+        // Profile/settings chưa load xong → không thể clone an toàn → revert switch.
+        if (currentProfile == null || currentProfile.getSettings() == null) {
+            isProgrammaticToggle = true;
+            binding.swEnableLockScreen.setChecked(!isChecked);
+            isProgrammaticToggle = false;
+            return;
+        }
+
+        // Clone để không mutate live ref → rollback dễ + không phá field khác.
+        UserProfile.Settings copy = cloneSettings(currentProfile.getSettings());
+        copy.setLockScreenEnabled(isChecked);
+
         String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
-        viewModel.saveSettings(displayName, currentSettings);
+        viewModel.saveSettings(displayName, copy);
 
         Intent serviceIntent = new Intent(this, LockScreenStudyService.class);
         if (isChecked) {
@@ -161,6 +168,24 @@ public class LockScreenConfigActivity extends AppCompatActivity {
         } else {
             stopService(serviceIntent);
         }
+
+        Toast.makeText(this,
+                isChecked ? R.string.lock_screen_enabled_toast : R.string.lock_screen_disabled_toast,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private UserProfile.Settings cloneSettings(UserProfile.Settings src) {
+        UserProfile.Settings dst = new UserProfile.Settings();
+        if (src == null) return dst;
+        dst.setLockScreenEnabled(src.isLockScreenEnabled());
+        dst.setReminderHour(src.getReminderHour());
+        dst.setReminderMinute(src.getReminderMinute());
+        dst.setDailyGoal(src.getDailyGoal());
+        dst.setDailyReminderEnabled(src.isDailyReminderEnabled());
+        dst.setLockScreenTopicIds(src.getLockScreenTopicIds() != null
+                ? new ArrayList<>(src.getLockScreenTopicIds())
+                : new ArrayList<>());
+        return dst;
     }
 
     private void setupObservers() {
@@ -209,17 +234,16 @@ public class LockScreenConfigActivity extends AppCompatActivity {
     }
 
     private void saveConfig() {
-        if (currentProfile == null) {
+        if (currentProfile == null || currentProfile.getSettings() == null) {
             return;
         }
-        // Switch enabled đã được auto-save ở listener. Apply chỉ lưu danh sách topic.
-        UserProfile.Settings currentSettings = currentProfile.getSettings() != null
-                ? currentProfile.getSettings() : new UserProfile.Settings();
-        currentSettings.setLockScreenEnabled(binding.swEnableLockScreen.isChecked());
-        currentSettings.setLockScreenTopicIds(new ArrayList<>(adapter.getSelectedIds()));
+        // Clone để giữ field khác (dailyGoal, reminder, dailyReminderEnabled) không bị wipe.
+        UserProfile.Settings copy = cloneSettings(currentProfile.getSettings());
+        copy.setLockScreenEnabled(binding.swEnableLockScreen.isChecked());
+        copy.setLockScreenTopicIds(new ArrayList<>(adapter.getSelectedIds()));
 
         String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
-        viewModel.saveSettings(displayName, currentSettings);
+        viewModel.saveSettings(displayName, copy);
         Toast.makeText(this, R.string.lock_screen_config_saved, Toast.LENGTH_SHORT).show();
 
         // Topic đổi → service cần refresh pool. Chỉ start nếu đang enabled.
