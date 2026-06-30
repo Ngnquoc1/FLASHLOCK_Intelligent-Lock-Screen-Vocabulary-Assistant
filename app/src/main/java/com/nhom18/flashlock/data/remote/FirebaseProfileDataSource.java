@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.nhom18.flashlock.data.model.UserProfile;
+import com.nhom18.flashlock.data.util.RetryHelper;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +74,7 @@ public class FirebaseProfileDataSource {
         updates.put("lastGoalCompletedDate", lastCompletedDate);
         updates.put("updatedAt", FieldValue.serverTimestamp());
 
-        return db.collection("users").document(uid).update(updates);
+        return RetryHelper.withRetry("updateUserStreak",
+                () -> db.collection("users").document(uid).update(updates));
     }
 }

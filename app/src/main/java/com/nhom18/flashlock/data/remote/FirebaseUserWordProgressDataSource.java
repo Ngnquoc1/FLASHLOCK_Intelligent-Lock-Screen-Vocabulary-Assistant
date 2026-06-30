@@ -8,6 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.nhom18.flashlock.data.model.UserWordProgress;
+import com.nhom18.flashlock.data.util.RetryHelper;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -67,11 +68,12 @@ public class FirebaseUserWordProgressDataSource {
         }
 
         Map<String, Object> payload = toFirestoreMap(uid, progress);
-        return db.collection("users")
-                .document(uid)
-                .collection("word_progress")
-                .document(progress.getWordId())
-                .set(payload);
+        return RetryHelper.withRetry("upsertProgress",
+                () -> db.collection("users")
+                        .document(uid)
+                        .collection("word_progress")
+                        .document(progress.getWordId())
+                        .set(payload));
     }
 
     public Task<Integer> getStudiedWordsCountToday(String uid) {

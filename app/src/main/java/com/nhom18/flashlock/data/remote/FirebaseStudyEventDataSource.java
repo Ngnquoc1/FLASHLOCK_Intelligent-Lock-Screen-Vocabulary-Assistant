@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nhom18.flashlock.data.model.StudyEvent;
+import com.nhom18.flashlock.data.util.RetryHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +39,11 @@ public class FirebaseStudyEventDataSource {
         payload.put("sessionId", event.getSessionId());
         payload.put("createdAt", FieldValue.serverTimestamp());
 
-        return db.collection("users")
-                .document(uid)
-                .collection("study_events")
-                .document()
-                .set(payload);
+        return RetryHelper.withRetry("logStudyEvent",
+                () -> db.collection("users")
+                        .document(uid)
+                        .collection("study_events")
+                        .document()
+                        .set(payload));
     }
 }
