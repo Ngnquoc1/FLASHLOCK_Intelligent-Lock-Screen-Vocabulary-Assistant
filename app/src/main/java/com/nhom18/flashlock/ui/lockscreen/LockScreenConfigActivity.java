@@ -38,6 +38,8 @@ public class LockScreenConfigActivity extends AppCompatActivity {
     private UserProfile currentProfile;
 
     private List<String> selectedTopicIds = new ArrayList<>();
+    // Phân biệt set programmatic (load từ Firestore) vs user tap, tránh vòng lặp save.
+    private boolean isProgrammaticToggle = false;
 
     // Bất kể user "Allow" hay "Deny" trong dialog hệ thống, callback chắc chắn chạy
     // → refresh status đáng tin hơn onResume (vốn có thể không fire trên một số dialog).
@@ -136,6 +138,29 @@ public class LockScreenConfigActivity extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnApply.setOnClickListener(v -> saveConfig());
         binding.btnReset.setOnClickListener(v -> resetDefaults());
+
+        // Switch auto-save ngay khi toggle (Material pattern) — không cần Apply.
+        binding.swEnableLockScreen.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isProgrammaticToggle) return;
+            applyEnableToggle(isChecked);
+        });
+    }
+
+    private void applyEnableToggle(boolean isChecked) {
+        if (currentProfile == null) return;
+        UserProfile.Settings currentSettings = currentProfile.getSettings() != null
+                ? currentProfile.getSettings() : new UserProfile.Settings();
+        currentSettings.setLockScreenEnabled(isChecked);
+        // Không động vào topicIds — Apply lo phần đó.
+        String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
+        viewModel.saveSettings(displayName, currentSettings);
+
+        Intent serviceIntent = new Intent(this, LockScreenStudyService.class);
+        if (isChecked) {
+            androidx.core.content.ContextCompat.startForegroundService(this, serviceIntent);
+        } else {
+            stopService(serviceIntent);
+        }
     }
 
     private void setupObservers() {
@@ -145,7 +170,10 @@ public class LockScreenConfigActivity extends AppCompatActivity {
                 return;
             }
             UserProfile.Settings settings = profile.getSettings();
+            // Set checked programmatic, không trigger listener.
+            isProgrammaticToggle = true;
             binding.swEnableLockScreen.setChecked(settings.isLockScreenEnabled());
+            isProgrammaticToggle = false;
             selectedTopicIds = settings.getLockScreenTopicIds() != null
                     ? settings.getLockScreenTopicIds() : new ArrayList<>();
             updateSelectedCount();
@@ -184,24 +212,21 @@ public class LockScreenConfigActivity extends AppCompatActivity {
         if (currentProfile == null) {
             return;
         }
+        // Switch enabled đã được auto-save ở listener. Apply chỉ lưu danh sách topic.
         UserProfile.Settings currentSettings = currentProfile.getSettings() != null
                 ? currentProfile.getSettings() : new UserProfile.Settings();
-
-        boolean isEnabled = binding.swEnableLockScreen.isChecked();
-
-        currentSettings.setLockScreenEnabled(isEnabled);
+        currentSettings.setLockScreenEnabled(binding.swEnableLockScreen.isChecked());
         currentSettings.setLockScreenTopicIds(new ArrayList<>(adapter.getSelectedIds()));
 
         String displayName = currentProfile.getDisplayName() != null ? currentProfile.getDisplayName() : "";
         viewModel.saveSettings(displayName, currentSettings);
         Toast.makeText(this, R.string.lock_screen_config_saved, Toast.LENGTH_SHORT).show();
 
-        if (!isEnabled) {
-            android.content.Intent serviceIntent = new android.content.Intent(this, com.nhom18.flashlock.service.LockScreenStudyService.class);
-            stopService(serviceIntent);
-        } else {
-            android.content.Intent serviceIntent = new android.content.Intent(this, com.nhom18.flashlock.service.LockScreenStudyService.class);
-            androidx.core.content.ContextCompat.startForegroundService(this, serviceIntent);
+        // Topic đổi → service cần refresh pool. Chỉ start nếu đang enabled.
+        if (binding.swEnableLockScreen.isChecked()) {
+            Intent refresh = new Intent(this, LockScreenStudyService.class);
+            refresh.setAction(LockScreenStudyService.ACTION_REFRESH_WORDS);
+            androidx.core.content.ContextCompat.startForegroundService(this, refresh);
         }
     }
 

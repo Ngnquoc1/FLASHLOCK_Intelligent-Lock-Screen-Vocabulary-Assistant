@@ -125,9 +125,6 @@
     <string name="profile_hint_display_name">Enter display name</string>
     <string name="profile_email_loading">Loading email...</string>
     <string name="profile_membership_label">Premium Scholar Member</string>
-    <string name="profile_cloud_sync_status">CLOUD SYNC STATUS</string>
-    <string name="profile_last_sync_default">Last synced at 10:00 AM</string>
-    <string name="profile_sync_now">Sync now</string>
     <string name="profile_stats_count">1.2k</string>
     <string name="profile_stats_label">WORDS MASTERED</string>
     <string name="profile_section_settings">APPLICATION SETTINGS</string>
@@ -243,7 +240,6 @@
     <string name="lock_screen_notification_title">FlashLock study</string>
     <string name="lock_screen_notification_text">Preparing lock screen card</string>
     <string name="lock_screen_notification_empty">No vocabulary yet. Add words to start learning.</string>
-    <string name="lock_screen_notification_disabled">Lock screen study is off. Enable it in settings.</string>
     <string name="lock_screen_action_next">Next ›</string>
     <string name="lock_screen_action_prev">‹ Prev</string>
     <string name="lock_screen_channel_name">Lock screen study</string>
@@ -263,6 +259,8 @@
     <string name="lock_screen_config_apply">Apply Configuration</string>
     <string name="lock_screen_config_reset">Reset to Default</string>
     <string name="lock_screen_config_saved">Configuration saved</string>
+    <string name="lock_screen_enabled_toast">Lock screen study turned on</string>
+    <string name="lock_screen_disabled_toast">Lock screen study turned off</string>
 
     <string name="lock_screen_swipe_hint">Left swipe for new word</string>
 
@@ -313,6 +311,9 @@
     <string name="perm_fix">Open Settings</string>
     <string name="perm_status_ok">✓</string>
     <string name="perm_status_missing">⚠ Required</string>
+
+    <string name="dictionary_not_found">Could not find details for this word.</string>
+    <string name="dictionary_added_to_my_words">Added to My Words</string>
 
     <string name="home_continue_format">Continue learning: %1$s</string>
     <string name="home_my_words">My Words</string>

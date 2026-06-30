@@ -377,7 +377,6 @@ public class ProfileFragment extends Fragment {
             });
         });
 
-        binding.btnSyncNow.setOnClickListener(v -> Toast.makeText(getContext(), "Đang đồng bộ dữ liệu...", Toast.LENGTH_SHORT).show());
 
         binding.btnLockScreenSettings.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), LockScreenConfigActivity.class);

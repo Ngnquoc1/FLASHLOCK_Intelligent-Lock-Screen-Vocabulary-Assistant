@@ -84,7 +84,7 @@ public class DictionaryDetailBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onError(String error) {
                 if (!isAdded() || binding == null) return;
-                Toast.makeText(getContext(), "Không tìm thấy chi tiết từ này!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.dictionary_not_found, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -174,7 +174,7 @@ public class DictionaryDetailBottomSheet extends BottomSheetDialogFragment {
 
         viewModel.addCustomWordToMyWords(word);
 
-        Toast.makeText(getContext(), "Added to My Words", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.dictionary_added_to_my_words, Toast.LENGTH_SHORT).show();
         dismiss();
     }
 

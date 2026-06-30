@@ -125,9 +125,6 @@
     <string name="profile_hint_display_name">Nhập tên hiển thị</string>
     <string name="profile_email_loading">Đang tải email...</string>
     <string name="profile_membership_label">Thành viên Premium Scholar</string>
-    <string name="profile_cloud_sync_status">TRẠNG THÁI ĐỒNG BỘ</string>
-    <string name="profile_last_sync_default">Đồng bộ lần cuối lúc 10:00 AM</string>
-    <string name="profile_sync_now">Đồng bộ ngay</string>
     <string name="profile_stats_count">1.2k</string>
     <string name="profile_stats_label">TỪ ĐÃ NHỚ</string>
     <string name="profile_section_settings">CÀI ĐẶT ỨNG DỤNG</string>
@@ -244,7 +241,6 @@
     <string name="lock_screen_notification_title">FlashLock học từ</string>
     <string name="lock_screen_notification_text">Đang chuẩn bị thẻ từ vựng</string>
     <string name="lock_screen_notification_empty">Chưa có từ vựng. Thêm từ để bắt đầu học.</string>
-    <string name="lock_screen_notification_disabled">Học qua màn hình khóa đang tắt. Bật trong cài đặt.</string>
     <string name="lock_screen_action_next">Tiếp ›</string>
     <string name="lock_screen_action_prev">‹ Trước</string>
     <string name="lock_screen_channel_name">Học qua màn hình khóa</string>
@@ -264,6 +260,8 @@
     <string name="lock_screen_config_apply">Apply Configuration</string>
     <string name="lock_screen_config_reset">Reset to Default</string>
     <string name="lock_screen_config_saved">Configuration saved</string>
+    <string name="lock_screen_enabled_toast">Đã bật học qua màn hình khóa</string>
+    <string name="lock_screen_disabled_toast">Đã tắt học qua màn hình khóa</string>
     <string name="lock_screen_swipe_hint">Quẹt trái để xem từ mới</string>
 
     <!-- Study Screen Strings -->
@@ -311,5 +309,8 @@
     <string name="perm_fix">Mở cài đặt</string>
     <string name="perm_status_ok">✓</string>
     <string name="perm_status_missing">⚠ Cần cấp</string>
+
+    <string name="dictionary_not_found">Không tìm thấy chi tiết từ này.</string>
+    <string name="dictionary_added_to_my_words">Đã thêm vào Từ của tôi</string>
 
 </resources>

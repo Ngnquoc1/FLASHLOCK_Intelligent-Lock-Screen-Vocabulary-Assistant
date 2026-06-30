@@ -116,8 +116,13 @@ public class LockScreenStudyService extends Service {
                     ? settings.getLockScreenTopicIds() : new ArrayList<>();
 
             if (!lockScreenEnabled) {
-                postNotification(buildStatusNotification(
-                        getString(R.string.lock_screen_notification_disabled)));
+                // Tắt tính năng = service kết thúc hoàn toàn, không để lại notification "off".
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    stopForeground(STOP_FOREGROUND_REMOVE);
+                } else {
+                    stopForeground(true);
+                }
+                stopSelf();
                 return;
             }
             int newHash = settingsFingerprint(lockScreenEnabled, currentTopicIds);
